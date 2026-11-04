@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin — Óc Eo</title>
+<style>
+:root{
+  --bg:#080604;--bg2:#0f0c07;--bg3:#161008;--bg4:#1c1408;
+  --br:#8B4513;--brl:#C8862A;--brx:#E8A050;
+  --txt:#F0E8D8;--txt2:rgba(240,232,216,.68);--txt3:rgba(240,232,216,.38);
+  --liq:rgba(200,134,42,.08);--liqs:rgba(200,134,42,.15);
+  --liqb:rgba(200,134,42,.28);--liqbs:rgba(200,134,42,.5);
+  --red:rgba(220,60,60,.85);--redb:rgba(220,60,60,.25);
+  --green:rgba(80,200,100,.85);--greenb:rgba(80,200,100,.18);
+  --yellow:#e8c050;
+  --r:14px;--rp:999px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px}
+
+/* ═══ LOGIN / LOADING ═══ */
+#loginScreen,#loadingScreen{min-height:100vh;display:none;align-items:center;justify-content:center;padding:20px}
+#loadingScreen{flex-direction:column;gap:14px;color:var(--txt2);font-size:13px}
+.spinner{width:30px;height:30px;border-radius:50%;border:3px solid var(--liqb);border-top-color:var(--brl);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.login-card{background:var(--bg2);border:0.5px solid var(--liqb);border-radius:20px;
+  padding:40px 32px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.login-logo{font-size:22px;font-weight:800;color:var(--txt);margin-bottom:6px}
+.login-sub{font-size:12px;color:var(--txt2);margin-bottom:26px;line-height:1.6}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+  background:#fff;color:#3c4043;border:none;border-radius:var(--rp);padding:12px;
+  font-size:13px;font-weight:700;cursor:pointer;transition:all .18s}
+.google-btn:hover{box-shadow:0 6px 18px rgba(0,0,0,.3);transform:translateY(-1px)}
+.google-btn:active{transform:scale(.97)}
+.login-error{margin-top:16px;font-size:12px;color:var(--red);line-height:1.5}
+
+/* ═══ SHELL ═══ */
+#shell{display:none;min-height:100vh}
+#sidebar{width:224px;flex-shrink:0;background:var(--bg2);border-right:0.5px solid var(--liqb);
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;
+  transition:transform .3s cubic-bezier(.34,1.2,.64,1);z-index:100}
+#sidebar::-webkit-scrollbar{display:none}
+#main{margin-left:224px;flex:1;min-height:100vh;display:flex;flex-direction:column}
+@media(max-width:720px){
+  #sidebar{transform:translateX(-100%)}#sidebar.open{transform:translateX(0)}
+  #main{margin-left:0}#menuBtn{display:flex!important}
+}
+.sb-head{padding:22px 18px 14px;border-bottom:0.5px solid var(--liqb)}
+.sb-logo{font-size:16px;font-weight:700;color:var(--txt);letter-spacing:-.2px}
+.sb-sub{font-size:10px;color:var(--brx);margin-top:2px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.sb-nav{padding:10px;flex:1}
+.snav{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:12px;cursor:pointer;
+  color:var(--txt2);font-size:13px;font-weight:500;margin-bottom:2px;transition:all .18s;
+  border:none;background:none;width:100%;text-align:left}
+.snav:hover{background:var(--liq);color:var(--txt)}
+.snav.on{background:var(--liqs);color:var(--brx);border:0.5px solid var(--liqb)}
+.snav-ic{font-size:16px;flex-shrink:0;width:20px;text-align:center}
+.sb-sep{height:0.5px;background:var(--liqb);margin:8px 10px}
+.sb-foot{padding:14px;border-top:0.5px solid var(--liqb)}
+.sb-user{display:flex;align-items:center;gap:8px;padding:9px 10px;margin-bottom:10px;
+  background:var(--liq);border-radius:12px;border:0.5px solid var(--liqb)}
+.sb-user img{width:26px;height:26px;border-radius:50%;flex-shrink:0;background:var(--liqb)}
+.sb-user-email{font-size:10.5px;color:var(--txt2);flex:1;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.logout-btn{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:13px;
+  padding:3px;flex-shrink:0;transition:color .18s}
+.logout-btn:hover{color:var(--red)}
+.preview-btn{display:flex;align-items:center;justify-content:center;gap:7px;
+  background:var(--liq);border:0.5px solid var(--liqb);color:var(--brx);
+  border-radius:var(--rp);padding:10px;font-size:12px;font-weight:700;cursor:pointer;
+  width:100%;text-decoration:none;transition:all .18s}
+.preview-btn:hover{background:var(--liqs);border-color:var(--liqbs)}
+
+#topbar{background:var(--bg2);border-bottom:0.5px solid var(--liqb);padding:14px 24px;
+  display:flex;align-items:center;gap:12px;flex-shrink:0;position:sticky;top:0;z-index:50;flex-wrap:wrap}
+#menuBtn{display:none;align-items:center;justify-content:center;width:34px;height:34px;
+  border-radius:10px;background:var(--liq);border:0.5px solid var(--liqb);cursor:pointer;font-size:16px}
+.top-title{font-size:16px;font-weight:700;color:var(--txt);flex:1}
+.sync-pill{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:6px 12px;
+  border-radius:var(--rp);background:var(--liq);border:0.5px solid var(--liqb);color:var(--txt2);
+  white-space:nowrap}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--txt3);flex-shrink:0}
+.sync-pill.ok .sync-dot{background:#5ac85a}
+.sync-pill.saving .sync-dot{background:var(--yellow);animation:pulse 1s infinite}
+.sync-pill.unsaved .sync-dot{background:var(--yellow)}
+.sync-pill.err .sync-dot{background:var(--red)}
+@keyframes pulse{50%{opacity:.25}}
+.save-btn{display:flex;align-items:center;gap:7px;background:var(--brl);color:#fff;border:none;
+  border-radius:var(--rp);padding:9px 20px;font-size:13px;font-weight:700;cursor:pointer;
+  transition:opacity .18s,transform .12s;box-shadow:0 4px 16px rgba(200,134,42,.28)}
+.save-btn:hover{opacity:.88}.save-btn:active{transform:scale(.96)}
+.save-btn:disabled{opacity:.5;cursor:default}
+.toast{position:fixed;top:18px;right:18px;z-index:999;background:rgba(80,200,100,.15);
+  border:0.5px solid rgba(80,200,100,.4);color:#7ddc7d;padding:10px 18px;border-radius:var(--rp);
+  font-size:13px;font-weight:600;transform:translateY(-10px);opacity:0;
+  transition:all .3s cubic-bezier(.34,1.2,.64,1);pointer-events:none;max-width:340px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.err{background:rgba(220,60,60,.15);border-color:rgba(220,60,60,.4);color:#ff9d9d}
+
+.remote-banner{display:none;align-items:center;gap:10px;background:rgba(232,192,80,.1);
+  border:0.5px solid rgba(232,192,80,.35);color:#e8c050;padding:10px 16px;font-size:12px;
+  font-weight:600;border-radius:12px;margin:0 24px 0;margin-top:14px}
+.remote-banner button{background:rgba(232,192,80,.2);border:0.5px solid rgba(232,192,80,.4);
+  color:#e8c050;border-radius:var(--rp);padding:5px 12px;font-size:11px;font-weight:700;
+  cursor:pointer;flex-shrink:0;margin-left:auto}
+
+#content{flex:1;padding:28px 24px;max-width:880px}
+.page{display:none}.page.on{display:block}
+.page-title{font-size:20px;font-weight:700;color:var(--txt);margin-bottom:4px}
+.page-sub{font-size:12px;color:var(--txt2);margin-bottom:20px;line-height:1.6}
+
+.search-box{margin-bottom:14px}
+.search-box input{width:100%;background:rgba(255,255,255,.04);border:0.5px solid var(--liqb);
+  border-radius:var(--rp);padding:9px 16px;color:var(--txt);font-size:13px;outline:none;
+  transition:border-color .18s}
+.search-box input:focus{border-color:var(--brl)}
+.empty-hint{font-size:12px;color:var(--txt3);padding:26px 10px;text-align:center}
+
+.card{background:var(--liq);border:0.5px solid var(--liqb);border-radius:var(--r);
+  padding:16px 18px;margin-bottom:12px;position:relative;transition:border-color .2s}
+.card:hover{border-color:var(--liqbs)}
+.acc-head{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.card-thumb{width:46px;height:46px;border-radius:10px;background-size:cover;background-position:center;
+  background-color:#1a1208;flex-shrink:0;border:0.5px solid var(--liqb)}
+.card-label{font-size:13px;font-weight:700;color:var(--txt);flex:1;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+.acc-caret{color:var(--txt3);font-size:11px;transition:transform .2s;flex-shrink:0;padding:4px}
+.acc-caret.open{transform:rotate(180deg)}
+.card-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-del{display:flex;align-items:center;gap:4px;background:var(--redb);
+  border:0.5px solid rgba(220,60,60,.35);color:var(--red);border-radius:var(--rp);
+  padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s;flex-shrink:0}
+.btn-del:hover{background:rgba(220,60,60,.35)}
+.btn-add{display:flex;align-items:center;gap:6px;background:var(--greenb);
+  border:0.5px solid rgba(80,200,100,.35);color:var(--green);border-radius:var(--rp);
+  padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;margin-bottom:14px}
+.btn-add:hover{background:rgba(80,200,100,.28)}
+.acc-body{display:none;margin-top:16px;padding-top:16px;border-top:0.5px solid var(--liqb)}
+.acc-body.open{display:block}
+
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.field-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:10px;font-weight:700;color:var(--brx);letter-spacing:.07em;text-transform:uppercase}
+.field input,.field textarea{background:rgba(255,255,255,.04);border:0.5px solid var(--liqb);
+  border-radius:10px;padding:9px 12px;color:var(--txt);font-size:13px;font-family:inherit;
+  resize:vertical;transition:border-color .18s,background .18s;outline:none}
+.field input:focus,.field textarea:focus{border-color:var(--brl);background:rgba(200,134,42,.06)}
+.field textarea{min-height:80px;line-height:1.55}
+.field-hint{font-size:10px;color:var(--txt3);margin-top:3px;line-height:1.5}
+.lang-tabs{display:flex;gap:4px;margin-bottom:14px}
+.ltab{font-size:10px;font-weight:700;padding:4px 12px;border-radius:var(--rp);cursor:pointer;
+  transition:all .16s;border:0.5px solid var(--liqb);color:var(--txt3);background:transparent;letter-spacing:.04em}
+.ltab.on{background:var(--brl);color:#fff;border-color:var(--brl)}
+.lang-pane{display:none}
+.lang-pane.on{display:block}
+
+.photo-preview-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.photo-preview{width:80px;height:80px;border-radius:12px;background-size:cover;
+  background-position:center;background-color:#1a1208;flex-shrink:0;border:0.5px solid var(--liqb)}
+
+.photo-thumb-lg{width:96px;height:96px;border-radius:12px;background-size:cover;
+  background-position:center;background-color:#1a1208;flex-shrink:0;border:0.5px solid var(--liqb)}
+.photo-upload-col{flex:1;display:flex;flex-direction:column;gap:6px}
+.photo-upload-col>label{font-size:10px;font-weight:700;color:var(--brx);letter-spacing:.07em;text-transform:uppercase}
+.photo-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-upload{display:flex;align-items:center;gap:6px;background:rgba(200,134,42,.15);
+  border:0.5px solid var(--liqb);color:var(--brx);border-radius:var(--rp);
+  padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s}
+.btn-upload:hover{background:rgba(200,134,42,.28)}
+.btn-upload:disabled{opacity:.5;cursor:default}
+.btn-del-photo{display:flex;align-items:center;gap:6px;background:var(--redb);
+  border:0.5px solid rgba(220,60,60,.35);color:var(--red);border-radius:var(--rp);
+  padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s}
+.btn-del-photo:hover{background:rgba(220,60,60,.35)}
+.upload-status{font-size:11px;color:var(--brx);min-height:14px}
+
+.photo-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.photo-grid-item{position:relative;width:88px;height:88px;border-radius:12px;overflow:hidden;
+  border:0.5px solid var(--liqb);background-color:#1a1208}
+.photo-grid-thumb{width:100%;height:100%;background-size:cover;background-position:center}
+.photo-grid-badge{position:absolute;left:4px;bottom:4px;background:rgba(0,0,0,.55);
+  color:#fff;font-size:8px;font-weight:700;padding:2px 6px;border-radius:var(--rp);letter-spacing:.03em}
+.photo-grid-del{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;
+  background:rgba(0,0,0,.6);border:none;color:#fff;font-size:12px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background .15s}
+.photo-grid-del:hover{background:var(--red)}
+
+.tags-wrap{display:flex;flex-wrap:wrap;gap:5px;padding:8px 10px;background:rgba(255,255,255,.03);
+  border:0.5px solid var(--liqb);border-radius:10px;min-height:38px;align-items:center}
+.tag-chip{display:flex;align-items:center;gap:4px;background:rgba(200,134,42,.15);
+  border:0.5px solid var(--liqb);border-radius:var(--rp);padding:3px 9px;font-size:11px;
+  color:var(--brx);cursor:default}
+.tag-chip button{background:none;border:none;color:rgba(220,60,60,.7);cursor:pointer;
+  font-size:13px;line-height:1;padding:0 0 0 2px}
+.tag-chip button:hover{color:var(--red)}
+.tag-add-input{background:none;border:none;outline:none;color:var(--txt2);font-size:11px;
+  min-width:80px;font-family:inherit}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:24px}
+.stat-card{background:var(--liq);border:0.5px solid var(--liqb);border-radius:var(--r);padding:16px 18px}
+.stat-n{font-size:26px;font-weight:700;color:var(--brx)}
+.stat-l{font-size:11px;color:var(--txt2);margin-top:3px;font-weight:500}
+
+.danger-zone{background:rgba(220,60,60,.06);border:0.5px solid rgba(220,60,60,.2);
+  border-radius:var(--r);padding:16px 20px;margin-top:24px}
+.danger-title{font-size:12px;font-weight:700;color:var(--red);margin-bottom:10px;
+  text-transform:uppercase;letter-spacing:.06em}
+.btn-danger{background:var(--redb);border:0.5px solid rgba(220,60,60,.35);color:var(--red);
+  border-radius:var(--rp);padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:all .18s;margin-right:8px;margin-top:6px}
+.btn-danger:hover{background:rgba(220,60,60,.35)}
+.btn-export{background:var(--greenb);border:0.5px solid rgba(80,200,100,.3);color:var(--green);
+  border-radius:var(--rp);padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:all .18s;margin-top:6px;margin-right:8px}
+.btn-export:hover{background:rgba(80,200,100,.28)}
+.btn-reload{background:rgba(100,120,200,.15);border:0.5px solid rgba(100,120,200,.3);
+  color:rgba(150,170,255,.9);border-radius:var(--rp);padding:8px 18px;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .18s;margin-top:6px;margin-right:8px}
+.btn-reload:hover{background:rgba(100,120,200,.28)}
+
+.step-card .acc-head{padding:0}
+.step-time-col{width:76px;flex-shrink:0}
+.step-body{flex:1;display:flex;flex-direction:column;gap:8px}
+.step-actions{flex-shrink:0;display:flex;gap:5px;align-items:flex-start}
+.btn-move{background:none;border:0.5px solid var(--liqb);color:var(--txt2);border-radius:8px;
+  padding:4px 8px;cursor:pointer;font-size:13px;transition:all .16s}
+.btn-move:hover{border-color:var(--brl);color:var(--brx)}
+.step-summary{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.step-summary-time{font-size:11px;font-weight:800;color:var(--brx);flex-shrink:0;width:44px}
+.step-summary-title{font-size:13px;font-weight:700;color:var(--txt);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(200,134,42,.2);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:rgba(200,134,42,.4)}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">⚙ Quản trị Óc Eo</div>
+    <div class="login-sub">Đăng nhập bằng tài khoản Google được cấp quyền để chỉnh sửa nội dung trang du lịch oceotownwalk.web.app</div>
+    <button class="google-btn" onclick="doSignIn()">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.6 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.5 29.5 3.5 24 3.5 12.7 3.5 3.5 12.7 3.5 24S12.7 44.5 24 44.5 44.5 35.3 44.5 24c0-1.2-.1-2.4-.3-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.9 19 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.5 6.5 29.5 4.5 24 4.5c-7.8 0-14.5 4.4-17.7 10.2z"/><path fill="#4CAF50" d="M24 44.5c5.4 0 10.3-1.8 14.1-5l-6.5-5.5c-2 1.4-4.6 2.3-7.6 2.3-5.4 0-9.9-3.4-11.5-8.2l-6.5 5C9.4 40 16.1 44.5 24 44.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.7 2.1-2 3.9-3.7 5.2l6.5 5.5C41.4 36 44.5 30.6 44.5 24c0-1.2-.1-2.4-.3-3.5z"/></svg>
+      Đăng nhập bằng Google
+    </button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ═══ LOADING ═══ -->
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <div id="loadingMsg">Đang tải dữ liệu từ máy chủ...</div>
+</div>
+
+<div id="shell">
+
+<div id="sidebar">
+  <div class="sb-head">
+    <div class="sb-logo">⚙ Quản trị</div>
+    <div class="sb-sub">Óc Eo · Nội dung trang web</div>
+  </div>
+  <nav class="sb-nav">
+    <button class="snav on" onclick="goPage('dashboard',this)"><span class="snav-ic">▤</span>Tổng quan</button>
+    <button class="snav" onclick="goPage('places',this)"><span class="snav-ic">◆</span>Địa điểm</button>
+    <button class="snav" onclick="goPage('foods',this)"><span class="snav-ic">◇</span>Ăn uống</button>
+    <button class="snav" onclick="goPage('hotels',this)"><span class="snav-ic">▢</span>Lưu trú</button>
+    <button class="snav" onclick="goPage('cafes',this)"><span class="snav-ic">○</span>Dừng chân</button>
+    <button class="snav" onclick="goPage('itinerary',this)"><span class="snav-ic">↝</span>Lịch trình</button>
+    <div class="sb-sep"></div>
+    <button class="snav" onclick="goPage('settings',this)"><span class="snav-ic">⚙</span>Cài đặt</button>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-user">
+      <img id="userAvatar" src="" onerror="this.style.visibility='hidden'"/>
+      <div class="sb-user-email" id="userEmail"></div>
+      <button class="logout-btn" onclick="doSignOut()" title="Đăng xuất">⏻</button>
+    </div>
+    <a class="preview-btn" href="index.html" target="_blank">👁 Xem trang du lịch</a>
+  </div>
+</div>
+
+<div id="main">
+  <div id="topbar">
+    <div id="menuBtn" onclick="toggleSidebar()">☰</div>
+    <div class="top-title" id="topTitle">Tổng quan</div>
+    <div class="sync-pill" id="syncPill"><span class="sync-dot"></span><span id="syncLabel">Đang tải...</span></div>
+    <button class="save-btn" id="saveBtn" onclick="saveAll()">💾 Lưu thay đổi</button>
+  </div>
+
+  <div class="remote-banner" id="remoteBanner">
+    ⚠ Dữ liệu trên máy chủ vừa được cập nhật từ nơi khác.
+    <button onclick="acceptRemoteReload()">Tải bản mới (mất thay đổi chưa lưu)</button>
+  </div>
+
+  <div id="content">
+
+    <div class="page on" id="page-dashboard">
+      <div class="page-title">Chào mừng trở lại</div>
+      <div class="page-sub">Quản lý toàn bộ nội dung trang web du lịch Óc Eo tại đây. Ảnh được tải trực tiếp lên Firebase Storage — chỉ cần bấm nút tải ảnh, không cần dán link. Mọi thay đổi chỉ hiển thị cho khách sau khi bạn bấm <b>"Lưu thay đổi"</b> ở góc trên.</div>
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="danger-zone">
+        <div class="danger-title">⚠ Công cụ dữ liệu</div>
+        <p style="font-size:12px;color:var(--txt2);margin-bottom:8px">Xuất dữ liệu để backup, nhập lại từ file, khôi phục mặc định, hoặc tải lại bản mới nhất từ máy chủ.</p>
+        <button class="btn-export" onclick="exportData()">📤 Xuất JSON</button>
+        <button class="btn-reload" onclick="importData()">📥 Nhập JSON</button>
+        <button class="btn-reload" onclick="acceptRemoteReload(true)">🔄 Tải lại từ máy chủ</button>
+        <button class="btn-danger" onclick="resetData()">♻ Khôi phục mặc định</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-places">
+      <div class="page-title">Địa điểm tham quan</div>
+      <div class="page-sub">Mỗi địa điểm hiển thị dạng card ảnh trượt (kiểu Apple Music) và trên bản đồ. Bấm "Tải ảnh lên" để tải ảnh thật của địa điểm. Bấm vào tiêu đề mỗi thẻ để mở/thu gọn.</div>
+      <div class="search-box"><input placeholder="🔍 Tìm địa điểm theo tên..." oninput="filterList('places',this.value)"/></div>
+      <button class="btn-add" onclick="addPlace()">＋ Thêm địa điểm</button>
+      <div id="placesList"></div>
+    </div>
+
+    <div class="page" id="page-foods">
+      <div class="page-title">Ăn uống</div>
+      <div class="page-sub">Món ăn / quán có chứng nhận Local Óc Eo. Hiển thị dạng thẻ ảnh cuộn ngang; bấm vào thẻ mở modal chi tiết gồm giá, mô tả và địa chỉ.</div>
+      <div class="search-box"><input placeholder="🔍 Tìm món ăn theo tên..." oninput="filterList('foods',this.value)"/></div>
+      <button class="btn-add" onclick="addFood()">＋ Thêm món / quán ăn</button>
+      <div id="foodsList"></div>
+    </div>
+
+    <div class="page" id="page-hotels">
+      <div class="page-title">Lưu trú</div>
+      <div class="page-sub">Khách sạn, nhà nghỉ, homestay. Mỗi cơ sở có thể có nhiều ảnh (hiển thị dạng trượt khi khách bấm xem chi tiết) — bấm "Thêm ảnh" để tải, ảnh đầu tiên là ảnh đại diện.</div>
+      <div class="search-box"><input placeholder="🔍 Tìm cơ sở lưu trú theo tên..." oninput="filterList('hotels',this.value)"/></div>
+      <button class="btn-add" onclick="addHotel()">＋ Thêm cơ sở lưu trú</button>
+      <div id="hotelsList"></div>
+    </div>
+
+    <div class="page" id="page-cafes">
+      <div class="page-title">Dừng chân</div>
+      <div class="page-sub">Quán cafe, quán nước — điểm dừng chân cho khách trong ngày. Mỗi quán có thể có nhiều ảnh — bấm "Thêm ảnh" để tải, ảnh đầu tiên là ảnh đại diện.</div>
+      <div class="search-box"><input placeholder="🔍 Tìm quán theo tên..." oninput="filterList('cafes',this.value)"/></div>
+      <button class="btn-add" onclick="addCafe()">＋ Thêm quán dừng chân</button>
+      <div id="cafesList"></div>
+    </div>
+
+    <div class="page" id="page-itinerary">
+      <div class="page-title">Lịch trình</div>
+      <div class="page-sub">Lịch trình gợi ý theo ngày. Bấm vào từng bước để mở/thu gọn chỉnh sửa.</div>
+      <div class="card">
+        <div class="card-head" style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span class="card-label">🗺 Thông tin lịch trình</span></div>
+        <div class="field-grid">
+          <div class="field"><label>Tiêu đề (Tiếng Việt)</label><input id="itin_title_vi" placeholder="Lịch trình 1 ngày — Óc Eo cơ bản"/></div>
+          <div class="field"><label>Title (English)</label><input id="itin_title_en" placeholder="1-Day Itinerary — Óc Eo Highlights"/></div>
+          <div class="field"><label>Mô tả (Tiếng Việt)</label><input id="itin_sub_vi" placeholder="Phù hợp khách trong ngày..."/></div>
+          <div class="field"><label>Description (English)</label><input id="itin_sub_en" placeholder="Ideal for day-trippers..."/></div>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addStep()">＋ Thêm bước</button>
+      <div id="stepsList"></div>
+    </div>
+
+    <div class="page" id="page-settings">
+      <div class="page-title">Cài đặt giao diện</div>
+      <div class="page-sub">Tuỳ chỉnh các nhãn, chú thích hiển thị trên trang du lịch.</div>
+      <div class="card">
+        <div class="card-head" style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span class="card-label">🔤 Nhãn chứng nhận Local</span></div>
+        <div class="field-grid">
+          <div class="field"><label>Tiếng Việt</label><input id="ui_seal_vi"/></div>
+          <div class="field"><label>English</label><input id="ui_seal_en"/></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head" style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span class="card-label">🗂 Nhãn tab điều hướng</span></div>
+        <div class="field-grid">
+          <div class="field"><label>Tab 1 (VI)</label><input id="ui_t0_vi"/></div>
+          <div class="field"><label>Tab 1 (EN)</label><input id="ui_t0_en"/></div>
+          <div class="field"><label>Tab 2 (VI)</label><input id="ui_t1_vi"/></div>
+          <div class="field"><label>Tab 2 (EN)</label><input id="ui_t1_en"/></div>
+          <div class="field"><label>Tab 3 (VI)</label><input id="ui_t2_vi"/></div>
+          <div class="field"><label>Tab 3 (EN)</label><input id="ui_t2_en"/></div>
+          <div class="field"><label>Tab 4 (VI)</label><input id="ui_t3_vi"/></div>
+          <div class="field"><label>Tab 4 (EN)</label><input id="ui_t3_en"/></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head" style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span class="card-label">🎙 Nhãn nút voice guide</span></div>
+        <div class="field-grid">
+          <div class="field"><label>Nút nghe (VI)</label><input id="ui_voice_vi"/></div>
+          <div class="field"><label>Listen button (EN)</label><input id="ui_voice_en"/></div>
+          <div class="field"><label>Đang phát (VI)</label><input id="ui_playing_vi"/></div>
+          <div class="field"><label>Playing text (EN)</label><input id="ui_playing_en"/></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head" style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span class="card-label">🛏 Nhãn tab Lưu trú / Dừng chân</span></div>
+        <div class="field-grid">
+          <div class="field"><label>Lưu trú (VI)</label><input id="ui_stay_vi"/></div>
+          <div class="field"><label>Lodging (EN)</label><input id="ui_stay_en"/></div>
+          <div class="field"><label>Dừng chân (VI)</label><input id="ui_cafe_vi"/></div>
+          <div class="field"><label>Pit stops (EN)</label><input id="ui_cafe_en"/></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImport(event)"/>
+
+<!-- ═══ FIREBASE (module) ═══ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, onSnapshot, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject }
+  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD367iejwFyLn89MdyIWEd0WRzt8RfQGRw",
+  authDomain: "chitieucanhan-33.firebaseapp.com",
+  projectId: "chitieucanhan-33",
+  storageBucket: "chitieucanhan-33.firebasestorage.app",
+  messagingSenderId: "139103955870",
+  appId: "1:139103955870:web:b4532a7b467abccfa7448f",
+  measurementId: "G-1ZV4YL6563"
+};
+const ADMIN_EMAIL = "vulpoz.com@gmail.com";
+const SITE_DOC = ["sites","oceotownwalk"];
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const siteRef = doc(db, SITE_DOC[0], SITE_DOC[1]);
+
+window.__fb = {
+  signIn: () => signInWithPopup(auth, new GoogleAuthProvider()).catch(err=>{
+    if(window.onSignInError) window.onSignInError(err);
+  }),
+  signOut: () => signOut(auth),
+  saveData: (data) => setDoc(siteRef, Object.assign({}, data, {_updatedAt: serverTimestamp()})),
+
+  /* Tải ảnh lên Storage. Nếu oldUrl có giá trị, xoá ảnh cũ trước khi tải ảnh mới lên. */
+  uploadImage: async (file, oldUrl) => {
+    if (oldUrl) {
+      try { await deleteObject(ref(storage, oldUrl)); }
+      catch (e) { /* ảnh cũ có thể đã bị xoá hoặc không hợp lệ — bỏ qua */ }
+    }
+    const safeName = (file.name || 'image').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = `oceotownwalk/${Date.now()}_${Math.random().toString(36).slice(2, 8)}_${safeName}`;
+    const r = ref(storage, path);
+    await uploadBytes(r, file);
+    return await getDownloadURL(r);
+  },
+
+  /* Xoá 1 ảnh khỏi Storage theo URL */
+  deleteImage: async (url) => {
+    if (!url) return;
+    try { await deleteObject(ref(storage, url)); }
+    catch (e) { /* ảnh có thể đã bị xoá hoặc không hợp lệ — bỏ qua */ }
+  },
+};
+
+onAuthStateChanged(auth, (user) => {
+  if (window.onAuthChanged) window.onAuthChanged(user, ADMIN_EMAIL);
+});
+
+onSnapshot(siteRef, (snap) => {
+  if (window.onDataSnapshot) window.onDataSnapshot(snap.exists() ? snap.data() : null, snap.exists());
+}, (err) => {
+  if (window.onDataError) window.onDataError(err);
+});
+</script>
+
+<script>
+/* ═══ DEFAULT DATA — mirrors index.html schema exactly ═══ */
+const DEFAULT_DATA = {
+  places:[
+    {photo:'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800&q=80',
+     name:{vi:'Di tích Óc Eo',en:'Óc Eo Heritage Site'},
+     eyebrow:{vi:'Khảo cổ học',en:'Archaeology'},
+     cat:{vi:'Di sản văn hóa quốc gia · Thế kỷ I–VII',en:'National Cultural Heritage · 1st–7th century'},
+     badge:{vi:'Miễn phí',en:'Free entry'},
+     desc:{vi:'Trung tâm thương mại cảng thị của vương quốc Phù Nam',en:'Commercial port hub of the ancient Funan Kingdom'},
+     info:{vi:[{icon:'clock',text:'Mở cửa 7h–17h hằng ngày'},{icon:'ticket',text:'Vào cửa miễn phí'},{icon:'mappin',text:'TT Óc Eo, Thoại Sơn, An Giang'},{icon:'car',text:'~15km từ Long Xuyên'}],
+           en:[{icon:'clock',text:'Open daily 7am–5pm'},{icon:'ticket',text:'Free admission'},{icon:'mappin',text:'Óc Eo Town, Thoai Son, An Giang'},{icon:'car',text:'~15km from Long Xuyen'}]},
+     text:{vi:'Khu di tích khảo cổ Óc Eo là trung tâm thương mại cảng thị của vương quốc Phù Nam từ thế kỷ 1–7 sau Công nguyên. Đây từng là điểm giao thương giữa Ấn Độ, Trung Quốc và các nước Đông Nam Á — một trong những nền văn minh lớn nhất Đông Nam Á cổ đại.',
+           en:'The Óc Eo Archaeological Site was the thriving commercial port of the Funan Kingdom (1st–7th century AD) — a major crossroads of trade between India, China, and Southeast Asia, and one of the greatest ancient civilizations in the region.'},
+     audio:{vi:'',en:''},geo:''},
+    {photo:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+     name:{vi:'Núi Ba Thê',en:'Ba The Mountain'},
+     eyebrow:{vi:'Văn hóa · Tâm linh',en:'Culture · Spirituality'},
+     cat:{vi:'Ngọn núi duy nhất vùng đồng bằng · 221m',en:'Only mountain in the Mekong Delta · 221m'},
+     badge:{vi:'~5k/người',en:'~5k VND'},
+     desc:{vi:'Leo núi, thăm chùa chiền, ngắm toàn cảnh Thoại Sơn',en:'Hike, visit pagodas, panoramic view of Thoai Son'},
+     info:{vi:[{icon:'mountain',text:'Cao 221m — ngọn núi duy nhất đồng bằng'},{icon:'ticket',text:'~5.000đ/người'},{icon:'sunset',text:'Đẹp nhất vào sáng sớm'},{icon:'mappin',text:'Thị trấn Óc Eo'}],
+           en:[{icon:'mountain',text:'221m — only mountain in the Mekong Delta'},{icon:'ticket',text:'~5,000 VND/person'},{icon:'sunset',text:'Best visited early morning'},{icon:'mappin',text:'Óc Eo Town'}]},
+     text:{vi:'Núi Ba Thê cao 221m, là ngọn núi duy nhất vùng đồng bằng sông Cửu Long. Trên núi có nhiều chùa chiền và hàng nghìn hiện vật khảo cổ Óc Eo quý giá. Từ đỉnh núi có thể ngắm toàn cảnh vùng Thoại Sơn tuyệt đẹp.',
+           en:'Ba The Mountain stands 221m — the only mountain in the entire Mekong Delta. It houses several sacred pagodas and thousands of precious Óc Eo artifacts. The summit offers a stunning panoramic view of Thoai Son.'},
+     audio:{vi:'',en:''},geo:''},
+    {photo:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80',
+     name:{vi:'Kênh Thoại Hà',en:'Thoai Ha Canal'},
+     eyebrow:{vi:'Thiên nhiên · Lịch sử',en:'Nature · History'},
+     cat:{vi:'Đào năm 1818 · Hoàng hôn tuyệt đẹp',en:'Built 1818 · Stunning sunset views'},
+     badge:{vi:'Tự do',en:'Free'},
+     desc:{vi:'Công trình thủy lợi vĩ đại thời Nguyễn, điểm ngắm hoàng hôn',en:'Magnificent hydraulic feat, perfect sunset watching spot'},
+     info:{vi:[{icon:'history',text:'Đào năm 1818 dưới thời Thoại Ngọc Hầu'},{icon:'ticket',text:'Tham quan tự do'},{icon:'sunset',text:'Hoàng hôn đẹp 17h–18h30'},{icon:'mappin',text:'Chạy dọc thị trấn Óc Eo'}],
+           en:[{icon:'history',text:'Dug in 1818 by Thoai Ngoc Hau'},{icon:'ticket',text:'Free to visit'},{icon:'sunset',text:'Stunning sunsets 5–6:30pm'},{icon:'mappin',text:'Runs along Óc Eo Town'}]},
+     text:{vi:'Kênh Thoại Hà được đào năm 1818 dưới sự chỉ huy của Thoại Ngọc Hầu — công trình thủy lợi vĩ đại thời Nguyễn. Ngày nay, ngoài là huyết mạch giao thông, kênh còn là điểm ngắm hoàng hôn tuyệt đẹp nhất vùng Thoại Sơn.',
+           en:'Thoai Ha Canal was dug in 1818 — a remarkable hydraulic feat of the Nguyen Dynasty. Today it remains a vital waterway and the most stunning sunset-watching spot in Thoai Son district.'},
+     audio:{vi:'',en:''},geo:''},
+    {photo:'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=800&q=80',
+     name:{vi:'Chợ Óc Eo',en:'Óc Eo Market'},
+     eyebrow:{vi:'Văn hóa · Ẩm thực',en:'Culture · Food'},
+     cat:{vi:'Họp từ 4h30 sáng · Đặc sản địa phương',en:'Opens 4:30am · Local specialties'},
+     badge:{vi:'Tự vào',en:'Free entry'},
+     desc:{vi:'Mua đặc sản khô cá sặc, mắm đồng, bánh dân gian',en:'Dried fish, fermented paste & traditional local cakes'},
+     info:{vi:[{icon:'clock',text:'Họp từ 4h30 sáng — đông nhất 5h–8h'},{icon:'ticket',text:'Tự do vào chợ'},{icon:'fish',text:'Khô cá sặc, mắm đồng, bánh dân gian'},{icon:'mappin',text:'Trung tâm thị trấn Óc Eo'}],
+           en:[{icon:'clock',text:'Opens 4:30am — busiest 5–8am'},{icon:'ticket',text:'Free entry'},{icon:'fish',text:'Dried fish, fermented paste, local cakes'},{icon:'mappin',text:'Town center of Óc Eo'}]},
+     text:{vi:'Chợ Óc Eo họp từ tờ mờ sáng, bán đặc sản địa phương như khô cá sặc, mắm đồng, tôm khô và bánh dân gian. Đây là nơi tuyệt vời để cảm nhận nhịp sống bình dị và chân thật nhất của người dân Thoại Sơn.',
+           en:"Óc Eo Market opens before dawn, selling local specialties like dried fish, fermented paste, dried shrimp, and traditional cakes. The most authentic way to experience everyday Thoai Son life."},
+     audio:{vi:'',en:''},geo:''},
+    {photo:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+     name:{vi:'Chùa Linh Sơn',en:'Linh Son Pagoda'},
+     eyebrow:{vi:'Phật giáo · Khmer',en:'Buddhism · Khmer'},
+     cat:{vi:'Phật giáo Nam Tông · Cộng đồng Khmer',en:'Theravada Buddhism · Khmer community'},
+     badge:{vi:'Miễn phí',en:'Free'},
+     desc:{vi:'Kiến trúc Khmer rực rỡ giữa vùng đồng bằng yên bình',en:'Vibrant Khmer architecture in a serene delta landscape'},
+     info:{vi:[{icon:'clock',text:'Mở cửa 6h–18h'},{icon:'ticket',text:'Miễn phí — ăn mặc kín đáo'},{icon:'users',text:'Cộng đồng Khmer sinh sống tại đây'},{icon:'mappin',text:'Xã Vọng Thê, Thoại Sơn'}],
+           en:[{icon:'clock',text:'Open 6am–6pm'},{icon:'ticket',text:'Free — dress modestly'},{icon:'users',text:'Active Khmer community on-site'},{icon:'mappin',text:'Vong The Commune, Thoai Son'}]},
+     text:{vi:'Chùa Linh Sơn là ngôi chùa Phật giáo Nam Tông lâu đời, nơi sinh hoạt văn hóa tâm linh của bà con người Khmer tại Thoại Sơn. Kiến trúc Khmer rực rỡ cùng không gian yên tĩnh tạo nên nét đặc sắc hiếm có.',
+           en:'Linh Son Pagoda is an ancient Theravada Buddhist temple and spiritual anchor of the Khmer community in Thoai Son. Its vibrant Khmer architecture and rare tranquility make it a serene escape in the flat delta.'},
+     audio:{vi:'',en:''},geo:''}
+  ],
+  foods:[
+    {photo:'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=75',name:{vi:'Bún cá Óc Eo',en:'Óc Eo Fish Noodle'},tags:{vi:['15k–25k','Đặc sản'],en:['15–25k VND','Local']},
+      price:{vi:'15.000₫ – 25.000₫',en:'15,000 – 25,000 VND'},
+      desc:{vi:'Nước lèo cá lóc đồng nấu nghệ tươi, ăn kèm bông điên điển và rau đắng — món ăn sáng quen thuộc của người Óc Eo.',en:'Fish broth simmered with fresh turmeric, served with local wildflowers and bitter herbs — a classic Óc Eo breakfast.'},
+      addr:{vi:'Chợ Óc Eo, TT Óc Eo, Thoại Sơn, An Giang',en:'Óc Eo Market, Óc Eo Town, Thoai Son, An Giang'},geo:''},
+    {photo:'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=75',name:{vi:'Lẩu mắm',en:'Mam Hotpot'},tags:{vi:['60k+','Miền Tây'],en:['60k+','Mekong']},
+      price:{vi:'Từ 60.000₫/phần',en:'From 60,000 VND/serving'},
+      desc:{vi:'Lẩu mắm đậm vị miền Tây với đủ loại rau đồng và cá tươi, thường dùng chung cho 2–4 người.',en:'A bold Mekong-style hotpot with local wild vegetables and fresh fish, typically shared by 2–4 people.'},
+      addr:{vi:'Quốc lộ 943, gần chợ Óc Eo, Thoại Sơn, An Giang',en:'National Road 943, near Óc Eo Market, Thoai Son, An Giang'},geo:''},
+    {photo:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=75',name:{vi:'Cơm tấm sườn',en:'Broken Rice & Pork'},tags:{vi:['20k–35k'],en:['20–35k VND']},
+      price:{vi:'20.000₫ – 35.000₫',en:'20,000 – 35,000 VND'},
+      desc:{vi:'Cơm tấm sườn nướng thơm lừng, ăn kèm bì, chả trứng và nước mắm chua ngọt đặc trưng.',en:'Grilled pork over broken rice, served with shredded pork skin, egg cake, and sweet fish sauce.'},
+      addr:{vi:'Đường Lê Lợi, TT Óc Eo, Thoại Sơn, An Giang',en:'Le Loi Street, Óc Eo Town, Thoai Son, An Giang'},geo:''},
+    {photo:'https://images.unsplash.com/photo-1607189699688-c84c3e59af56?w=400&q=75',name:{vi:'Khô cá sặc',en:'Dried Fish'},tags:{vi:['Mua về'],en:['Take home']},
+      price:{vi:'80.000₫ – 150.000₫/kg',en:'80,000 – 150,000 VND/kg'},
+      desc:{vi:'Khô cá sặc rằn phơi nắng tự nhiên, đặc sản mang về nổi tiếng của vùng Óc Eo – Thoại Sơn.',en:'Sun-dried snakeskin gourami, a famous take-home specialty from the Óc Eo – Thoai Son region.'},
+      addr:{vi:'Chợ Óc Eo, TT Óc Eo, Thoại Sơn, An Giang',en:'Óc Eo Market, Óc Eo Town, Thoai Son, An Giang'},geo:''},
+    {photo:'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=75',name:{vi:'Gỏi cuốn tôm',en:'Spring Rolls'},tags:{vi:['15k–20k'],en:['15–20k VND']},
+      price:{vi:'15.000₫ – 20.000₫',en:'15,000 – 20,000 VND'},
+      desc:{vi:'Gỏi cuốn tươi mát với tôm, bún và rau sống, chấm cùng nước mắm chua ngọt hoặc tương đậu phộng.',en:'Fresh rolls with shrimp, rice noodles and herbs, served with sweet fish sauce or peanut dipping sauce.'},
+      addr:{vi:'Đường Lê Lợi, TT Óc Eo, Thoại Sơn, An Giang',en:'Le Loi Street, Óc Eo Town, Thoai Son, An Giang'},geo:''},
+    {photo:'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=75',name:{vi:'Bánh ít lá gai',en:'Gai Leaf Cake'},tags:{vi:['5k–10k','Truyền thống'],en:['5–10k','Traditional']},
+      price:{vi:'5.000₫ – 10.000₫/cái',en:'5,000 – 10,000 VND/piece'},
+      desc:{vi:'Bánh nếp lá gai nhân đậu xanh dừa, vị dẻo thơm truyền thống, thường xuất hiện trong dịp lễ.',en:'Sticky rice cake with gai leaf, mung bean and coconut filling — a traditional treat often served at festivals.'},
+      addr:{vi:'Chợ Óc Eo, TT Óc Eo, Thoại Sơn, An Giang',en:'Óc Eo Market, Óc Eo Town, Thoai Son, An Giang'},geo:''}
+  ],
+  hotels:[
+    {photos:['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80','https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&q=80','https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80'],
+     name:{vi:'Khách sạn Óc Eo Inn',en:'Óc Eo Inn Hotel'},type:{vi:'Khách sạn',en:'Hotel'},price:{vi:'250k–400k/đêm',en:'250–400k VND/night'},addr:{vi:'12 Đường Lê Lợi, TT Óc Eo',en:'12 Le Loi St, Óc Eo Town'},phone:'0296 123 456',amenities:{vi:'Wifi · Điều hoà · Bãi xe',en:'Wifi · AC · Parking'},geo:''},
+    {photos:['https://images.unsplash.com/photo-1521783988139-89397d761dce?w=800&q=80','https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800&q=80','https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800&q=80'],
+     name:{vi:'Nhà nghỉ Thanh Bình',en:'Thanh Binh Guesthouse'},type:{vi:'Nhà nghỉ',en:'Guesthouse'},price:{vi:'120k–180k/đêm',en:'120–180k VND/night'},addr:{vi:'45 Trần Hưng Đạo, Óc Eo',en:'45 Tran Hung Dao, Óc Eo'},phone:'0909 234 567',amenities:{vi:'Gần chợ, sạch sẽ, bình dân',en:'Near market, clean, budget-friendly'},geo:''}
+  ],
+  cafes:[
+    {photos:['https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80','https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80'],
+     name:{vi:'Cafe Đồng Quê',en:'Dong Que Cafe'},hours:{vi:'7h–21h',en:'7am–9pm'},note:{vi:'View đồng lúa',en:'Rice field view'},price:{vi:'Cà phê 15k · Sinh tố 25k',en:'Coffee 15k · Smoothie 25k'},addr:{vi:'Đường ra Núi Ba Thê, Óc Eo',en:'Road to Ba The Mountain, Óc Eo'},phone:'0913 456 789',geo:''},
+    {photos:['https://images.unsplash.com/photo-1495556650867-99590cea3657?w=800&q=80','https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=800&q=80'],
+     name:{vi:'Trà sữa Thảo',en:"Thao's Milk Tea"},hours:{vi:'9h–22h',en:'9am–10pm'},note:{vi:'Trung tâm thị trấn',en:'Town center'},price:{vi:'Trà sữa 25k–40k',en:'Milk tea 25–40k VND'},addr:{vi:'Đường Lê Lợi, TT Óc Eo',en:'Le Loi Street, Óc Eo Town'},phone:'0908 567 890',geo:''},
+    {photos:['https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80','https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&q=80'],
+     name:{vi:'Quán nước Bà Năm',en:"Ba Nam's Drinks"},hours:{vi:'5h–11h',en:'5am–11am'},note:{vi:'Gần chợ',en:'Near market'},price:{vi:'Trà đá 5k',en:'Iced tea 5k VND'},addr:{vi:'Gần chợ Óc Eo, Thoại Sơn',en:'Near Óc Eo Market, Thoai Son'},phone:'0977 345 678',geo:''}
+  ],
+  itinerary:{
+    title:{vi:'Lịch trình 1 ngày — Óc Eo cơ bản',en:'1-Day Itinerary — Óc Eo Highlights'},
+    sub:{vi:'Phù hợp khách trong ngày, xe máy hoặc ô tô',en:'Ideal for day-trippers by motorbike or car'},
+    steps:[
+      {time:'7:00',title:{vi:'Ăn sáng bún cá',en:'Breakfast — fish noodles'},note:{vi:'Chợ Óc Eo, cảm nhận buổi sáng miền Tây',en:'Óc Eo Market — soak in the Mekong morning vibe'},dur:{vi:'~45 phút',en:'~45 min'}},
+      {time:'8:00',title:{vi:'Di tích Óc Eo',en:'Óc Eo Heritage Site'},note:{vi:'Khu khảo cổ cổ đại, nghe voice guide tại chỗ',en:'Ancient site — use audio guide in-app'},dur:{vi:'~90 phút',en:'~90 min'}},
+      {time:'10:00',title:{vi:'Cafe Đồng Quê',en:'Dong Que Cafe'},note:{vi:'Nghỉ chân, cà phê nhìn ra cánh đồng lúa',en:'Rest stop, coffee overlooking rice fields'},dur:{vi:'~30 phút',en:'~30 min'}},
+      {time:'11:00',title:{vi:'Núi Ba Thê',en:'Ba The Mountain'},note:{vi:'Leo núi, thăm chùa, ngắm toàn cảnh Thoại Sơn',en:'Hike, visit pagodas, panoramic view'},dur:{vi:'~2 giờ',en:'~2 hrs'}},
+      {time:'13:30',title:{vi:'Ăn trưa lẩu mắm',en:'Lunch — Mam hotpot'},note:{vi:'Đặc sản không thể bỏ qua của miền Tây',en:'A must-try Mekong Delta specialty'},dur:{vi:'~60 phút',en:'~60 min'}},
+      {time:'15:00',title:{vi:'Kênh Thoại Hà & mua quà',en:'Thoai Ha Canal & souvenirs'},note:{vi:'Dạo bờ kênh, mua khô cá sặc về làm quà',en:'Stroll the canal, buy dried fish as gifts'},dur:{vi:'~60 phút',en:'~60 min'}}
+    ]
+  },
+  ui:{
+    seal:{vi:'Chứng nhận Local Óc Eo — nơi người địa phương thực sự hay lui tới',en:'Local Óc Eo Certified — places locals actually go'},
+    voiceListen:{vi:'Nghe giới thiệu',en:'Listen to audio guide'},
+    voicePlaying:{vi:'Đang phát...',en:'Playing...'},
+    stayLbl:{vi:'Lưu trú',en:'Lodging'},cafeLbl:{vi:'Dừng chân',en:'Pit stops'},
+    tabs:{vi:['Tham quan','Ăn uống','Dừng chân','Lịch trình'],en:['Attractions','Food','Stops','Itinerary']}
+  }
+};
+
+let D=null, isAdmin=false, firstLoadDone=false, dirty=false, pendingRemote=null, initializingDoc=false;
+
+/* ═══ AUTH / DATA WIRING ═══ */
+function doSignIn(){
+  document.getElementById('loginError').textContent='';
+  window.__fb.signIn();
+}
+function doSignOut(){ window.__fb.signOut(); }
+window.onSignInError = function(err){
+  document.getElementById('loginError').textContent='Không thể đăng nhập: '+(err&&err.message?err.message:'lỗi không xác định');
+};
+
+window.onAuthChanged = function(user, adminEmail){
+  if(user && user.email===adminEmail){
+    isAdmin=true;
+    document.getElementById('userEmail').textContent=user.email;
+    document.getElementById('userAvatar').src=user.photoURL||'';
+    document.getElementById('loginError').textContent='';
+    tryShowShell();
+  } else if(user){
+    isAdmin=false;
+    document.getElementById('shell').style.display='none';
+    document.getElementById('loadingScreen').style.display='none';
+    document.getElementById('loginScreen').style.display='flex';
+    document.getElementById('loginError').textContent='Tài khoản "'+user.email+'" không có quyền quản trị trang này. Vui lòng đăng nhập đúng tài khoản được cấp quyền.';
+    window.__fb.signOut();
+  } else {
+    isAdmin=false;
+    document.getElementById('shell').style.display='none';
+    document.getElementById('loadingScreen').style.display='none';
+    document.getElementById('loginScreen').style.display='flex';
+  }
+};
+
+window.onDataSnapshot = function(remote, exists){
+  if(!dirty){
+    D = remote ? remote : JSON.parse(JSON.stringify(DEFAULT_DATA));
+    firstLoadDone = true;
+    updateSyncPill('ok');
+    tryShowShell();
+    if(document.getElementById('shell').style.display!=='none') rerenderCurrentPage();
+  } else {
+    pendingRemote = remote;
+    document.getElementById('remoteBanner').style.display='flex';
+  }
+  /* KHÔNG tự động ghi đè Firestore ở đây nữa — kể cả khi document "chưa tồn tại".
+     Việc tự-lưu-âm-thầm trước đây từng gây rủi ro: nếu Firestore báo nhầm
+     "không tồn tại" (do mạng chập chờn/độ trễ quyền truy cập) dù dữ liệu thật
+     đã có sẵn, admin sẽ vô tình ghi đè dữ liệu thật bằng dữ liệu mẫu mặc định
+     mà không có cảnh báo nào. Giờ chỉ tạo document khi bạn chủ động bấm
+     "Lưu thay đổi" — an toàn hơn, không có ghi đè ngoài ý muốn.*/
+  if(!exists && isAdmin){
+    showToast('ℹ️ Chưa có dữ liệu trên máy chủ — bấm "Lưu thay đổi" để khởi tạo.');
+  }
+};
+window.onDataError = function(err){
+  updateSyncPill('err');
+  showToast('❌ Lỗi kết nối máy chủ: '+(err&&err.message?err.message:'không xác định'), true);
+};
+
+function tryShowShell(){
+  if(isAdmin && firstLoadDone){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('loadingScreen').style.display='none';
+    document.getElementById('shell').style.display='flex';
+    renderDashboard();
+  } else if(isAdmin && !firstLoadDone){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('loadingScreen').style.display='flex';
+  }
+}
+
+function acceptRemoteReload(force){
+  const src = pendingRemote!==null ? pendingRemote : (force ? null : null);
+  if(pendingRemote===null && !force){return}
+  D = pendingRemote ? pendingRemote : JSON.parse(JSON.stringify(DEFAULT_DATA));
+  pendingRemote=null; dirty=false;
+  document.getElementById('remoteBanner').style.display='none';
+  rerenderCurrentPage();
+  updateSyncPill('ok');
+  showToast('🔄 Đã tải dữ liệu mới nhất từ máy chủ');
+}
+
+let currentPage='dashboard';
+function rerenderCurrentPage(){
+  /* Luôn render sẵn DOM của TẤT CẢ các trang, không chỉ trang đang xem.
+     Lý do: hàm v(id) trả về '' nếu phần tử DOM chưa tồn tại — nếu chỉ
+     render trang đang xem, các trang chưa từng mở sẽ bị gatherXXX() ghi
+     đè dữ liệu thật bằng chuỗi rỗng mỗi khi bấm "Lưu thay đổi" từ trang khác. */
+  renderDashboard();
+  renderPlaces();
+  renderFoods();
+  renderHotels();
+  renderCafes();
+  renderItinerary();
+  renderSettings();
+}
+
+function updateSyncPill(state){
+  const p=document.getElementById('syncPill'), l=document.getElementById('syncLabel');
+  p.className='sync-pill '+state;
+  const now=new Date();
+  const t=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  if(state==='ok')l.textContent='Đã đồng bộ · '+t;
+  else if(state==='saving')l.textContent='Đang lưu...';
+  else if(state==='unsaved')l.textContent='Có thay đổi chưa lưu';
+  else if(state==='err')l.textContent='Lỗi đồng bộ';
+  else l.textContent='Đang tải...';
+}
+
+/* mark dirty on any edit within content */
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('content').addEventListener('input',()=>{
+    if(!dirty){dirty=true;updateSyncPill('unsaved')}
+  });
+});
+
+/* ═══ NAV ═══ */
+function goPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.snav').forEach(b=>b.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  if(btn)btn.classList.add('on');
+  currentPage=id;
+  const titles={dashboard:'Tổng quan',places:'Địa điểm tham quan',foods:'Ăn uống',hotels:'Lưu trú',cafes:'Dừng chân',itinerary:'Lịch trình',settings:'Cài đặt'};
+  document.getElementById('topTitle').textContent=titles[id]||id;
+  if(id==='dashboard')renderDashboard();
+  if(id==='places')renderPlaces();
+  if(id==='foods')renderFoods();
+  if(id==='hotels')renderHotels();
+  if(id==='cafes')renderCafes();
+  if(id==='itinerary')renderItinerary();
+  if(id==='settings')renderSettings();
+  if(window.innerWidth<=720)document.getElementById('sidebar').classList.remove('open');
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+
+/* ═══ ACCORDION ═══ */
+function toggleAcc(headEl){
+  const body=headEl.parentElement.querySelector('.acc-body');
+  const caret=headEl.querySelector('.acc-caret');
+  const open=body.classList.toggle('open');
+  if(caret)caret.classList.toggle('open',open);
+}
+function openAcc(cardEl){
+  const body=cardEl.querySelector('.acc-body');
+  const caret=cardEl.querySelector('.acc-caret');
+  body.classList.add('open');
+  if(caret)caret.classList.add('open');
+}
+
+/* ═══ LANG PANE TOGGLE ═══ */
+function switchLang(cardEl,lang){
+  cardEl.querySelectorAll('.ltab').forEach(b=>b.classList.toggle('on',b.dataset.lang===lang));
+  cardEl.querySelectorAll('.lang-pane').forEach(p=>p.classList.toggle('on',p.dataset.lang===lang));
+}
+
+/* ═══ SEARCH FILTER ═══ */
+function filterList(listId,q){
+  q=q.trim().toLowerCase();
+  document.querySelectorAll('#'+listId+'List > .card').forEach(c=>{
+    const s=(c.dataset.search||'').toLowerCase();
+    c.style.display=(!q||s.includes(q))?'':'none';
+  });
+}
+
+/* ═══ TAGS ═══ */
+function buildTagEditor(tags,containerId){
+  const c=document.getElementById(containerId);if(!c)return;
+  c.innerHTML='';
+  tags.forEach((t)=>{
+    const chip=document.createElement('span');chip.className='tag-chip';
+    chip.innerHTML=`${t}<button onclick="this.closest('.tags-wrap').removeChild(this.closest('.tag-chip'));markDirty()">×</button>`;
+    c.appendChild(chip);
+  });
+  const inp=document.createElement('input');
+  inp.className='tag-add-input';inp.placeholder='Thêm tag, Enter↵';
+  inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const val=inp.value.trim();
+    if(val){const chip=document.createElement('span');chip.className='tag-chip';
+      chip.innerHTML=`${val}<button onclick="this.closest('.tags-wrap').removeChild(this.closest('.tag-chip'));markDirty()">×</button>`;
+      c.insertBefore(chip,inp);markDirty();}
+    inp.value='';}};
+  c.appendChild(inp);
+}
+function readTags(containerId){
+  const c=document.getElementById(containerId);if(!c)return[];
+  return[...c.querySelectorAll('.tag-chip')].map(ch=>ch.firstChild.textContent.trim());
+}
+function markDirty(){if(!dirty){dirty=true;updateSyncPill('unsaved')}}
+
+/* ═══ DASHBOARD ═══ */
+function renderDashboard(){
+  if(!D)return;
+  document.getElementById('statsGrid').innerHTML=[
+    {n:D.places.length,l:'Địa điểm tham quan'},
+    {n:D.foods.length,l:'Món ăn / quán'},
+    {n:D.hotels.length,l:'Cơ sở lưu trú'},
+    {n:D.cafes.length,l:'Quán dừng chân'},
+    {n:D.itinerary.steps.length,l:'Bước lịch trình'}
+  ].map(s=>`<div class="stat-card"><div class="stat-n">${s.n}</div><div class="stat-l">${s.l}</div></div>`).join('');
+}
+
+/* ═══ PLACES ═══ */
+function renderPlaces(){
+  const list=document.getElementById('placesList');list.innerHTML='';
+  if(!D.places.length){list.innerHTML='<div class="empty-hint">Chưa có địa điểm nào. Bấm "Thêm địa điểm" để bắt đầu.</div>';return}
+  D.places.forEach((p,i)=>{
+    const el=document.createElement('div');el.className='card';el.id='pcard_'+i;
+    el.dataset.search=(p.name.vi||'')+' '+(p.name.en||'');
+    el.innerHTML=`
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <div class="card-thumb" id="p_thumb_${i}" style="background-image:url('${esc(p.photo)}')"></div>
+        <span class="card-label" id="p_label_${i}">#${i+1} ${esc(p.name.vi)}</span>
+        <div class="card-actions" onclick="event.stopPropagation()"><button class="btn-del" onclick="delPlace(${i})">🗑 Xoá</button></div>
+        <span class="acc-caret">▾</span>
+      </div>
+      <div class="acc-body">
+        <div class="photo-preview-row">
+          <div class="photo-thumb-lg" id="p_photo_${i}_thumb" style="background-image:url('${esc(p.photo)}')"></div>
+          <div class="photo-upload-col">
+            <label>Ảnh địa điểm</label>
+            <div class="photo-actions" id="p_photo_${i}_actions"></div>
+            <div class="upload-status" id="p_photo_${i}_status"></div>
+            <div class="field-hint">Ảnh được tải trực tiếp lên Firebase Storage. Bấm "Đổi ảnh" sẽ tự xoá ảnh cũ trước khi tải ảnh mới.</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Toạ độ Google Maps (lat,lng) — dùng cho nút "Chỉ đường"</label>
+          <input id="p_geo_${i}" value="${esc(p.geo)}" placeholder="10.223456,105.123456"/>
+          <div class="field-hint">Mở Google Maps → chạm giữ đúng vị trí → chạm vào ô toạ độ hiện lên để copy (dạng "10.223456, 105.123456") → dán vào đây. Để trống thì nút Chỉ đường sẽ tìm theo tên địa điểm (có thể không chính xác).</div>
+        </div>
+        <div class="lang-tabs">
+          <button class="ltab on" data-lang="vi" onclick="switchLang(this.closest('.card'),'vi')">Tiếng Việt</button>
+          <button class="ltab" data-lang="en" onclick="switchLang(this.closest('.card'),'en')">English</button>
+        </div>
+        ${['vi','en'].map(lang=>`
+        <div class="lang-pane ${lang==='vi'?'on':''}" data-lang="${lang}">
+          <div class="field-grid">
+            <div class="field"><label>Tên (${lang==='vi'?'VI':'EN'})</label>
+              <input id="p_name_${lang}_${i}" value="${esc(p.name[lang])}"
+                oninput="document.getElementById('p_label_${i}').textContent='#${i+1} '+document.getElementById('p_name_vi_${i}').value"/></div>
+            <div class="field"><label>Nhãn nhỏ / Eyebrow (${lang==='vi'?'VI':'EN'})</label>
+              <input id="p_eye_${lang}_${i}" value="${esc(p.eyebrow&&p.eyebrow[lang])}" placeholder="Khảo cổ học"/></div>
+            <div class="field"><label>Danh mục phụ (${lang==='vi'?'VI':'EN'})</label>
+              <input id="p_cat_${lang}_${i}" value="${esc(p.cat&&p.cat[lang])}" placeholder="Di sản văn hóa quốc gia..."/></div>
+            <div class="field"><label>Badge góc ảnh (${lang==='vi'?'VI':'EN'})</label>
+              <input id="p_badge_${lang}_${i}" value="${esc(p.badge&&p.badge[lang])}" placeholder="Miễn phí"/></div>
+          </div>
+          <div class="field"><label>Mô tả ngắn trên card (${lang==='vi'?'VI':'EN'})</label>
+            <input id="p_desc_${lang}_${i}" value="${esc(p.desc&&p.desc[lang])}" placeholder="Trung tâm thương mại cảng thị..."/></div>
+          <div class="field"><label>Thông tin nhanh (${lang==='vi'?'VI':'EN'})</label>
+            <div class="info-rows" id="p_info_${lang}_${i}_rows"></div>
+            <button type="button" class="btn-upload" onclick="addInfoRow(${i},'${lang}')">+ Thêm dòng thông tin</button>
+          </div>
+          <div class="field"><label>Nội dung mô tả hiển thị trong trang chi tiết (${lang==='vi'?'VI':'EN'})</label>
+            <textarea id="p_text_${lang}_${i}" rows="4">${esc(p.text&&p.text[lang])}</textarea></div>
+          <div class="field">
+            <label>Audio thuyết minh (${lang==='vi'?'VI':'EN'}) — phát khi khách bấm "Nghe giới thiệu"</label>
+            <audio id="p_audio_${lang}_${i}_player" controls style="width:100%;margin-bottom:8px;display:${p.audio&&p.audio[lang]?'block':'none'}" src="${esc(p.audio&&p.audio[lang]||'')}"></audio>
+            <div class="photo-actions" id="p_audio_${lang}_${i}_actions"></div>
+            <div class="upload-status" id="p_audio_${lang}_${i}_status"></div>
+            <div class="field-hint">File MP3/AAC ngắn gọn giới thiệu địa điểm này. Trang khách sẽ phát trực tiếp file này thay vì đọc bằng giọng máy — cần tải riêng cho mỗi ngôn ngữ.</div>
+          </div>
+        </div>`).join('')}
+      </div>`;
+    list.appendChild(el);
+    renderPhotoActions('p_photo_'+i,'places',i);
+    renderAudioActions(i,'vi');
+    renderAudioActions(i,'en');
+    renderInfoRows(i,'vi');
+    renderInfoRows(i,'en');
+  });
+}
+function gatherPlaces(){
+  const g=id=>document.getElementById(id);
+  D.places.forEach((p,i)=>{
+    if(g('p_geo_'+i))p.geo=g('p_geo_'+i).value.trim();
+    ['vi','en'].forEach(lang=>{
+      if(g('p_name_'+lang+'_'+i)){p.name=p.name||{};p.name[lang]=g('p_name_'+lang+'_'+i).value}
+      if(g('p_eye_'+lang+'_'+i)){p.eyebrow=p.eyebrow||{vi:'',en:''};p.eyebrow[lang]=g('p_eye_'+lang+'_'+i).value}
+      if(g('p_cat_'+lang+'_'+i)){p.cat=p.cat||{vi:'',en:''};p.cat[lang]=g('p_cat_'+lang+'_'+i).value}
+      if(g('p_badge_'+lang+'_'+i)){p.badge=p.badge||{vi:'',en:''};p.badge[lang]=g('p_badge_'+lang+'_'+i).value}
+      if(g('p_desc_'+lang+'_'+i)){p.desc=p.desc||{vi:'',en:''};p.desc[lang]=g('p_desc_'+lang+'_'+i).value}
+      if(g('p_text_'+lang+'_'+i)){p.text=p.text||{vi:'',en:''};p.text[lang]=g('p_text_'+lang+'_'+i).value}
+    });
+  });
+}
+function addPlace(){
+  D.places.push({photo:'',name:{vi:'Địa điểm mới',en:'New Place'},eyebrow:{vi:'',en:''},
+    cat:{vi:'',en:''},badge:{vi:'',en:''},desc:{vi:'',en:''},info:{vi:[],en:[]},text:{vi:'',en:''},audio:{vi:'',en:''},geo:''});
+  renderPlaces();markDirty();
+  const el=document.getElementById('placesList').lastElementChild;
+  el?.scrollIntoView({behavior:'smooth'});if(el)openAcc(el);
+}
+function delPlace(i){if(!confirm('Xoá địa điểm này?'))return;gatherPlaces();D.places.splice(i,1);renderPlaces();markDirty()}
+
+/* ═══ FOODS ═══ */
+function renderFoods(){
+  const list=document.getElementById('foodsList');list.innerHTML='';
+  if(!D.foods.length){list.innerHTML='<div class="empty-hint">Chưa có món ăn nào. Bấm "Thêm món / quán ăn" để bắt đầu.</div>';return}
+  D.foods.forEach((f,i)=>{
+    const el=document.createElement('div');el.className='card';
+    el.dataset.search=(f.name.vi||'')+' '+(f.name.en||'');
+    el.innerHTML=`
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <div class="card-thumb" id="f_thumb_${i}" style="background-image:url('${esc(f.photo)}')"></div>
+        <span class="card-label" id="f_label_${i}">${esc(f.name.vi)}</span>
+        <div class="card-actions" onclick="event.stopPropagation()"><button class="btn-del" onclick="delFood(${i})">🗑 Xoá</button></div>
+        <span class="acc-caret">▾</span>
+      </div>
+      <div class="acc-body">
+        <div class="photo-preview-row">
+          <div class="photo-thumb-lg" id="f_photo_${i}_thumb" style="background-image:url('${esc(f.photo)}')"></div>
+          <div class="photo-upload-col">
+            <label>Ảnh món ăn</label>
+            <div class="photo-actions" id="f_photo_${i}_actions"></div>
+            <div class="upload-status" id="f_photo_${i}_status"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Toạ độ Google Maps (lat,lng) — dùng cho nút "Chỉ đường"</label>
+          <input id="f_geo_${i}" value="${esc(f.geo)}" placeholder="10.223456,105.123456"/>
+        </div>
+        <div class="lang-tabs">
+          <button class="ltab on" data-lang="vi" onclick="switchLang(this.closest('.card'),'vi')">Tiếng Việt</button>
+          <button class="ltab" data-lang="en" onclick="switchLang(this.closest('.card'),'en')">English</button>
+        </div>
+        ${['vi','en'].map(lang=>`
+        <div class="lang-pane ${lang==='vi'?'on':''}" data-lang="${lang}">
+          <div class="field-grid">
+            <div class="field"><label>Tên (${lang==='vi'?'VI':'EN'})</label>
+              <input id="f_name_${lang}_${i}" value="${esc(f.name[lang])}"
+                ${lang==='vi'?`oninput="document.getElementById('f_label_${i}').textContent=this.value"`:''}/></div>
+            <div class="field"><label>Giá (${lang==='vi'?'VI':'EN'})</label>
+              <input id="f_price_${lang}_${i}" value="${esc(f.price&&f.price[lang])}" placeholder="15.000₫ – 25.000₫"/></div>
+          </div>
+          <div class="field"><label>Mô tả (${lang==='vi'?'VI':'EN'})</label>
+            <textarea id="f_desc_${lang}_${i}" rows="3">${esc(f.desc&&f.desc[lang])}</textarea></div>
+          <div class="field"><label>Địa chỉ (${lang==='vi'?'VI':'EN'})</label>
+            <input id="f_addr_${lang}_${i}" value="${esc(f.addr&&f.addr[lang])}"/></div>
+        </div>`).join('')}
+        <div class="field"><label>Tags (VI) — Enter để thêm</label><div class="tags-wrap" id="food_tags_vi_${i}"></div></div>
+        <div class="field"><label>Tags (EN)</label><div class="tags-wrap" id="food_tags_en_${i}"></div></div>
+      </div>`;
+    list.appendChild(el);
+    buildTagEditor(f.tags.vi,'food_tags_vi_'+i);
+    buildTagEditor(f.tags.en,'food_tags_en_'+i);
+    renderPhotoActions('f_photo_'+i,'foods',i);
+  });
+}
+function gatherFoods(){
+  const g=id=>document.getElementById(id);
+  D.foods.forEach((f,i)=>{
+    if(g('f_geo_'+i))f.geo=g('f_geo_'+i).value.trim();
+    ['vi','en'].forEach(lang=>{
+      if(g('f_name_'+lang+'_'+i))f.name[lang]=g('f_name_'+lang+'_'+i).value;
+      if(g('f_price_'+lang+'_'+i)){f.price=f.price||{vi:'',en:''};f.price[lang]=g('f_price_'+lang+'_'+i).value}
+      if(g('f_desc_'+lang+'_'+i)){f.desc=f.desc||{vi:'',en:''};f.desc[lang]=g('f_desc_'+lang+'_'+i).value}
+      if(g('f_addr_'+lang+'_'+i)){f.addr=f.addr||{vi:'',en:''};f.addr[lang]=g('f_addr_'+lang+'_'+i).value}
+    });
+    if(document.getElementById('food_tags_vi_'+i))f.tags.vi=readTags('food_tags_vi_'+i);
+    if(document.getElementById('food_tags_en_'+i))f.tags.en=readTags('food_tags_en_'+i);
+  });
+}
+function addFood(){
+  D.foods.push({photo:'',name:{vi:'Món mới',en:'New Dish'},tags:{vi:['Giá'],en:['Price']},
+    price:{vi:'',en:''},desc:{vi:'',en:''},addr:{vi:'',en:''},geo:''});
+  renderFoods();markDirty();
+  const el=document.getElementById('foodsList').lastElementChild;
+  el?.scrollIntoView({behavior:'smooth'});if(el)openAcc(el);
+}
+function delFood(i){if(!confirm('Xoá món này?'))return;gatherFoods();D.foods.splice(i,1);renderFoods();markDirty()}
+
+/* ═══ HOTELS ═══ */
+function renderHotels(){
+  const list=document.getElementById('hotelsList');list.innerHTML='';
+  if(!D.hotels.length){list.innerHTML='<div class="empty-hint">Chưa có cơ sở lưu trú nào.</div>';return}
+  D.hotels.forEach((h,i)=>{
+    const el=document.createElement('div');el.className='card';
+    el.dataset.search=(h.name.vi||'')+' '+(h.name.en||'');
+    const photos=h.photos||[];
+    el.innerHTML=`
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <div class="card-thumb" id="h_thumb_${i}" style="background-image:url('${esc(photos[0]||'')}')"></div>
+        <span class="card-label" id="h_label_${i}">🏨 ${esc(h.name.vi)}</span>
+        <div class="card-actions" onclick="event.stopPropagation()"><button class="btn-del" onclick="delHotel(${i})">🗑 Xoá</button></div>
+        <span class="acc-caret">▾</span>
+      </div>
+      <div class="acc-body">
+        <div class="field"><label>Ảnh (ảnh đầu tiên là ảnh đại diện)</label>
+          <div class="photo-grid" id="h_photos_${i}_grid"></div>
+          <input type="file" accept="image/*" multiple id="h_photos_${i}_file" style="display:none"
+            onchange="onMultiPhotoFileChange(this,'hotels',${i},'h_photos_${i}')"/>
+          <div class="photo-actions">
+            <button type="button" class="btn-upload" id="h_photos_${i}_btn"
+              onclick="document.getElementById('h_photos_${i}_file').click()">⬆ Thêm ảnh</button>
+          </div>
+          <div class="upload-status" id="h_photos_${i}_status"></div>
+        </div>
+        <div class="field-grid">
+          <div class="field"><label>Tên (VI)</label><input id="h_nvi_${i}" value="${esc(h.name.vi)}"
+            oninput="document.getElementById('h_label_${i}').textContent='🏨 '+this.value"/></div>
+          <div class="field"><label>Name (EN)</label><input id="h_nen_${i}" value="${esc(h.name.en)}"/></div>
+          <div class="field"><label>Loại (VI)</label><input id="h_tvi_${i}" value="${esc(h.type.vi)}" placeholder="Khách sạn / Nhà nghỉ..."/></div>
+          <div class="field"><label>Type (EN)</label><input id="h_ten_${i}" value="${esc(h.type.en)}" placeholder="Hotel / Guesthouse..."/></div>
+          <div class="field"><label>Giá (VI)</label><input id="h_pvi_${i}" value="${esc(h.price.vi)}" placeholder="250k–400k/đêm"/></div>
+          <div class="field"><label>Price (EN)</label><input id="h_pen_${i}" value="${esc(h.price.en)}" placeholder="250–400k VND/night"/></div>
+          <div class="field"><label>Địa chỉ (VI)</label><input id="h_avi_${i}" value="${esc(h.addr.vi)}"/></div>
+          <div class="field"><label>Address (EN)</label><input id="h_aen_${i}" value="${esc(h.addr.en)}"/></div>
+          <div class="field"><label>Số điện thoại</label><input id="h_ph_${i}" value="${esc(h.phone)}" placeholder="0296 xxx xxx"/></div>
+          <div class="field"><label>Tiện nghi (VI)</label><input id="h_amvi_${i}" value="${esc(h.amenities.vi)}"/></div>
+          <div class="field"><label>Amenities (EN)</label><input id="h_amen_${i}" value="${esc(h.amenities.en)}"/></div>
+          <div class="field" style="grid-column:1/-1"><label>Toạ độ Google Maps (lat,lng) — dùng cho nút "Chỉ đường"</label>
+            <input id="h_geo_${i}" value="${esc(h.geo)}" placeholder="10.223456,105.123456"/></div>
+        </div>
+      </div>`;
+    list.appendChild(el);
+    renderPhotoGrid('h_photos_'+i,'hotels',i);
+  });
+}
+function gatherHotels(){
+  const g=id=>document.getElementById(id);
+  D.hotels.forEach((h,i)=>{
+    if(g('h_geo_'+i))h.geo=g('h_geo_'+i).value.trim();
+    h.name.vi=v('h_nvi_'+i);h.name.en=v('h_nen_'+i);
+    h.type.vi=v('h_tvi_'+i);h.type.en=v('h_ten_'+i);
+    h.price.vi=v('h_pvi_'+i);h.price.en=v('h_pen_'+i);
+    h.addr.vi=v('h_avi_'+i);h.addr.en=v('h_aen_'+i);
+    h.phone=v('h_ph_'+i);
+    h.amenities.vi=v('h_amvi_'+i);h.amenities.en=v('h_amen_'+i);
+  });
+}
+function addHotel(){
+  D.hotels.push({photos:[],name:{vi:'Cơ sở mới',en:'New Lodging'},type:{vi:'Nhà nghỉ',en:'Guesthouse'},price:{vi:'',en:''},addr:{vi:'',en:''},phone:'',amenities:{vi:'',en:''},geo:''});
+  renderHotels();markDirty();
+  const el=document.getElementById('hotelsList').lastElementChild;
+  el?.scrollIntoView({behavior:'smooth'});if(el)openAcc(el);
+}
+function delHotel(i){if(!confirm('Xoá cơ sở này?'))return;gatherHotels();D.hotels.splice(i,1);renderHotels();markDirty()}
+
+/* ═══ CAFES ═══ */
+function renderCafes(){
+  const list=document.getElementById('cafesList');list.innerHTML='';
+  if(!D.cafes.length){list.innerHTML='<div class="empty-hint">Chưa có quán dừng chân nào.</div>';return}
+  D.cafes.forEach((c,i)=>{
+    const el=document.createElement('div');el.className='card';
+    el.dataset.search=(c.name.vi||'')+' '+(c.name.en||'');
+    const photos=c.photos||[];
+    el.innerHTML=`
+      <div class="acc-head" onclick="toggleAcc(this)">
+        <div class="card-thumb" id="c_thumb_${i}" style="background-image:url('${esc(photos[0]||'')}')"></div>
+        <span class="card-label" id="c_label_${i}">☕ ${esc(c.name.vi)}</span>
+        <div class="card-actions" onclick="event.stopPropagation()"><button class="btn-del" onclick="delCafe(${i})">🗑 Xoá</button></div>
+        <span class="acc-caret">▾</span>
+      </div>
+      <div class="acc-body">
+        <div class="field"><label>Ảnh (ảnh đầu tiên là ảnh đại diện)</label>
+          <div class="photo-grid" id="c_photos_${i}_grid"></div>
+          <input type="file" accept="image/*" multiple id="c_photos_${i}_file" style="display:none"
+            onchange="onMultiPhotoFileChange(this,'cafes',${i},'c_photos_${i}')"/>
+          <div class="photo-actions">
+            <button type="button" class="btn-upload" id="c_photos_${i}_btn"
+              onclick="document.getElementById('c_photos_${i}_file').click()">⬆ Thêm ảnh</button>
+          </div>
+          <div class="upload-status" id="c_photos_${i}_status"></div>
+        </div>
+        <div class="field-grid">
+          <div class="field"><label>Tên (VI)</label><input id="c_nvi_${i}" value="${esc(c.name.vi)}"
+            oninput="document.getElementById('c_label_${i}').textContent='☕ '+this.value"/></div>
+          <div class="field"><label>Name (EN)</label><input id="c_nen_${i}" value="${esc(c.name.en)}"/></div>
+          <div class="field"><label>Ghi chú (VI)</label><input id="c_noti_vi_${i}" value="${esc(c.note.vi)}" placeholder="View đồng lúa..."/></div>
+          <div class="field"><label>Note (EN)</label><input id="c_noti_en_${i}" value="${esc(c.note.en)}"/></div>
+          <div class="field"><label>Giờ mở cửa (VI)</label><input id="c_hvi_${i}" value="${esc(c.hours.vi)}" placeholder="7h–21h"/></div>
+          <div class="field"><label>Hours (EN)</label><input id="c_hen_${i}" value="${esc(c.hours.en)}"/></div>
+          <div class="field"><label>Giá (VI)</label><input id="c_pvi_${i}" value="${esc(c.price.vi)}"/></div>
+          <div class="field"><label>Price (EN)</label><input id="c_pen_${i}" value="${esc(c.price.en)}"/></div>
+          <div class="field"><label>Địa chỉ (VI)</label><input id="c_avi_${i}" value="${esc(c.addr&&c.addr.vi)}"/></div>
+          <div class="field"><label>Address (EN)</label><input id="c_aen_${i}" value="${esc(c.addr&&c.addr.en)}"/></div>
+          <div class="field"><label>Số điện thoại</label><input id="c_ph_${i}" value="${esc(c.phone)}"/></div>
+          <div class="field" style="grid-column:1/-1"><label>Toạ độ Google Maps (lat,lng) — dùng cho nút "Chỉ đường"</label>
+            <input id="c_geo_${i}" value="${esc(c.geo)}" placeholder="10.223456,105.123456"/></div>
+        </div>
+      </div>`;
+    list.appendChild(el);
+    renderPhotoGrid('c_photos_'+i,'cafes',i);
+  });
+}
+function gatherCafes(){
+  const g=id=>document.getElementById(id);
+  D.cafes.forEach((c,i)=>{
+    c.name.vi=v('c_nvi_'+i);c.name.en=v('c_nen_'+i);
+    c.note.vi=v('c_noti_vi_'+i);c.note.en=v('c_noti_en_'+i);
+    c.hours.vi=v('c_hvi_'+i);c.hours.en=v('c_hen_'+i);
+    c.price.vi=v('c_pvi_'+i);c.price.en=v('c_pen_'+i);
+    c.addr=c.addr||{vi:'',en:''};c.addr.vi=v('c_avi_'+i);c.addr.en=v('c_aen_'+i);
+    c.phone=v('c_ph_'+i);
+    if(g('c_geo_'+i))c.geo=g('c_geo_'+i).value.trim();
+  });
+}
+function addCafe(){
+  D.cafes.push({photos:[],name:{vi:'Quán mới',en:'New Cafe'},hours:{vi:'',en:''},note:{vi:'',en:''},price:{vi:'',en:''},addr:{vi:'',en:''},phone:'',geo:''});
+  renderCafes();markDirty();
+  const el=document.getElementById('cafesList').lastElementChild;
+  el?.scrollIntoView({behavior:'smooth'});if(el)openAcc(el);
+}
+function delCafe(i){if(!confirm('Xoá quán này?'))return;gatherCafes();D.cafes.splice(i,1);renderCafes();markDirty()}
+
+/* ═══ IMAGE UPLOAD (Firebase Storage) ═══
+   - Ảnh đơn (places, foods): field "photo". Bấm "Đổi ảnh" sẽ tự xoá ảnh cũ trên Storage
+     trước khi tải ảnh mới lên (dùng window.__fb.uploadImage(file, oldUrl)).
+   - Ảnh nhiều (hotels, cafes): field "photos" (mảng). Mỗi ảnh có nút xoá riêng. */
+const PHOTO_PREFIX={places:'p',foods:'f',hotels:'h',cafes:'c'};
+
+function setStatus(wrapId,text){
+  const el=document.getElementById(wrapId+'_status');
+  if(el)el.textContent=text||'';
+}
+function updateHeadThumb(section,i){
+  const item=D[section][i];
+  const url=(item.photos&&item.photos[0])||item.photo||'';
+  const prefix=PHOTO_PREFIX[section];
+  const head=document.getElementById(prefix+'_thumb_'+i);
+  if(head)head.style.backgroundImage=url?`url('${url}')`:'';
+}
+
+/* ── single photo (places, foods) ── */
+function renderPhotoActions(wrapId,section,i){
+  const item=D[section][i];
+  const has=!!item.photo;
+  const actionsEl=document.getElementById(wrapId+'_actions');
+  if(!actionsEl)return;
+  actionsEl.innerHTML=`
+    <input type="file" accept="image/*" id="${wrapId}_file" style="display:none"
+      onchange="onSinglePhotoFileChange(this,'${section}',${i},'${wrapId}')"/>
+    <button type="button" class="btn-upload" id="${wrapId}_btn"
+      onclick="document.getElementById('${wrapId}_file').click()">${has?'🔄 Đổi ảnh':'⬆ Tải ảnh lên'}</button>
+    ${has?`<button type="button" class="btn-del-photo" onclick="removeSinglePhoto('${section}',${i},'${wrapId}')">🗑 Xoá ảnh</button>`:''}
+  `;
+}
+function onSinglePhotoFileChange(inputEl,section,i,wrapId){
+  const file=inputEl.files[0];inputEl.value='';if(!file)return;
+  uploadSinglePhoto(file,section,i,wrapId);
+}
+async function uploadSinglePhoto(file,section,i,wrapId){
+  const item=D[section][i];
+  const btn=document.getElementById(wrapId+'_btn');
+  if(btn)btn.disabled=true;
+  setStatus(wrapId,'Đang tải ảnh lên...');
+  try{
+    const url=await window.__fb.uploadImage(file,item.photo||null);
+    item.photo=url;
+    const thumb=document.getElementById(wrapId+'_thumb');
+    if(thumb)thumb.style.backgroundImage=`url('${url}')`;
+    updateHeadThumb(section,i);
+    renderPhotoActions(wrapId,section,i);
+    markDirty();
+    showToast('✓ Đã tải ảnh lên — nhớ bấm "Lưu thay đổi" để hiển thị cho khách');
+  }catch(err){
+    showToast('❌ Tải ảnh thất bại: '+(err&&err.message?err.message:'lỗi không xác định'),true);
+  }finally{
+    setStatus(wrapId,'');
+    if(btn)btn.disabled=false;
+  }
+}
+async function removeSinglePhoto(section,i,wrapId){
+  if(!confirm('Xoá ảnh này khỏi Storage?'))return;
+  const item=D[section][i];
+  const url=item.photo;
+  setStatus(wrapId,'Đang xoá ảnh...');
+  try{await window.__fb.deleteImage(url)}catch(e){}
+  item.photo='';
+  const thumb=document.getElementById(wrapId+'_thumb');
+  if(thumb)thumb.style.backgroundImage='';
+  updateHeadThumb(section,i);
+  renderPhotoActions(wrapId,section,i);
+  setStatus(wrapId,'');
+  markDirty();
+}
+
+/* ── multi photo (hotels, cafes) ── */
+function renderPhotoGrid(wrapId,section,i){
+  const item=D[section][i];
+  const photos=item.photos||[];
+  const grid=document.getElementById(wrapId+'_grid');
+  if(!grid)return;
+  grid.innerHTML=(photos.map((url,idx)=>`
+    <div class="photo-grid-item">
+      <div class="photo-grid-thumb" style="background-image:url('${esc(url)}')"></div>
+      ${idx===0?'<span class="photo-grid-badge">Đại diện</span>':''}
+      <button type="button" class="photo-grid-del" title="Xoá ảnh"
+        onclick="removeMultiPhoto('${section}',${i},${idx},'${wrapId}')">✕</button>
+    </div>`).join(''))
+    +(!photos.length?'<div class="empty-hint" style="margin:0">Chưa có ảnh nào.</div>':'');
+}
+function onMultiPhotoFileChange(inputEl,section,i,wrapId){
+  const files=Array.from(inputEl.files||[]);inputEl.value='';
+  if(!files.length)return;
+  uploadMultiPhotos(files,section,i,wrapId);
+}
+async function uploadMultiPhotos(files,section,i,wrapId){
+  const item=D[section][i];
+  const btn=document.getElementById(wrapId+'_btn');
+  if(btn)btn.disabled=true;
+  for(let idx=0;idx<files.length;idx++){
+    setStatus(wrapId,`Đang tải ảnh ${idx+1}/${files.length}...`);
+    try{
+      const url=await window.__fb.uploadImage(files[idx],null);
+      item.photos=item.photos||[];
+      item.photos.push(url);
+      renderPhotoGrid(wrapId,section,i);
+      updateHeadThumb(section,i);
+      markDirty();
+    }catch(err){
+      showToast('❌ Tải ảnh thất bại: '+(err&&err.message?err.message:'lỗi không xác định'),true);
+    }
+  }
+  setStatus(wrapId,'');
+  if(btn)btn.disabled=false;
+  showToast('✓ Đã tải ảnh lên — nhớ bấm "Lưu thay đổi" để hiển thị cho khách');
+}
+async function removeMultiPhoto(section,i,idx,wrapId){
+  if(!confirm('Xoá ảnh này khỏi Storage?'))return;
+  const item=D[section][i];
+  const url=(item.photos||[])[idx];
+  setStatus(wrapId,'Đang xoá ảnh...');
+  try{if(url)await window.__fb.deleteImage(url)}catch(e){}
+  item.photos.splice(idx,1);
+  renderPhotoGrid(wrapId,section,i);
+  updateHeadThumb(section,i);
+  setStatus(wrapId,'');
+  markDirty();
+}
+
+/* ── audio (voice guide) — places only, 1 file mỗi ngôn ngữ ── */
+function renderAudioActions(i,lang){
+  const p=D.places[i];
+  const has=!!(p.audio&&p.audio[lang]);
+  const wrapId='p_audio_'+lang+'_'+i;
+  const actionsEl=document.getElementById(wrapId+'_actions');
+  if(!actionsEl)return;
+  actionsEl.innerHTML=`
+    <input type="file" accept="audio/*" id="${wrapId}_file" style="display:none"
+      onchange="onAudioFileChange(this,${i},'${lang}')"/>
+    <button type="button" class="btn-upload" id="${wrapId}_btn"
+      onclick="document.getElementById('${wrapId}_file').click()">${has?'🔄 Đổi audio':'⬆ Tải audio lên'}</button>
+    ${has?`<button type="button" class="btn-del-photo" onclick="removeAudio(${i},'${lang}')">🗑 Xoá audio</button>`:''}
+  `;
+  const playerEl=document.getElementById(wrapId+'_player');
+  if(playerEl){
+    if(has){playerEl.src=p.audio[lang];playerEl.style.display='block'}
+    else{playerEl.removeAttribute('src');playerEl.style.display='none'}
+  }
+}
+function onAudioFileChange(inputEl,i,lang){
+  const file=inputEl.files[0];inputEl.value='';if(!file)return;
+  uploadSingleAudio(file,i,lang);
+}
+async function uploadSingleAudio(file,i,lang){
+  const p=D.places[i];
+  const wrapId='p_audio_'+lang+'_'+i;
+  const btn=document.getElementById(wrapId+'_btn');
+  if(btn)btn.disabled=true;
+  setStatus(wrapId,'Đang tải audio lên...');
+  try{
+    p.audio=p.audio||{vi:'',en:''};
+    const url=await window.__fb.uploadImage(file,p.audio[lang]||null);
+    p.audio[lang]=url;
+    renderAudioActions(i,lang);
+    markDirty();
+    showToast('✓ Đã tải audio lên — nhớ bấm "Lưu thay đổi"');
+  }catch(err){
+    showToast('❌ Tải audio thất bại: '+(err&&err.message?err.message:'lỗi không xác định'),true);
+  }finally{
+    setStatus(wrapId,'');
+    if(btn)btn.disabled=false;
+  }
+}
+async function removeAudio(i,lang){
+  if(!confirm('Xoá audio này khỏi Storage?'))return;
+  const p=D.places[i];
+  const wrapId='p_audio_'+lang+'_'+i;
+  setStatus(wrapId,'Đang xoá audio...');
+  try{await window.__fb.deleteImage(p.audio[lang])}catch(e){}
+  p.audio[lang]='';
+  renderAudioActions(i,lang);
+  setStatus(wrapId,'');
+  markDirty();
+}
+
+/* ── thông tin nhanh (info) — icon picker + nội dung tách biệt, không còn parse dấu phẩy ── */
+const INFO_ICONS=[
+  {key:'clock',label:'🕐 Giờ mở cửa'},
+  {key:'ticket',label:'🎫 Giá vé'},
+  {key:'mappin',label:'📍 Vị trí'},
+  {key:'car',label:'🚗 Khoảng cách di chuyển'},
+  {key:'mountain',label:'⛰️ Địa hình / núi'},
+  {key:'sunset',label:'🌇 Thời điểm đẹp'},
+  {key:'history',label:'📜 Lịch sử'},
+  {key:'fish',label:'🐟 Đặc sản'},
+  {key:'users',label:'👥 Cộng đồng'},
+  {key:'wifi',label:'📶 Wifi'},
+  {key:'phone',label:'📞 Liên hệ'},
+];
+function infoIconOptionsHtml(selected){
+  return INFO_ICONS.map(o=>`<option value="${o.key}" ${o.key===selected?'selected':''}>${o.label}</option>`).join('');
+}
+function renderInfoRows(i,lang){
+  const p=D.places[i];
+  const rows=(p.info&&p.info[lang])||[];
+  const wrap=document.getElementById('p_info_'+lang+'_'+i+'_rows');
+  if(!wrap)return;
+  wrap.innerHTML=rows.map((row,ri)=>`
+    <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+      <select style="flex:0 0 180px" onchange="updateInfoIcon(${i},'${lang}',${ri},this.value)">
+        ${infoIconOptionsHtml(row.icon)}
+      </select>
+      <input style="flex:1" value="${esc(row.text)}" placeholder="Nội dung..."
+        oninput="updateInfoText(${i},'${lang}',${ri},this.value)"/>
+      <button type="button" class="btn-del-photo" style="flex:0 0 auto;padding:7px 10px" onclick="removeInfoRow(${i},'${lang}',${ri})">🗑</button>
+    </div>`).join('') || '<div class="empty-hint" style="margin:0 0 8px">Chưa có thông tin nào.</div>';
+}
+function addInfoRow(i,lang){
+  const p=D.places[i];
+  p.info=p.info||{vi:[],en:[]};
+  p.info[lang]=p.info[lang]||[];
+  p.info[lang].push({icon:'mappin',text:''});
+  renderInfoRows(i,lang);
+  markDirty();
+}
+function updateInfoIcon(i,lang,ri,val){
+  D.places[i].info[lang][ri].icon=val;
+  markDirty();
+}
+function updateInfoText(i,lang,ri,val){
+  D.places[i].info[lang][ri].text=val;
+  markDirty();
+}
+function removeInfoRow(i,lang,ri){
+  D.places[i].info[lang].splice(ri,1);
+  renderInfoRows(i,lang);
+  markDirty();
+}
+
+/* ═══ ITINERARY ═══ */
+function renderItinerary(){
+  const it=D.itinerary;
+  sv('itin_title_vi',it.title.vi);sv('itin_title_en',it.title.en);
+  sv('itin_sub_vi',it.sub.vi);sv('itin_sub_en',it.sub.en);
+  const sl=document.getElementById('stepsList');sl.innerHTML='';
+  if(!it.steps.length){sl.innerHTML='<div class="empty-hint">Chưa có bước nào trong lịch trình.</div>';return}
+  it.steps.forEach((s,i)=>{
+    const el=document.createElement('div');el.className='card step-card';el.id='step_'+i;
+    el.innerHTML=`
+      <div class="acc-head" onclick="toggleAcc(this)" style="width:100%">
+        <div class="step-summary">
+          <span class="step-summary-time" id="step_sum_time_${i}">${esc(s.time)}</span>
+          <span class="step-summary-title" id="step_sum_title_${i}">${esc(s.title&&s.title.vi)}</span>
+        </div>
+        <div class="card-actions" onclick="event.stopPropagation()">
+          ${i>0?`<button class="btn-move" onclick="moveStep(${i},-1)" title="Lên">↑</button>`:''}
+          ${i<it.steps.length-1?`<button class="btn-move" onclick="moveStep(${i},1)" title="Xuống">↓</button>`:''}
+          <button class="btn-del" onclick="delStep(${i})" style="padding:5px 9px">🗑</button>
+        </div>
+        <span class="acc-caret">▾</span>
+      </div>
+      <div class="acc-body">
+        <div class="field-grid">
+          <div class="field"><label>Giờ</label><input id="s_time_${i}" value="${esc(s.time)}" placeholder="7:00"
+            oninput="document.getElementById('step_sum_time_${i}').textContent=this.value"/></div>
+          <div class="field"></div>
+          <div class="field"><label>Thời lượng (VI)</label><input id="s_dur_vi_${i}" value="${esc(s.dur&&s.dur.vi)}" placeholder="~45 phút"/></div>
+          <div class="field"><label>Duration (EN)</label><input id="s_dur_en_${i}" value="${esc(s.dur&&s.dur.en)}" placeholder="~45 min"/></div>
+          <div class="field"><label>Tiêu đề (VI)</label><input id="s_tvi_${i}" value="${esc(s.title&&s.title.vi)}"
+            oninput="document.getElementById('step_sum_title_${i}').textContent=this.value"/></div>
+          <div class="field"><label>Title (EN)</label><input id="s_ten_${i}" value="${esc(s.title&&s.title.en)}"/></div>
+          <div class="field"><label>Ghi chú (VI)</label><input id="s_nvi_${i}" value="${esc(s.note&&s.note.vi)}"/></div>
+          <div class="field"><label>Note (EN)</label><input id="s_nen_${i}" value="${esc(s.note&&s.note.en)}"/></div>
+        </div>
+      </div>`;
+    sl.appendChild(el);
+  });
+}
+function gatherItinerary(){
+  D.itinerary.title.vi=v('itin_title_vi');D.itinerary.title.en=v('itin_title_en');
+  D.itinerary.sub.vi=v('itin_sub_vi');D.itinerary.sub.en=v('itin_sub_en');
+  D.itinerary.steps.forEach((s,i)=>{
+    if(!document.getElementById('s_time_'+i))return;
+    s.time=v('s_time_'+i);
+    s.title={vi:v('s_tvi_'+i),en:v('s_ten_'+i)};
+    s.note={vi:v('s_nvi_'+i),en:v('s_nen_'+i)};
+    s.dur={vi:v('s_dur_vi_'+i),en:v('s_dur_en_'+i)};
+  });
+}
+function addStep(){
+  D.itinerary.steps.push({time:'',title:{vi:'Bước mới',en:'New step'},note:{vi:'',en:''},dur:{vi:'',en:''}});
+  renderItinerary();markDirty();
+  const el=document.getElementById('stepsList').lastElementChild;
+  el?.scrollIntoView({behavior:'smooth'});if(el)openAcc(el);
+}
+function delStep(i){if(!confirm('Xoá bước này?'))return;gatherItinerary();D.itinerary.steps.splice(i,1);renderItinerary();markDirty()}
+function moveStep(i,dir){gatherItinerary();const s=D.itinerary.steps;[s[i],s[i+dir]]=[s[i+dir],s[i]];renderItinerary();markDirty()}
+
+/* ═══ SETTINGS ═══ */
+function renderSettings(){
+  const u=D.ui;
+  sv('ui_seal_vi',u.seal.vi);sv('ui_seal_en',u.seal.en);
+  sv('ui_t0_vi',u.tabs.vi[0]);sv('ui_t0_en',u.tabs.en[0]);
+  sv('ui_t1_vi',u.tabs.vi[1]);sv('ui_t1_en',u.tabs.en[1]);
+  sv('ui_t2_vi',u.tabs.vi[2]);sv('ui_t2_en',u.tabs.en[2]);
+  sv('ui_t3_vi',u.tabs.vi[3]);sv('ui_t3_en',u.tabs.en[3]);
+  sv('ui_voice_vi',u.voiceListen.vi);sv('ui_voice_en',u.voiceListen.en);
+  sv('ui_playing_vi',u.voicePlaying.vi);sv('ui_playing_en',u.voicePlaying.en);
+  sv('ui_stay_vi',u.stayLbl.vi);sv('ui_stay_en',u.stayLbl.en);
+  sv('ui_cafe_vi',u.cafeLbl.vi);sv('ui_cafe_en',u.cafeLbl.en);
+}
+function gatherSettings(){
+  const u=D.ui;
+  u.seal.vi=v('ui_seal_vi');u.seal.en=v('ui_seal_en');
+  u.tabs.vi=[v('ui_t0_vi'),v('ui_t1_vi'),v('ui_t2_vi'),v('ui_t3_vi')];
+  u.tabs.en=[v('ui_t0_en'),v('ui_t1_en'),v('ui_t2_en'),v('ui_t3_en')];
+  u.voiceListen.vi=v('ui_voice_vi');u.voiceListen.en=v('ui_voice_en');
+  u.voicePlaying.vi=v('ui_playing_vi');u.voicePlaying.en=v('ui_playing_en');
+  u.stayLbl.vi=v('ui_stay_vi');u.stayLbl.en=v('ui_stay_en');
+  u.cafeLbl.vi=v('ui_cafe_vi');u.cafeLbl.en=v('ui_cafe_en');
+}
+
+/* ═══ SAVE (→ Firestore) ═══ */
+function saveAll(){
+  gatherPlaces();gatherFoods();gatherHotels();gatherCafes();gatherItinerary();gatherSettings();
+  updateSyncPill('saving');
+  document.getElementById('saveBtn').disabled=true;
+  try{
+    /* Loại bỏ mọi giá trị undefined trong D (Firestore không chấp nhận undefined
+       và sẽ ném lỗi ngay lập tức nếu có, khiến nút Lưu bị treo mãi ở "Đang lưu"). */
+    const clean=JSON.parse(JSON.stringify(D));
+    Promise.resolve(window.__fb.saveData(clean)).then(()=>{
+      dirty=false;
+      updateSyncPill('ok');
+      showToast('✓ Đã lưu lên Firebase — khách xem trang sẽ thấy ngay!');
+    }).catch(err=>{
+      console.error('Lỗi khi lưu:',err);
+      updateSyncPill('err');
+      showToast('❌ Lưu thất bại: '+(err&&err.message?err.message:'lỗi không xác định'),true);
+    }).finally(()=>{
+      document.getElementById('saveBtn').disabled=false;
+    });
+  }catch(err){
+    console.error('Lỗi khi lưu (đồng bộ):',err);
+    updateSyncPill('err');
+    showToast('❌ Lưu thất bại: '+(err&&err.message?err.message:'lỗi không xác định'),true);
+    document.getElementById('saveBtn').disabled=false;
+  }
+}
+
+/* ═══ EXPORT/IMPORT/RESET ═══ */
+function exportData(){
+  gatherPlaces();gatherFoods();gatherHotels();gatherCafes();gatherItinerary();gatherSettings();
+  const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='oceo_data_'+(new Date().toISOString().slice(0,10))+'.json';a.click();
+  showToast('📤 Đã xuất file JSON (nhớ bấm "Lưu thay đổi" nếu muốn đồng bộ)');
+}
+function importData(){document.getElementById('importFile').click()}
+function handleImport(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{try{const d=JSON.parse(ev.target.result);D=d;markDirty();rerenderCurrentPage();
+    showToast('✓ Đã nhập dữ liệu — bấm "Lưu thay đổi" để đồng bộ lên máy chủ')}
+    catch(err){showToast('❌ File không hợp lệ',true)}};
+  r.readAsText(file);e.target.value='';
+}
+function resetData(){
+  if(!confirm('Khôi phục về dữ liệu mặc định? Mọi thay đổi hiện tại (chưa lưu) sẽ bị xoá. Bạn vẫn cần bấm "Lưu thay đổi" để áp dụng lên máy chủ.'))return;
+  D=JSON.parse(JSON.stringify(DEFAULT_DATA));
+  markDirty();rerenderCurrentPage();
+  showToast('♻ Đã khôi phục dữ liệu mặc định (chưa lưu)');
+}
+
+/* ═══ UTILS ═══ */
+function v(id){const el=document.getElementById(id);return el?el.value:''}
+function sv(id,val){const el=document.getElementById(id);if(el)el.value=val||''}
+function esc(s){return (s==null?'':String(s)).replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+function showToast(msg,isErr){const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast show'+(isErr?' err':'');
+  setTimeout(()=>t.classList.remove('show'),3200)}
+</script>
+</body>
+</html>

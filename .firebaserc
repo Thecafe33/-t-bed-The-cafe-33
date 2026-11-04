@@ -1,0 +1,13 @@
+{
+  "projects": {},
+  "targets": {
+    "chitieucanhan-33": {
+      "hosting": {
+        "oceo": [
+          "oceotownwalk"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
