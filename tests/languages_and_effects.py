@@ -106,7 +106,11 @@ with sync_playwright() as p:
  page=c.new_page();page.goto(origin,wait_until='networkidle');page.locator('#language-select').select_option('zh')
  page.evaluate('async()=>{await navigator.serviceWorker.ready}');page.wait_for_function('!!navigator.serviceWorker.controller')
  c.set_offline(True);page.reload(wait_until='domcontentloaded');expect(page.locator('.place-card')).to_have_count(16)
- expect(page.locator('html')).to_have_attribute('lang','zh-Hans');go('pass')
+ expect(page.locator('html')).to_have_attribute('lang','zh-Hans');go('map')
+ expect(page.locator('.townwalk-cartography svg').first).to_be_visible()
+ expect(page.locator('#map-network-state')).not_to_be_visible()
+ expect(page.locator('.leaflet-tile')).to_have_count(0)
+ go('pass')
  with page.expect_download() as download:page.locator('#save-pass-image').click()
  assert Path(download.value.path()).stat().st_size>10000
  b.close()

@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="./assets/vendor/leaflet.css" />
     <link rel="stylesheet" href="./assets/vendor/markercluster.css" />
     <link rel="stylesheet" href="./assets/discover.css" />
+    <link rel="stylesheet" href="./assets/town-map.css" />
     <script src="./assets/vendor/leaflet.js" defer></script>
     <script src="./assets/vendor/leaflet.markercluster.js" defer></script>
     <script type="module" src="./assets/app.js"></script>
@@ -65,8 +66,7 @@
           role="status"
           hidden
         >
-          Đang ngoại tuyến · tư liệu đã tải vẫn xem được, bản đồ nền và đồng bộ
-          cần mạng.
+          Đang ngoại tuyến · bản đồ và tư liệu đã tải vẫn xem được; đồng bộ cần mạng.
         </div>
         <div class="today-line">
           <span>✳ ĐI CHƠI CÙNG DI SẢN</span
@@ -177,16 +177,17 @@
         <div class="map-title-row"><div><span class="eyebrow">ÓC EO TRONG TÚI BẠN</span><h1 id="map-heading" tabindex="-1">Bản đồ <span class="serif">Óc Eo.</span></h1></div><button id="reload-map" class="circle-button" aria-label="Tải lại bản đồ"><span data-icon="compass"></span></button></div>
         <div class="map-layout">
           <div class="map-board">
-            <div id="osm-map" aria-label="Bản đồ địa lý OpenStreetMap, chỉ các pin đã xác minh"></div>
+            <div id="osm-map" aria-label="Bản đồ riêng Óc Eo Townwalk, vị trí có nguồn"></div>
             <div class="map-explorer-tools">
               <label class="search-field"><span data-icon="compass"></span><input id="map-search" type="search" placeholder="Tìm di tích, quán, món, chỗ nghỉ…" aria-label="Tìm điểm đến trong danh sách bản đồ"></label>
               <div class="map-category-row" role="group" aria-label="Lọc địa điểm trên bản đồ">
                 <button class="chip active" data-map-category="all" aria-pressed="true">Tất cả</button><button class="chip" data-map-category="heritage" aria-pressed="false">Di sản</button><button class="chip" data-map-category="food" aria-pressed="false">Ăn uống</button><button class="chip" data-map-category="rest" aria-pressed="false">Cà phê</button><button class="chip" data-map-category="stay" aria-pressed="false">Lưu trú</button>
               </div>
             </div>
+            <div class="town-map-signature" aria-hidden="true"><b>ÓC EO</b><span>TOWNWALK / LOCAL MAP</span></div><span class="town-map-north" aria-hidden="true">N</span>
             <span id="map-loading" class="map-loading" role="status" hidden>Đang tải bản đồ…</span>
             <div class="map-utility"><button id="locate-me" class="circle-button" aria-label="Tìm điểm gần vị trí của tôi"><span data-icon="locate"></span></button><button id="fit-map" class="circle-button" aria-label="Xem tất cả pin"><span data-icon="expand"></span></button></div>
-            <div class="map-network-state" id="map-network-state" role="status" hidden><span data-icon="map"></span><strong>Chưa tải được bản đồ</strong><p>Cần kết nối đến OpenStreetMap. Không hiển thị sơ đồ hay pin phỏng đoán thay thế.</p><button class="text-button" id="show-map-list">Xem danh sách điểm đến ↓</button><button class="button outline" id="retry-map">Thử kết nối lại</button></div>
+            <div class="map-network-state" id="map-network-state" role="status" hidden><span data-icon="map"></span><strong>Chưa tải được bản đồ</strong><p>Chưa đọc được dữ liệu bản đồ lưu tại ứng dụng. Thử tải lại hoặc mở danh sách điểm đến.</p><button class="text-button" id="show-map-list">Xem danh sách điểm đến ↓</button><button class="button outline" id="retry-map">Thử kết nối lại</button></div>
             <div id="map-selection" class="map-selection" aria-live="polite"></div>
           </div>
           <details id="map-directory" class="map-directory"><summary><span><span data-icon="map"></span> Danh sách điểm đến</span><span id="map-result-count"></span></summary>

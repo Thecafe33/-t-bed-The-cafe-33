@@ -1,13 +1,10 @@
-"""Discovery entry points and map selection with deterministic tiles/GPS, no live writes."""
+"""Discovery entry points and map selection with local vector cartography and deterministic GPS, no live writes."""
 from playwright.sync_api import sync_playwright,expect
-import base64
 origin='http://127.0.0.1:8000'
-tile=base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGNgAAIAAAUAAYWlMjQAAAAASUVORK5CYII=')
 with sync_playwright() as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True)
  c=b.new_context(viewport={'width':390,'height':844},service_workers='block',reduced_motion='reduce',permissions=['geolocation'],geolocation={'latitude':10.2465818,'longitude':105.1549758,'accuracy':10})
  c.route('**/*',lambda r:r.continue_() if r.request.url.startswith(origin) else r.abort())
- c.route('https://tile.openstreetmap.org/**',lambda r:r.fulfill(status=200,content_type='image/png',body=tile))
  page=c.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
  page.goto(origin,wait_until='networkidle')
  expect(page.locator('.curiosity-card')).to_have_count(3)
@@ -15,6 +12,8 @@ with sync_playwright() as p:
  page.locator('.curiosity-card[data-place=nha-trung-bay-cu-ba-the]').click();expect(page.locator('.access-warning')).to_contain_text('mưa');expect(page.locator('#checkin')).to_have_count(0);page.locator('#close-modal').click()
  page.locator('#surprise-me').click();first=page.locator('#modal h2').first.inner_text();page.locator('#close-modal').click();page.locator('#surprise-me').click();assert page.locator('#modal h2').first.inner_text()!=first;page.locator('#close-modal').click()
  page.locator('.app-tabbar [data-route=map]').click();expect(page.locator('#map-network-state')).not_to_be_visible()
+ expect(page.locator('.townwalk-cartography svg').first).to_be_visible()
+ expect(page.locator('.leaflet-tile')).to_have_count(0)
  assert not page.locator('#map-directory').evaluate('e=>e.open')
  assert page.locator('#osm-map').bounding_box()['height']>=450
  page.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===11")
@@ -52,4 +51,4 @@ with sync_playwright() as p:
   assert actions['y']+actions['height']<=nav['y'],(width,height,actions,nav)
  assert not errors,errors
  b.close()
-print('PASS: three source-linked curiosity cards, non-repeating surprise, clustered real positions, pin preview, preserved selection/zoom, opt-in nearby search without stamps/storage, pending locations, mobile map layout. Test tiles/GPS only; no live writes.')
+print('PASS: three source-linked curiosity cards, non-repeating surprise, clustered real positions, pin preview, preserved selection/zoom, opt-in nearby search without stamps/storage, pending locations, mobile map layout. Local vectors and test GPS only; no live writes.')

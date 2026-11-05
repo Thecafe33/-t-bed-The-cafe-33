@@ -10,9 +10,9 @@ export const POLICY_MESSAGES = [
     "尚未设置运营方。 · 尚未提供个人数据联系地址。"
   ],
   [
-    "Không đăng nhập: xem địa điểm, bản đồ và lịch trình. Khi mở Óc Eo Pass, tên tự chọn, danh sách điểm muốn ghé và tem được lưu trên trình duyệt của thiết bị này; bạn có thể xóa bất cứ lúc nào. Chế độ khách không đăng đánh giá và không đồng bộ qua thiết bị. Trình duyệt có thể lưu bản ứng dụng và tư liệu công khai để xem khi mất mạng; không lưu phản hồi API tài khoản hoặc bản đồ nền vào bộ nhớ đệm này.",
-    "Without an account, you can browse destinations, maps and the day plan. Your chosen Pass name, saved stops and stamps stay in this device’s browser and can be cleared at any time. Guest mode cannot publish reviews or sync across devices. The browser may cache public app files and stories for offline reading; account API responses and basemap tiles are not included in that cache.",
-    "无需账户即可浏览地点、地图与行程。自选Pass名字、收藏地点及印章保存在本机浏览器，可随时清除。访客模式不能发评论或跨设备同步。浏览器可缓存公开应用文件与资料供离线阅读，但不缓存账户API响应或地图底图瓦片。"
+    "Không đăng nhập: xem địa điểm, bản đồ và lịch trình. Tên tự chọn, danh sách điểm muốn ghé và tem được lưu trên trình duyệt thiết bị; có thể xóa bất cứ lúc nào. Chế độ khách không đăng đánh giá và không đồng bộ qua thiết bị. Trình duyệt lưu ứng dụng, bản đồ vector và tư liệu công khai để đọc ngoại tuyến; không cache phản hồi API tài khoản.",
+    "Browse places, the map and day plan without an account. Your chosen name, saved stops and stamps stay in this device’s browser and can be cleared. Guests cannot post reviews or sync across devices. The app, local vector map and public stories are cached for offline reading; account API responses are not.",
+    "无需账户即可浏览地点、地图与行程。自选名字、收藏地点及印章保存在本机浏览器，可随时清除。访客不能发评论或跨设备同步。应用、本地矢量地图及公开资料可缓存供离线阅读，账户API响应不会缓存。"
   ],
   [
     "Đăng nhập Google: Firebase Authentication xử lý việc xác thực. Ứng dụng nhận mã tài khoản, tên hiển thị, email và ảnh đại diện do Google cung cấp. Không nhận mật khẩu Google. Email dùng để kiểm tra quyền quản trị, không hiển thị trong đánh giá công khai.",
@@ -60,9 +60,9 @@ export const POLICY_MESSAGES = [
     "Google Firebase提供Hosting、Authentication、Firestore、Storage与Cloud Functions，并在发布前于服务器检查图片。函数配置于新加坡，Firestore和Storage位置取决于项目设置，数据可能在越南境外处理。正式运营前，运营方须审核存储地点及相关数据保护、跨境传输义务。"
   ],
   [
-    "Bản đồ OpenStreetMap chỉ tải khi bạn mở tab “Bản đồ”; máy chủ bản đồ có thể nhận IP và vùng bản đồ đang xem. Không gửi vị trí GPS của bạn cho bản đồ. Một số liên kết nguồn cơ sở mở Google Maps trong trang riêng; dịch vụ đó có chính sách riêng và có thể nhận IP khi bạn mở liên kết. Liên kết đặt Cafe in bed mở website của quán; việc đặt lịch tại đó theo chính sách của quán, app không tự gửi hồ sơ hay GPS của bạn sang trang đặt lịch. Không tích hợp quảng cáo, Google Analytics hoặc trình theo dõi tiếp thị trong phiên bản này.",
-    "OpenStreetMap loads when you open Map; its servers may receive your IP address and viewed area. Your GPS coordinates are not sent to the basemap. Some source links open Google Maps under its own privacy policy. Cafe in bed bookings open the café’s website and follow its policy; the app does not automatically send your profile or GPS there. This version contains no advertising, Google Analytics or marketing trackers.",
-    "打开地图页时才加载OpenStreetMap，其服务器可能收到IP地址及所查看区域；不会向底图发送GPS坐标。部分来源链接打开Google Maps并适用其隐私政策。Cafe in bed预约在店家网站进行并适用店家政策，应用不会自动发送你的档案或GPS。本版本不含广告、Google Analytics或营销追踪器。"
+    "Bản đồ Óc Eo Townwalk được vẽ từ dữ liệu mở lưu tại ứng dụng; không tải ô ảnh từ máy chủ OpenStreetMap khi bạn xem. Các liên kết mở vị trí hoặc nguồn có thể mở OpenStreetMap hay Google Maps trong trang riêng và áp dụng chính sách của dịch vụ đó. Đặt Cafe in bed mở website của quán; app không tự gửi hồ sơ hay GPS sang trang đặt lịch. Phiên bản này không có quảng cáo, Google Analytics hoặc trình theo dõi tiếp thị.",
+    "The Townwalk map is drawn from open data stored with the app; viewing it does not request image tiles from OpenStreetMap servers. Location and source links may open OpenStreetMap or Google Maps under those services’ policies. Cafe in bed booking opens the café website; the app does not automatically send your profile or GPS there. This version has no ads, Google Analytics or marketing trackers.",
+    "Townwalk地图根据随应用保存的开放数据绘制，浏览时不会向OpenStreetMap服务器请求地图图片。位置及来源链接可能另行打开OpenStreetMap或Google Maps，并适用该服务的政策。Cafe in bed预约在店家网站进行，应用不会自动向该网站发送档案或GPS。本版本不含广告、Google Analytics或营销追踪器。"
   ],
   [
     "Hồ sơ và bài đăng được giữ đến khi bạn xóa hoặc yêu cầu xóa. Trong “Tài khoản”, bạn có thể xóa từng đánh giá, xuất dữ liệu của mình hoặc xóa tài khoản cùng hồ sơ, bài viết, ảnh và báo cáo. Có thể cần xác thực lại bằng Google. Bản sao lưu và nhật ký kỹ thuật của nhà cung cấp được xử lý theo chính sách của nhà cung cấp; nội dung người khác đã tải về có thể không thu hồi được.",

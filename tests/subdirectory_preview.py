@@ -37,7 +37,7 @@ try:
   assert page.locator('.detail-illustration img').evaluate('e=>e.complete && e.naturalWidth>0 && e.src.includes("/-t-bed-The-cafe-33/assets/photos/")')
   page.locator('#close-modal').click();page.locator('.app-tabbar [data-route=map]').click()
   page.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===11")
-  page.wait_for_function("performance.getEntriesByType('resource').some(e=>e.name.endsWith('/-t-bed-The-cafe-33/assets/data/oceo-boundary.geojson'))")
+  page.wait_for_function("performance.getEntriesByType('resource').some(e=>e.name.endsWith('/-t-bed-The-cafe-33/assets/data/oceo-town-map.geojson'))")
   page.locator('.app-tabbar [data-route=pass]').click()
   page.evaluate("() => {window.__svg='';const create=URL.createObjectURL.bind(URL);URL.createObjectURL=b=>{if(b.type.startsWith('image/svg+xml'))b.text().then(s=>window.__svg=s);return create(b)};}")
   with page.expect_download() as download:page.locator('#save-pass-image').click()

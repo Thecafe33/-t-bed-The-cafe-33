@@ -113,3 +113,11 @@ Các đoạn Việt/Anh/Trung giản thể là bản biên tập của dự án;
 ## Cụm pin trên bản đồ
 
 Leaflet.markercluster 1.5.3: https://github.com/Leaflet/Leaflet.markercluster, MIT. Bản phân phối tải từ gói cố định `leaflet.markercluster@1.5.3`; giấy phép lưu tại `assets/vendor/markercluster-LICENSE.txt`. Cụm số gom các tọa độ hiện có để tránh đè pin, không bổ sung hoặc thay tọa độ di tích. Phóng to để chọn pin riêng; có thể xem mọi hồ sơ trong danh sách, gồm cả nơi chưa có tọa độ.
+
+## Bản đồ Óc Eo Townwalk vẽ riêng
+
+`assets/data/oceo-town-map.geojson` gồm 379 đối tượng đường, kênh, sử dụng đất và đỉnh núi, lấy từ Overpass ngày 05/11/2026 và cắt theo polygon OSM tham khảo đã lưu tại dự án. Mỗi đối tượng giữ liên kết OSM gốc; tập dữ liệu dẫn xuất mang giấy phép ODbL, có attribution và thông tin thời điểm nguồn ngay trong GeoJSON. Đây là phạm vi minh hoạ theo OSM, không khẳng định là ranh giới hành chính pháp lý sau sáp nhập.
+
+Nền được dựng thành SVG tại trình duyệt bằng `assets/town-map.js`, palette/nhãn và texture trong `assets/town-map.css`. Biểu tượng núi là minh hoạ của dự án đặt tại điểm đỉnh núi có nguồn; không biểu diễn đúng kích thước hoặc độ cao. Hình học đường/kênh giữ theo dữ liệu địa lý. Không tải raster tiles, không dùng ảnh nền Google Maps; bản đồ hoạt động ngoại tuyến sau khi cache ứng dụng. Dòng ghi công OSM vẫn giữ ở góc vì dữ liệu mở không đồng nghĩa với bỏ attribution.
+
+Dựng lại dữ liệu: cài Python `shapely`, chạy `python3 tools/build_town_map.py --download`; hoặc truyền tệp JSON Overpass để kiểm tra một bản chụp. Phần vị trí POI vẫn tách riêng trong `content.js`: các điểm có nguồn Google Maps dùng vị trí đã đối chiếu từ mã công khai, không phải dữ liệu đường nền Google. Nhãn công khai đổi thành “Trang địa điểm Google Maps”; mã kỹ thuật và độ chính xác tham khảo còn trong mục “Về vị trí trên bản đồ”.

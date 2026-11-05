@@ -180,3 +180,27 @@ test("story export draws only earned stamps, escapes names and retains every sta
  assert.equal(new Set([...full.svg.matchAll(/id="(cut-\d+)"/g)].map(m=>m[1])).size,15);
  for(const p of collection)assert.ok(full.svg.includes(`data-earned-stamp="${p.id}"`));
 });
+
+test('local cartography is attributed and clipped to the Óc Eo reference polygon', async () => {
+  const {readFile}=await import('node:fs/promises');
+  const data=JSON.parse(await readFile(new URL('../assets/data/oceo-town-map.geojson',import.meta.url),'utf8'));
+  const reference=JSON.parse(await readFile(new URL('../assets/data/oceo-boundary.geojson',import.meta.url),'utf8'));
+  assert.deepEqual(data.boundary,reference.geometry);
+  assert.match(data.license,/odbl/);assert.match(data.attribution,/OpenStreetMap contributors/);
+  assert.ok(data.features.some(f=>f.properties.role==='road'));
+  assert.ok(data.features.some(f=>f.properties.role==='waterway'));
+  assert.ok(data.features.some(f=>f.properties.name==='Núi Ba Thê'));
+  const ring=data.boundary.coordinates[0];
+  function inside([x,y]){
+    let hit=false;
+    for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+      const [ax,ay]=ring[i],[bx,by]=ring[j],dx=bx-ax,dy=by-ay;
+      const t=Math.max(0,Math.min(1,((x-ax)*dx+(y-ay)*dy)/(dx*dx+dy*dy||1)));
+      if(Math.hypot(x-ax-t*dx,y-ay-t*dy)<1e-6)return true;
+      if((ay>y)!==(by>y)&&x<(bx-ax)*(y-ay)/(by-ay)+ax)hit=!hit;
+    }
+    return hit;
+  }
+  function check(coords){if(typeof coords[0]==='number')assert.ok(inside(coords),`Outside Óc Eo: ${coords}`);else coords.forEach(check);}
+  for(const f of data.features){assert.match(f.properties.source,/^https:\/\/www.openstreetmap.org\/(way|node)\/\d+$/);check(f.geometry.coordinates);}
+});

@@ -38,3 +38,9 @@ Mốc ghi là công việc thực hiện trong phiên, không phải lịch ch�
 - Bản đồ ưu tiên không gian xem: tìm/lọc trên nền bản đồ, cụm số cho các pin sát nhau, thẻ điểm đến ngắn, danh sách đầy đủ thu gọn và nút xem toàn bộ pin. Giữ lựa chọn/zoom khi đổi tab.
 - Tìm điểm gần là thao tác tự nguyện: GPS chỉ giữ trong bộ nhớ phiên, khoảng cách ghi rõ là đường chim bay, không phát tem. Chính sách ba ngôn ngữ đã được cập nhật tương ứng.
 - Kiểm tra lại ảnh nền OSM thật và các pin Linh Sơn ở mức phóng to. Kiểm tra tự động dùng tiles/GPS giả lập tách biệt; không ghi dữ liệu Firebase production.
+
+## Bản đồ riêng Óc Eo — 05/11/2026
+
+- Dựng 379 đối tượng địa lý thành SVG từ dữ liệu OSM cắt trong phạm vi tham khảo Óc Eo, không tải raster tiles hay cần API bản đồ. Palette giấy/xanh/kênh, texture và hình minh hoạ núi do dự án thiết kế.
+- Giữ attribution OSM gọn một góc và giấy phép ODbL trong tệp dữ liệu; nhãn Google Maps bỏ thuật ngữ Plus Code ở luồng chính, giữ provenance trong chi tiết thu gọn.
+- Kiểm tra geometry nằm trong polygon, không gọi máy chủ tiles, lỗi dữ liệu/thử lại, bản đồ ngoại tuyến, giữ pin/GPS/tem, ba ngôn ngữ và đường dẫn GitHub Pages. Chính sách được cập nhật để phản ánh bản đồ lưu tại ứng dụng.

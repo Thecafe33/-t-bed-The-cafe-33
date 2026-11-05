@@ -255,4 +255,14 @@ export const EXTRA_MESSAGES = [
 ["BA THÊ / ÓC EO, AN GIANG", "BA THÊ / ÓC EO, AN GIANG", "BA THÊ / 安江省Óc Eo"]
 ,
 ["Đang tải bản đồ…", "Loading map…", "正在加载地图…"]
+,
+["Bản đồ riêng Óc Eo Townwalk, vị trí có nguồn", "Óc Eo Townwalk’s own map with sourced positions", "Óc Eo Townwalk专属地图，位置有来源"],
+["Chưa đọc được dữ liệu bản đồ lưu tại ứng dụng. Thử tải lại hoặc mở danh sách điểm đến.", "The local map could not load. Retry or open the destination directory.", "无法读取应用内的地图数据，请重试或查看目的地列表。"],
+["Bản đồ cộng đồng", "Community map", "社区地图"],
+["Trang địa điểm Google Maps", "Google Maps place listing", "Google Maps地点条目"],
+["Nguồn vị trí", "Location source", "位置来源"],
+["Có vị trí tham khảo", "Reference position available", "已有参考位置"],
+["Pin là vị trí tham khảo. Xác nhận đúng lối vào và giờ đón khách trước khi đến.", "This pin is a reference position. Confirm the entrance and visitor hours before arriving.", "定位仅供参考，到访前请确认入口与接待时间。"],
+["Về vị trí trên bản đồ", "About this map position", "关于此地图位置"],
+["Đang ngoại tuyến · bản đồ và tư liệu đã tải vẫn xem được; đồng bộ cần mạng.", "Offline · downloaded maps and stories remain available; sync needs a connection.", "离线中 · 已下载的地图与资料仍可阅读，同步需要联网。"]
 ];

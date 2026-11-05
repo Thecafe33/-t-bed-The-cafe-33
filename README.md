@@ -37,7 +37,7 @@ Open `http://localhost:8001/-t-bed-The-cafe-33/index.html`. `python3 tests/subdi
 
 - Vietnamese, English and Simplified Chinese for the public app, source/access guidance, privacy page and downloaded Pass; native place names and visitor-written text stay unchanged. Language choice is stored on this device. Local Chinese font subsets ship with their source licence and rebuild script.
 - Short tab reveals, a restrained Pass-cover transition and earned-stamp motion respect reduced-motion preferences. Optional quiet paper/check-in tones use local Web Audio, start muted and only play after interaction; no audio request, microphone or ambient playback.
-- A bold Óc Eo postcard cover, three source-linked curiosity cards and a non-repeating surprise destination encourage discovery. The map uses on-canvas search/category controls, numbered clusters (Leaflet.markercluster 1.5.3, MIT), pin preview cards, a collapsible full directory, fit-all and explicit opt-in nearby search. Returning to the map preserves its chosen point and zoom. Nearby distances are straight-line, GPS stays in memory and never grants a stamp by itself.
+- A bold Óc Eo postcard cover, three source-linked curiosity cards and a non-repeating surprise destination encourage discovery. The map draws its own SVG cartography from a 145 KB OSM extract clipped to the Óc Eo reference polygon (379 features). Original terrain marks, paper/green/canal colours and road styling are editable in `assets/town-map.js` and `assets/town-map.css`; no remote raster tiles or map API key are required. A compact OSM credit remains visible and the derivative data stays ODbL. The map uses on-canvas search/category controls, numbered clusters (Leaflet.markercluster 1.5.3, MIT), pin preview cards, a collapsible full directory, fit-all and explicit opt-in nearby search. Returning to the map preserves its chosen point and zoom. Nearby distances are straight-line, GPS stays in memory and never grants a stamp by itself.
 - Separate Explore, Map, Day Plan, Pass and Community views; persistent readable pill navigation; browser history, deep links and retained search/map/draft state. Larger screens retain a narrow app layout.
 - Sixteen destination records: fourteen heritage records, the Óc Eo culture exhibition house and an optional former exhibition building on Ba Thê. Each has source links, a short story and an observation prompt; the summit entry separates published architectural background from the owner-supplied condition report. Five archaeological OSM area positions plus the OSM exhibition-house point and Linh Sơn Bắc from a publicly displayed Plus Code; unresolved records have no invented pin. [Source register](docs/SOURCES.md) explains selection, names, grouping and geographic limits.
 - Real photos with open-license credit for Gò Cây Thị, Linh Sơn Nam, chùa Linh Sơn and Ba Thê; locally hosted fonts and SDK. Neither the flower mark nor illustration is an official heritage logo.
@@ -49,7 +49,7 @@ Open `http://localhost:8001/-t-bed-The-cafe-33/index.html`. `python3 tests/subdi
 - A trusted callable verifies actual image existence, ownership and successful decoding, then re-encodes it to remove metadata before publication. Direct review creation is denied by rules. It supports idempotent retries and one post per minute.
 - Account deletion requires fresh authentication and removes uploads (including orphaned uploads), reviews, reports, profile, rate-limit record and finally Auth. Per-document deletion failures are propagated so the Auth account remains available for retry.
 - Admin preview, structured content/coordinate/image-credit editing, itinerary reordering, configuration import/export, late moderation and privacy settings. New data uses `sites/oceotownwalk-v2`; the legacy document is not auto-migrated or overwritten.
-- Installable app manifest and public app-shell caching. Previously loaded public text/assets can be read offline; account/API responses and OSM tiles are not cached. Offline state and fallback navigation are explicit.
+- Installable app manifest and public app-shell caching. Previously loaded public text, local vector map and assets can be read offline; account/API responses are not cached. Offline state and fallback navigation are explicit.
 
 ## Validation and review
 
@@ -62,6 +62,7 @@ python3 tests/pass_and_stops.py
 python3 tests/pass_checkins.py
 python3 tests/languages_and_effects.py
 python3 tests/discover_and_map.py
+python3 tests/local_cartography.py
 ```
 
 These need the local server on port 8000, Python Playwright and `/usr/bin/chromium`. The first tests mobile navigation, layout, source/search behavior and admin validation with external requests blocked; the second substitutes only the cloud transport for deterministic GPS, Pass PNG, photo-required review and report journeys. Neither is a real Google OAuth test.

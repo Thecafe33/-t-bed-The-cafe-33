@@ -17,6 +17,7 @@ import { icon, mark } from "./icons.js";
 import { passArtwork, stampColor } from "./pass-art.js";
 import { stampOutline } from "./stamp-shape.js";
 import { appURL } from "./app-paths.js";
+import { mountTownMap } from "./town-map.js";
 import { initI18n, translateText, getLanguage, dateLocale } from "./i18n.js";
 import { initEffects, revealView, playEffect, armSound, reducedMotion } from "./effects.js";
 import * as cloud from "./cloud.js";
@@ -27,7 +28,7 @@ let site = cloneDefault(),
   reviews = [],
   map,
   markerLayer,
-  mapTiles,
+  townMapLoad,
   reviewLoading = false,
   bookPage = 0,
   heritageGroup = "all";
@@ -72,7 +73,7 @@ function activateTab(tab, { focus = false } = {}) {
     (passNeedsRender || !$("#pass-content").hasChildNodes())
   )
     showPassport();
-  if (tab === "map") showOSM();
+  if (tab === "map") showTownMap();
   if (tab === "community" && !reviewsRequested) {
     reviewsRequested = true;
     loadReviews(true);
@@ -260,8 +261,8 @@ function mapPlaces() {
 }
 function coordinateLabel(p) {
   const url = safeURL(p.coordinateSource);
-  return url.includes("openstreetmap.org/") ? "OSM" :
-    url.includes("google.com/maps") ? "Google Maps · Plus Code" : "nguồn tọa độ";
+  return url.includes("openstreetmap.org/") ? "Bản đồ cộng đồng" :
+    url.includes("google.com/maps") ? "Trang địa điểm Google Maps" : "Nguồn vị trí";
 }
 function renderHomeStories() {
   const stories = [
@@ -321,7 +322,7 @@ function renderMap() {
     ? visible
         .map(
           (p) =>
-            `<button class="map-list-item" data-place="${e(p.id)}">${icon(p.symbol)}<span>${e(p.name)}<small>${p.collectible === false ? "Hidden gem tùy chọn · đọc lưu ý đường núi" : eligible(p) ? "Có pin · " + coordinateLabel(p) : p.localRecommendation ? p.address || "Gợi ý địa phương · chưa có pin" : "Có tư liệu · đang bổ sung vị trí"}</small></span>${icon("arrowup")}</button>`,
+            `<button class="map-list-item" data-place="${e(p.id)}">${icon(p.symbol)}<span>${e(p.name)}<small>${p.collectible === false ? "Hidden gem tùy chọn · đọc lưu ý đường núi" : eligible(p) ? "Có vị trí tham khảo" : p.localRecommendation ? p.address || "Gợi ý địa phương · chưa có pin" : "Có tư liệu · đang bổ sung vị trí"}</small></span>${icon("arrowup")}</button>`,
         )
         .join("")
     : '<p class="map-search-empty">Chưa tìm thấy tên này trong danh sách đang biên tập.</p>';
@@ -374,8 +375,9 @@ function placeDetail(id) {
  ${p.category !== "heritage" ? `<div class="stop-facts">${p.address ? `<p>${icon("pin")} ${e(p.address)}</p>` : ""}${p.price ? `<p>${icon("coffee")} ${e(p.price)}</p>` : ""}</div>` : ""}
  ${canCollectStamp(p) ? `<p class="gps-zone">${icon("pin")} Nhận tem trong bán kính ${Math.min(site.radius,p.checkInRadius || site.radius)} m quanh vị trí tham khảo, sau khi GPS xác định thành công.</p>` : ""}
  <p class="detail-description">${e(p.note || "")}</p>
- <div class="notice ${valid ? "" : "warning"}">${p.collectible === false ? "Điểm tùy chọn, không phát tem và không tính vào tiến độ Óc Eo Pass. Chưa xác nhận quyền tiếp cận hoặc tọa độ công trình." : valid ? e(p.coordinateNote || "Vị trí có nguồn; xác nhận lối tiếp cận và giờ đón khách tại điểm.") : sourced ? (p.category==="heritage"?"Nội dung đã đối chiếu tư liệu. Chưa có tọa độ đủ căn cứ; chưa mở chỉ đường và nhận tem tại điểm này.":"Danh bạ tham khảo, chưa xác nhận hoạt động. Mở nguồn gốc hoặc gọi kiểm tra trước khi đến.") : p.localRecommendation && p.category !== "heritage" ? "Gợi ý theo mốc địa phương; chưa đủ tọa độ gắn pin. Hỏi đúng điểm bán, giờ phục vụ và giá trước khi ghé." : "Thông tin đang được đối chiếu; chưa mở chỉ đường hoặc nhận tem."}</div>
- <div class="source-links">${safeURL(p.sourceUrl) ? `<a href="${e(safeURL(p.sourceUrl))}" target="_blank" rel="noopener noreferrer">${icon("leaf")} Đọc nguồn ${e(p.sourceLabel || (p.category === "heritage" ? "Ban Quản lý" : "OpenStreetMap"))} ↗</a>` : p.category === "heritage" ? `<a class="heritage-reference" href="${HERITAGE_REFERENCE_URL}" target="_blank" rel="noopener noreferrer">Tra cứu tư liệu Óc Eo ↗</a>` : `<span class="local-source-note">Gợi ý địa phương · cập nhật ${e(p.contentReviewedAt || "")}</span>`}${safeURL(p.coordinateSource) ? `<a href="${e(safeURL(p.coordinateSource))}" target="_blank" rel="noopener noreferrer">Nguồn vị trí · ${e(coordinateLabel(p))} ↗</a>` : ""}</div>
+ <div class="notice ${valid ? "" : "warning"}">${p.collectible === false ? "Điểm tùy chọn, không phát tem và không tính vào tiến độ Óc Eo Pass. Chưa xác nhận quyền tiếp cận hoặc tọa độ công trình." : valid ? "Pin là vị trí tham khảo. Xác nhận đúng lối vào và giờ đón khách trước khi đến." : sourced ? (p.category==="heritage"?"Nội dung đã đối chiếu tư liệu. Chưa có tọa độ đủ căn cứ; chưa mở chỉ đường và nhận tem tại điểm này.":"Danh bạ tham khảo, chưa xác nhận hoạt động. Mở nguồn gốc hoặc gọi kiểm tra trước khi đến.") : p.localRecommendation && p.category !== "heritage" ? "Gợi ý theo mốc địa phương; chưa đủ tọa độ gắn pin. Hỏi đúng điểm bán, giờ phục vụ và giá trước khi ghé." : "Thông tin đang được đối chiếu; chưa mở chỉ đường hoặc nhận tem."}</div>
+ ${valid && p.coordinateNote ? `<details class="coordinate-details"><summary>Về vị trí trên bản đồ</summary><p>${e(p.coordinateNote)}</p></details>` : ""}
+ <div class="source-links">${safeURL(p.sourceUrl) ? `<a href="${e(safeURL(p.sourceUrl))}" target="_blank" rel="noopener noreferrer">${icon("leaf")} Đọc nguồn ${e(p.sourceLabel || (p.category === "heritage" ? "Ban Quản lý" : "OpenStreetMap"))} ↗</a>` : p.category === "heritage" ? `<a class="heritage-reference" href="${HERITAGE_REFERENCE_URL}" target="_blank" rel="noopener noreferrer">Tra cứu tư liệu Óc Eo ↗</a>` : `<span class="local-source-note">Gợi ý địa phương · cập nhật ${e(p.contentReviewedAt || "")}</span>`}${safeURL(p.coordinateSource) ? `<a href="${e(safeURL(p.coordinateSource))}" target="_blank" rel="noopener noreferrer">${e(coordinateLabel(p))} ↗</a>` : ""}</div>
  <div class="detail-actions">${p.phone && /^\+?[0-9]{9,15}$/.test(p.phone) ? `<a class="button outline" href="tel:${e(p.phone)}">${e(p.phoneLabel || "Gọi cơ sở · số công khai")}</a>` : ""}${valid ? `<a class="button outline" href="https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lng}#map=18/${p.lat}/${p.lng}" target="_blank" rel="noopener noreferrer">Mở vị trí ${icon("map")}</a><button class="button outline" id="focus-on-map">Xem trong app ${icon("pin")}</button>` : ""}${p.category === "heritage" && p.collectible !== false ? `<button class="button dark" id="checkin" ${!canCollectStamp(p) ? "disabled" : ""}>${profile.badges.includes(p.id) ? "Đã có tem · xem Pass" : "Mình đang ở đây"} ${icon("pin")}</button>` : ""}</div>
  <button class="button outline full-width" id="share-place">${icon("arrowup")} Gửi điểm này cho bạn bè</button><button class="button outline full-width" id="save-place">${icon(saved ? "check" : "heart")} ${saved ? "Đã lưu vào chuyến đi" : "Lưu vào chuyến đi"}</button>
  <small class="detail-privacy">GPS chỉ dùng khi nhận tem, không lưu tọa độ. Đặt tên di tích vào danh sách lưu không xác nhận địa điểm đang mở cửa.</small>`,
@@ -503,10 +505,10 @@ function renderMarkers({fit=false} = {}) {
   }
   if (fit || !mapHasFramed) fitMapPoints();
   $("#map-disclaimer").textContent = verified.length
-    ? `${verified.length} pin có nguồn · OSM và Plus Code công khai. Xem nguồn từng điểm; hỏi lối vào trước khi đến. Nét đứt là ranh giới OSM tham khảo.`
+    ? `${verified.length} vị trí tham khảo trên bản đồ Óc Eo Townwalk. Thiết kế riêng từ dữ liệu mở; nguồn tọa độ được giữ trong từng hồ sơ. Phạm vi minh hoạ theo OSM, không thay thế bản đồ hành chính pháp lý.`
     : "Không có pin phù hợp bộ lọc này. Một số gợi ý mới chỉ có mốc tương đối; xem mô tả trong danh sách.";
 }
-function showOSM() {
+function showTownMap() {
   if (!window.L) {
     $("#map-network-state").hidden = false;
     return;
@@ -520,49 +522,24 @@ function showOSM() {
     );
     map.zoomControl.setPosition("topright");
     markerLayer = L.markerClusterGroup({animate:false,showCoverageOnHover:false,maxClusterRadius:40,disableClusteringAtZoom:18,spiderfyOnMaxZoom:true,iconCreateFunction:cluster=>L.divIcon({className:"map-cluster",html:`<span data-cluster-count="${cluster.getChildCount()}" aria-label="${cluster.getChildCount()} điểm gần nhau, chạm để phóng to">${cluster.getChildCount()}</span>`,iconSize:[46,46]})}).addTo(map);
-    mapTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    });
-    mapTiles.on("loading",()=>{$("#map-loading").hidden=false;});
-    mapTiles.on("load",()=>{$("#map-loading").hidden=true;});
-    let failures = 0;
-    mapTiles.on("tileerror", () => {
-      if (++failures >= 3) { $("#map-network-state").hidden = false; $("#map-loading").hidden = true; }
-    });
-    mapTiles.on("tileload", () => {
-      $("#map-network-state").hidden = true;
-      failures = 0;
-    });
-    mapTiles.addTo(map);
-    fetch(appURL("assets/data/oceo-boundary.geojson"))
-      .then((r) => r.json())
-      .then((data) => {
-        L.geoJSON(data, {
-          style: {
-            color: "#798557",
-            weight: 2,
-            dashArray: "5 7",
-            fillOpacity: 0.025,
-          },
-          interactive: false,
-        }).addTo(map);
-      })
-      .catch(() => {});
+    loadTownCartography();
   }
   requestAnimationFrame(() => {
     map.invalidateSize();
     renderMarkers();
   });
 }
-function retryMap() {
-  showOSM();
-  if (mapTiles) {
-    $("#map-network-state").hidden = true;
-    mapTiles.redraw();
-  }
+function loadTownCartography(){
+  if(townMapLoad)return townMapLoad;
+  $("#map-loading").hidden=false;
+  townMapLoad=mountTownMap(map).then(()=>{
+    $("#map-loading").hidden=true;$("#map-network-state").hidden=true;
+  }).catch(()=>{
+    townMapLoad=null;$("#map-loading").hidden=true;$("#map-network-state").hidden=false;
+  });
+  return townMapLoad;
 }
+function retryMap() {showTownMap();loadTownCartography();}
 $("#reload-map").onclick = retryMap;
 $("#retry-map").onclick = retryMap;
 $("#show-map-list").onclick = openMapDirectory;
