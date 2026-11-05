@@ -50,3 +50,10 @@ Mốc ghi là công việc thực hiện trong phiên, không phải lịch ch�
 - Giới hạn stacking context của nội dung và canvas Leaflet, header có nền đặc; điều khiển bản đồ không thể vẽ đè header hoặc popup tìm kiếm khi cuộn.
 - Thay ô tìm kiếm luôn nổi bằng nút “Tìm điểm” cạnh tiêu đề. Popup dùng ô nhập gạch dưới, kết quả chọn trực tiếp, xóa lọc, Escape và bấm ngoài để đóng; giữ truy vấn khi đổi tab.
 - Kiểm tra hit-testing tại các nút header ở năm kích thước màn hình và bốn vị trí cuộn, bao gồm màn hình ngang thấp; kiểm tra riêng nút zoom không phủ popup tìm kiếm.
+
+## Bổ sung hiện vật theo di tích — 05/11/2026
+
+- Tiếp tục từ commit thiết kế của chủ dự án `6612b12` trên nhánh riêng `feat/oc-eo-artifact-trails`; không sửa `genz.css` hoặc tự merge vào main.
+- Đọc lại tư liệu Ban Quản lý, bổ sung chín thẻ hiện vật/nhóm gắn tám nơi phát hiện; nguồn và giới hạn ở ARTIFACT-SOURCES.md.
+- Thêm hai bối cảnh quan sát, câu hỏi phản hồi tại trình duyệt, tìm theo tên hiện vật, liên kết hồ sơ và bản đồ hiện có. Không tạo tọa độ mới, không đổi tem GPS và không ghi Firebase.
+- Kiểm tra nguồn/liên kết, ngôn ngữ, điện thoại, quiz không ghi tem, offline và tiền tố GitHub Pages.

@@ -121,3 +121,7 @@ Leaflet.markercluster 1.5.3: https://github.com/Leaflet/Leaflet.markercluster, M
 Nền được dựng thành SVG tại trình duyệt bằng `assets/town-map.js`, palette/nhãn và texture trong `assets/town-map.css`. Biểu tượng núi là minh hoạ của dự án đặt tại điểm đỉnh núi có nguồn; không biểu diễn đúng kích thước hoặc độ cao. Hình học đường/kênh giữ theo dữ liệu địa lý. Không tải raster tiles, không dùng ảnh nền Google Maps; bản đồ hoạt động ngoại tuyến sau khi cache ứng dụng. Dòng ghi công OSM vẫn giữ ở góc vì dữ liệu mở không đồng nghĩa với bỏ attribution.
 
 Dựng lại dữ liệu: cài Python `shapely`, chạy `python3 tools/build_town_map.py --download`; hoặc truyền tệp JSON Overpass để kiểm tra một bản chụp. Phần vị trí POI vẫn tách riêng trong `content.js`: các điểm có nguồn Google Maps dùng vị trí đã đối chiếu từ mã công khai, không phải dữ liệu đường nền Google. Nhãn công khai đổi thành “Trang địa điểm Google Maps”; mã kỹ thuật và độ chính xác tham khảo còn trong mục “Về vị trí trên bản đồ”.
+
+## Bổ sung: cổ vật và bối cảnh phát hiện
+
+Xem [bảng nguồn và giới hạn của chín thẻ hiện vật](ARTIFACT-SOURCES.md): nhẫn Nandin, phù điêu Phật, đầu tượng Phật đất nung, hai mộ vò, các nhóm hạt chuỗi và Linga–Yoni Linh Sơn. Tách nơi phát hiện, nơi lưu giữ và lịch trưng bày; không suy đoán hố khai quật hay gán hiện vật ngoài xã vào danh mục.

@@ -35,6 +35,8 @@ Open `http://localhost:8001/-t-bed-The-cafe-33/index.html`. `python3 tests/subdi
 
 ## What is implemented
 
+- Nine sourced artifact/group cards connect eight discovery areas with their documented finds; the museum links only to the two displays explicitly pictured in the sources. Read at-site vs display/photo prompts, try a short local quiz, search by object name, and open existing site/map records. This does not add map pins or award stamps. All content is VI/EN/Chinese and cached offline; original source photos open externally. Editorial data lives in `assets/artifacts.js` (not a new admin form). See [artifact source register](docs/ARTIFACT-SOURCES.md).
+
 - Vietnamese, English and Simplified Chinese for the public app, source/access guidance, privacy page and downloaded Pass; native place names and visitor-written text stay unchanged. Language choice is stored on this device. Local Chinese font subsets ship with their source licence and rebuild script.
 - Short tab reveals, a restrained Pass-cover transition and earned-stamp motion respect reduced-motion preferences. Optional quiet paper/check-in tones use local Web Audio, start muted and only play after interaction; no audio request, microphone or ambient playback.
 - A bold Óc Eo postcard cover, three source-linked curiosity cards and a non-repeating surprise destination encourage discovery. The map draws its own SVG cartography from a 145 KB OSM extract clipped to the Óc Eo reference polygon (379 features). Original terrain marks, paper/green/canal colours and road styling are editable in `assets/town-map.js` and `assets/town-map.css`; no remote raster tiles or map API key are required. A compact OSM credit remains visible and the derivative data stays ODbL. The map uses compact, opt-in search beside the title, immediate place results and on-canvas category controls. Its layers are isolated below the sticky header/navigation and search panel, including on short landscape screens. It also has numbered clusters (Leaflet.markercluster 1.5.3, MIT), pin preview cards, a collapsible full directory, fit-all and explicit opt-in nearby search. Returning to the map preserves its chosen point and zoom. Nearby distances are straight-line, GPS stays in memory and never grants a stamp by itself.
@@ -64,6 +66,8 @@ python3 tests/languages_and_effects.py
 python3 tests/discover_and_map.py
 python3 tests/local_cartography.py
 python3 tests/map_controls.py
+node --test tests/artifacts.test.mjs
+python3 tests/artifact_journeys.py
 ```
 
 These need the local server on port 8000, Python Playwright and `/usr/bin/chromium`. The first tests mobile navigation, layout, source/search behavior and admin validation with external requests blocked; the second substitutes only the cloud transport for deterministic GPS, Pass PNG, photo-required review and report journeys. Neither is a real Google OAuth test.
