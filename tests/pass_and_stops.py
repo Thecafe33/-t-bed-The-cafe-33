@@ -2,6 +2,7 @@
 from pathlib import Path
 import struct
 from playwright.sync_api import sync_playwright,expect
+from ui_helpers import fill_map_search
 out=Path('/workspace/outputs');out.mkdir(exist_ok=True)
 with sync_playwright() as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True)
@@ -31,12 +32,12 @@ with sync_playwright() as p:
  page.locator('[data-map-category=rest]').click();expect(page.locator('.osm-pin')).to_have_count(2)
  assert page.locator('[data-map-category=rest]').evaluate('e=>getComputedStyle(e).whiteSpace')=='nowrap'
  expect(page.locator('.osm-pin[title="The cafe 33"]')).to_have_count(1);expect(page.locator('.osm-pin[title="XOFA coffee & tea"]')).to_have_count(1)
- page.locator('#map-search').fill('sua gao');expect(page.locator('.map-list-item')).to_have_count(1);expect(page.locator('.osm-pin')).to_have_count(1)
+ fill_map_search(page,'sua gao');expect(page.locator('.map-list-item')).to_have_count(1);expect(page.locator('.osm-pin')).to_have_count(1)
  page.locator('.map-list-item').click();expect(page.locator('.stop-facts')).to_contain_text('25.000đ');expect(page.locator('.detail-description').first).to_contain_text('văn hóa Óc Eo');expect(page.locator('.source-links')).to_contain_text('Google Maps');page.locator('#close-modal').click()
- page.locator('#map-search').fill('');page.locator('[data-map-category=stay]').click();expect(page.locator('.osm-pin')).to_have_count(2)
+ fill_map_search(page,'');page.locator('[data-map-category=stay]').click();expect(page.locator('.osm-pin')).to_have_count(2)
  expect(page.locator('#map-list')).to_contain_text('Nhà nghỉ Phượng Sang');expect(page.locator('#map-list')).to_contain_text('Nhà nghỉ Út Mập')
  page.locator('[data-map-category=food]').click();expect(page.locator('.osm-pin')).to_have_count(0)
- page.locator('#map-search').fill('bun cua');expect(page.locator('.map-list-item')).to_have_count(1);page.locator('.map-list-item').click();expect(page.locator('.stop-facts')).to_contain_text('Chùa Phổ Quang');expect(page.locator('.local-source-note')).to_contain_text('Gợi ý địa phương');page.locator('#close-modal').click()
+ fill_map_search(page,'bun cua');expect(page.locator('.map-list-item')).to_have_count(1);page.locator('.map-list-item').click();expect(page.locator('.stop-facts')).to_contain_text('Chùa Phổ Quang');expect(page.locator('.local-source-note')).to_contain_text('Gợi ý địa phương');page.locator('#close-modal').click()
  page.locator('.app-tabbar [data-route=explore]').click();page.get_by_role('button',name='Nghỉ chân',exact=True).click()
  assert page.locator('.place-art').evaluate_all('els=>els.slice(0,2).map(e=>e.dataset.place)')==['the-cafe-33','xofa']
  page.locator('.place-art[data-place=the-cafe-33]').click();expect(page.locator('#book-stop')).to_have_attribute('href','https://the-cafe-33.web.app/');expect(page.locator('.booking-notice')).to_contain_text('thêm phí')

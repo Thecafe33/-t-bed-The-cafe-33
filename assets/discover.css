@@ -132,3 +132,36 @@
 
 @media(max-height:700px) { .map-selection-empty>p { display:none; } .map-selection-empty .map-quick-jumps { flex-wrap:nowrap; overflow-x:auto; } .map-selection-empty .map-quick-jumps button { flex-shrink:0; } }
 @media(max-height:700px) { .map-utility { top:14px; z-index:750; } .townwalk-app .map-explorer-tools .search-field { margin-right:106px; } }
+
+/* Map controls are confined to their canvas, below the sticky app chrome. */
+.townwalk-app .map-board { isolation:isolate; }
+.townwalk-app .map-search-trigger { min-height:44px; display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:10px 13px; border:1px solid #c8c6d5; border-radius:16px; background:#eae6f2; color:#253e32; font-size:12px; white-space:nowrap; flex-shrink:0; position:relative; }
+.map-search-trigger>.icon { width:18px; height:18px; }
+.map-search-trigger[aria-expanded=true] { background:#173f36; color:#fbf6e8; border-color:#173f36; }
+.map-search-trigger[data-search-active=true]::after { content:''; position:absolute; width:7px; height:7px; border-radius:50%; background:#56704c; border:2px solid #f7f5ed; right:2px; top:2px; }
+.townwalk-app .map-explorer-tools { top:14px; }
+.townwalk-app .map-utility { top:74px; }
+.townwalk-app .leaflet-top.leaflet-right { top:179px; }
+.map-search-panel { position:absolute; left:12px; right:12px; top:65px; z-index:800; max-height:calc(100% - 90px); padding:16px; background:#fffdf7; border:1px solid #d4d8c7; border-radius:20px; box-shadow:0 12px 35px #173f362b; overflow:auto; overscroll-behavior:contain; }
+.map-search-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.map-search-heading strong { font-size:18px; font-weight:800; letter-spacing:-.5px; }
+.map-search-heading .circle-button { width:44px; height:44px; min-width:44px; border:0; background:#f0f0e5; }
+.map-search-heading .icon { width:17px; height:17px; }
+.map-search-input { display:flex; align-items:center; gap:9px; border-bottom:1.5px solid #81916d; margin-top:10px; padding:8px 0; min-height:45px; }
+.map-search-input>.icon { width:19px; height:19px; flex-shrink:0; color:#687957; }
+.map-search-input input { width:100%; min-width:0; font:inherit; font-size:16px; padding:4px 0; outline:none; background:transparent; border:0; color:#173f36; }
+.map-search-input:focus-within { border-bottom-color:#173f36; }
+.map-search-meta { display:flex; justify-content:space-between; gap:12px; align-items:center; font-size:10px; color:#67765b; margin:9px 0 4px; }
+.map-search-meta button { min-height:32px; font-size:11px; color:#526c42; text-decoration:underline; padding:0; }
+.map-search-result { min-height:57px; width:100%; display:flex; align-items:center; gap:11px; text-align:left; padding:11px 0; border-bottom:1px solid #e6e8da; }
+.map-search-result>.icon { width:20px; height:20px; color:#5f7351; flex-shrink:0; }
+.map-search-result>span { flex:1; min-width:0; }
+.map-search-result strong { display:block; font-size:13px; font-weight:600; line-height:1.5; }
+.map-search-result small { display:block; font-size:10px; color:#68795b; margin-top:3px; }
+.map-search-result:last-child { border-bottom:0; }
+.map-search-empty { margin:13px 0 3px; font-size:12px; color:#647252; }
+@media(max-height:700px) { .townwalk-app .map-utility { top:73px; flex-direction:row; } .map-search-panel { max-height:calc(100% - 80px); padding:13px; } }
+@media(max-width:359px) { .townwalk-app .map-title-row h1 { font-size:23px; } .townwalk-app .map-search-trigger { padding:10px; font-size:11px; } .map-search-heading strong { font-size:16px; } }
+/* Leaflet's internal control z-indices also stay below the search panel. */
+.townwalk-app #osm-map { position:relative; isolation:isolate; z-index:0; }
+.map-search-input input::-webkit-search-cancel-button { -webkit-appearance:none; }

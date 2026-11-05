@@ -1,5 +1,6 @@
 """Discovery entry points and map selection with local vector cartography and deterministic GPS, no live writes."""
 from playwright.sync_api import sync_playwright,expect
+from ui_helpers import fill_map_search
 origin='http://127.0.0.1:8000'
 with sync_playwright() as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True)
@@ -33,11 +34,11 @@ with sync_playwright() as p:
  expect(page.locator('#map-selection h2')).to_have_text('Chùa Linh Sơn');expect(page.locator('#map-selection')).to_contain_text('đường chim bay')
  assert not page.evaluate("JSON.parse(localStorage.getItem('oceo-passport-guest')||'{}').badges?.length")
  # Pending coordinates are searchable in the directory; no made-up pin or external directions.
- page.locator('#map-search').fill('go 6 thuan');expect(page.locator('.map-list-item')).to_have_count(1)
+ fill_map_search(page,'go 6 thuan');expect(page.locator('.map-list-item')).to_have_count(1)
  expect(page.locator('#map-directory')).to_have_attribute('open','');expect(page.locator('.osm-pin')).to_have_count(0)
  expect(page.locator('#map-selection')).to_contain_text('chưa có pin')
  page.locator('.map-list-item').click();expect(page.locator('#checkin')).to_be_disabled();expect(page.locator('#focus-on-map')).to_have_count(0);page.locator('#close-modal').click()
- page.locator('#map-search').fill('');page.locator('#fit-map').click()
+ fill_map_search(page,'');page.keyboard.press('Escape');page.evaluate('scrollTo(0,0)');page.locator('#fit-map').click()
  # A selected point at any phone width stays above the nav; controls do not overflow the map.
  for width in [320,360,390,430,768,1440]:
   page.set_viewport_size({'width':width,'height':844});page.locator('[data-map-jump=chua-linh-son]').click() if page.locator('[data-map-jump=chua-linh-son]').count() else None

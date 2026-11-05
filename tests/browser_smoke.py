@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
+from ui_helpers import fill_map_search
 out=Path('/workspace/outputs');out.mkdir(exist_ok=True)
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True)
@@ -46,11 +47,11 @@ with sync_playwright() as p:
  expect(page.locator('#map-disclaimer')).to_contain_text('vị trí tham khảo')
  expect(page.locator('#map-list')).to_contain_text('Gò Sáu Thuận')
  expect(page.locator('#map-list')).to_contain_text('Gò Út Trạnh')
- page.locator('#map-search').fill('ut trach');expect(page.locator('.map-list-item')).to_have_count(1)
+ fill_map_search(page,'ut trach');expect(page.locator('.map-list-item')).to_have_count(1)
  go('day');expect(page.locator('.timeline-row')).to_have_count(6)
  expect(page.locator('.day-trip-card')).to_contain_text('chưa xác minh tuyến')
  go('map');expect(page.locator('#map-search')).to_have_value('ut trach')
- page.locator('#map-search').fill('')
+ fill_map_search(page,'')
  page.screenshot(path=str(out/'oc-eo-mobile-map.png'))
  go('explore');expect(page.locator('#places-grid')).to_contain_text('Quán Ăn Sân Vườn Liễu')
  page.get_by_role('button',name='Di sản',exact=True).click()

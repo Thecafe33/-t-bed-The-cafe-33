@@ -12,13 +12,13 @@
 .townwalk-app .leaflet-control-attribution a { color:#68705c; text-decoration:none; }
 .townwalk-app .leaflet-control-scale { margin:0 0 5px 8px; }
 .townwalk-app .leaflet-control-scale-line { border-color:#7e8871; background:#faf7eacc; color:#68705c; font-size:9px; line-height:1.3; border-width:0 1px 1px; padding:1px 5px; }
-.town-map-signature { position:absolute; left:15px; top:126px; color:#647557; pointer-events:none; z-index:400; display:flex; flex-direction:column; gap:2px; }
+.town-map-signature { position:absolute; left:15px; top:79px; color:#647557; pointer-events:none; z-index:400; display:flex; flex-direction:column; gap:2px; }
 .town-map-signature b { font-size:15px; font-weight:800; letter-spacing:1px; }
 .town-map-signature span { font-size:7px; letter-spacing:1.4px; }
-.town-map-north { position:absolute; left:17px; top:178px; display:flex; flex-direction:column; align-items:center; color:#7a8768; z-index:400; pointer-events:none; font:800 8px 'Be Vietnam',sans-serif; }
+.town-map-north { position:absolute; left:17px; top:131px; display:flex; flex-direction:column; align-items:center; color:#7a8768; z-index:400; pointer-events:none; font:800 8px 'Be Vietnam',sans-serif; }
 .town-map-north::after { content:''; width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-bottom:15px solid #7a8768; margin-top:4px; }
 .coordinate-details { margin:14px 0; padding:10px 13px; border:1px solid #d7dcc6; border-radius:13px; color:#647252; }
 .coordinate-details summary { cursor:pointer; font-size:12px; padding:5px 0; }
 .coordinate-details p { font-size:12px; line-height:1.8; }
 .coordinate-details a { font-size:12px; line-height:1.8; text-decoration:underline; }
-@media(max-height:700px) { .town-map-signature { top:120px; left:14px; } .town-map-signature b { font-size:12px; } .town-map-north { display:none; } }
+@media(max-height:700px) { .town-map-signature { top:78px; left:14px; } .town-map-signature b { font-size:12px; } .town-map-north { display:none; } }

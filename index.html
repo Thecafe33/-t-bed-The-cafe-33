@@ -174,16 +174,22 @@
         aria-labelledby="map-heading"
         hidden
       >
-        <div class="map-title-row"><div><span class="eyebrow">ÓC EO TRONG TÚI BẠN</span><h1 id="map-heading" tabindex="-1">Bản đồ <span class="serif">Óc Eo.</span></h1></div><button id="reload-map" class="circle-button" aria-label="Tải lại bản đồ"><span data-icon="compass"></span></button></div>
+        <div class="map-title-row"><div><span class="eyebrow">ÓC EO TRONG TÚI BẠN</span><h1 id="map-heading" tabindex="-1">Bản đồ <span class="serif">Óc Eo.</span></h1></div><button id="toggle-map-search" class="map-search-trigger" aria-label="Tìm điểm đến" aria-expanded="false" aria-controls="map-search-panel"><span data-icon="search"></span><span>Tìm điểm</span></button></div>
         <div class="map-layout">
           <div class="map-board">
             <div id="osm-map" aria-label="Bản đồ riêng Óc Eo Townwalk, vị trí có nguồn"></div>
             <div class="map-explorer-tools">
-              <label class="search-field"><span data-icon="compass"></span><input id="map-search" type="search" placeholder="Tìm di tích, quán, món, chỗ nghỉ…" aria-label="Tìm điểm đến trong danh sách bản đồ"></label>
+
               <div class="map-category-row" role="group" aria-label="Lọc địa điểm trên bản đồ">
                 <button class="chip active" data-map-category="all" aria-pressed="true">Tất cả</button><button class="chip" data-map-category="heritage" aria-pressed="false">Di sản</button><button class="chip" data-map-category="food" aria-pressed="false">Ăn uống</button><button class="chip" data-map-category="rest" aria-pressed="false">Cà phê</button><button class="chip" data-map-category="stay" aria-pressed="false">Lưu trú</button>
               </div>
             </div>
+            <section id="map-search-panel" class="map-search-panel" role="search" aria-label="Tìm điểm đến" hidden>
+              <div class="map-search-heading"><strong>Bạn muốn ghé đâu?</strong><button id="close-map-search" class="circle-button" aria-label="Đóng tìm kiếm"><span data-icon="close"></span></button></div>
+              <label class="map-search-input"><span data-icon="search"></span><input id="map-search" type="search" placeholder="Tên di tích, quán hoặc món…" aria-label="Tìm điểm đến trong danh sách bản đồ" autocomplete="off"></label>
+              <div class="map-search-meta"><span id="map-search-count"></span><button id="clear-map-search" hidden>Xóa tìm kiếm</button></div>
+              <div id="map-search-results" class="map-search-results"></div>
+            </section>
             <div class="town-map-signature" aria-hidden="true"><b>ÓC EO</b><span>TOWNWALK / LOCAL MAP</span></div><span class="town-map-north" aria-hidden="true">N</span>
             <span id="map-loading" class="map-loading" role="status" hidden>Đang tải bản đồ…</span>
             <div class="map-utility"><button id="locate-me" class="circle-button" aria-label="Tìm điểm gần vị trí của tôi"><span data-icon="locate"></span></button><button id="fit-map" class="circle-button" aria-label="Xem tất cả pin"><span data-icon="expand"></span></button></div>
@@ -193,7 +199,7 @@
           <details id="map-directory" class="map-directory"><summary><span><span data-icon="map"></span> Danh sách điểm đến</span><span id="map-result-count"></span></summary>
             <aside class="map-aside"><div class="eyebrow">DANH MỤC ĐANG RÀ SOÁT · CHƯA ĐẦY ĐỦ</div><p class="map-inventory-count" id="map-inventory-count"></p><div id="map-list"></div><div class="map-tip"><span data-icon="leaf"></span><p>Chỉ để lại dấu chân. Không lấy hiện vật hoặc vào khu khai quật.</p></div></aside>
           </details>
-          <details class="map-source-note"><summary>Nguồn vị trí & cách dùng bản đồ</summary><p id="map-disclaimer" class="map-disclaimer"></p><p>Chạm cụm số để phóng to các pin gần nhau. Điểm chưa xác nhận tọa độ vẫn có trong danh sách, chưa đặt pin.</p></details>
+          <details class="map-source-note"><summary>Nguồn vị trí & cách dùng bản đồ</summary><button class="text-button" id="reload-map">Tải lại bản đồ</button><p id="map-disclaimer" class="map-disclaimer"></p><p>Chạm cụm số để phóng to các pin gần nhau. Điểm chưa xác nhận tọa độ vẫn có trong danh sách, chưa đặt pin.</p></details>
         </div>
       </section>
       <section

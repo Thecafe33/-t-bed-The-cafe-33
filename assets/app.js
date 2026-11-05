@@ -59,6 +59,7 @@ function activateTab(tab, { focus = false } = {}) {
   if (activeTab) tabScroll[activeTab] = window.scrollY;
   if (modal.open) modal.close();
   activeTab = tab;
+  if(tab!=="map")closeMapSearch();
   document
     .querySelectorAll(".app-view[data-view]")
     .forEach((view) => (view.hidden = view.dataset.view !== tab));
@@ -306,9 +307,40 @@ function fitMapPoints() {
   if(map && points.length){const compact=map.getSize().y<420;map.fitBounds(points.map(p=>[p.lat,p.lng]),{paddingTopLeft:[35,compact?118:127],paddingBottomRight:[62,compact?130:218],maxZoom:16,animate:false});mapHasFramed=true;}
 }
 function openMapDirectory(){
+  closeMapSearch();
   $("#map-directory").open=true;
   $("#map-directory").scrollIntoView({block:"start",behavior:reducedMotion()?"instant":"smooth"});
 }
+function renderMapSearchResults(){
+  const visible=mapPlaces(), query=$("#map-search").value.trim();
+  const suggested=["chua-linh-son","go-cay-thi","xofa"].map(findPlace).filter(p=>p && visible.some(v=>v.id===p.id));
+  const results=query?visible.slice(0,8):(suggested.length?suggested:visible.slice(0,3));
+  $("#map-search-count").textContent=query?`${visible.length} kết quả`:"Gợi ý cho chuyến đi";
+  $("#clear-map-search").hidden=!query;
+  $("#toggle-map-search").dataset.searchActive=String(!!query);
+  $("#map-search-results").innerHTML=results.length?results.map(p=>`<button class="map-search-result" data-map-result="${e(p.id)}">${icon(p.symbol)}<span><strong>${e(p.name)}</strong><small>${eligible(p)?"Xem điểm trên bản đồ":"Có câu chuyện · vị trí đang bổ sung"}</small></span>${icon("arrowup")}</button>`).join(""):'<p class="map-search-empty">Chưa tìm thấy tên này trong danh sách đang biên tập.</p>';
+  if(query && visible.length>8)$("#map-search-results").insertAdjacentHTML("beforeend",'<button class="text-button" data-open-map-directory>Xem toàn bộ kết quả ↓</button>');
+}
+function closeMapSearch({returnFocus=false}={}){
+  $("#map-search-panel").hidden=true;
+  $("#toggle-map-search").setAttribute("aria-expanded","false");
+  if(returnFocus)$("#toggle-map-search").focus({preventScroll:true});
+}
+function openMapSearch(){
+  $("#map-search-panel").hidden=false;
+  $("#toggle-map-search").setAttribute("aria-expanded","true");
+  renderMapSearchResults();
+  $("#map-search").focus({preventScroll:true});
+}
+$("#toggle-map-search").onclick=()=>$("#map-search-panel").hidden?openMapSearch():closeMapSearch({returnFocus:true});
+$("#close-map-search").onclick=()=>closeMapSearch({returnFocus:true});
+$("#clear-map-search").onclick=()=>{$("#map-search").value="";renderMap();$("#map-search").focus({preventScroll:true});};
+document.addEventListener("keydown",ev=>{if(ev.key==="Escape"&&!$("#map-search-panel").hidden){ev.preventDefault();closeMapSearch({returnFocus:true});}});
+document.addEventListener("click",ev=>{
+  if(!$("#map-search-panel").hidden && !ev.target.closest("#map-search-panel,#toggle-map-search"))closeMapSearch();
+  const result=ev.target.closest("[data-map-result]");
+  if(result){const p=findPlace(result.dataset.mapResult);closeMapSearch({returnFocus:true});if(p){if(eligible(p))selectMapPlace(p.id);else placeDetail(p.id);}}
+});
 function renderMap() {
   const visible = mapPlaces();
   const located = visible.filter(eligible).length;
@@ -329,6 +361,7 @@ function renderMap() {
   $("#map-result-count").textContent=`${visible.length} điểm`;
   if(mapSelectedId && !visible.some(p=>p.id===mapSelectedId))mapSelectedId=null;
   renderMapSelection();
+  renderMapSearchResults();
   if ($("#map-search").value.trim()) $("#map-directory").open=true;
   if (map) renderMarkers({fit:true});
 }
@@ -353,6 +386,7 @@ function findPlace(id) {
   return [...site.places, ...site.stops].find((p) => p.id === id);
 }
 function placeDetail(id) {
+  closeMapSearch();
   const p = findPlace(id);
   if (!p) return;
   const valid = eligible(p),

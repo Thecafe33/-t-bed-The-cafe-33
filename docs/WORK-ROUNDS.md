@@ -44,3 +44,9 @@ Mốc ghi là công việc thực hiện trong phiên, không phải lịch ch�
 - Dựng 379 đối tượng địa lý thành SVG từ dữ liệu OSM cắt trong phạm vi tham khảo Óc Eo, không tải raster tiles hay cần API bản đồ. Palette giấy/xanh/kênh, texture và hình minh hoạ núi do dự án thiết kế.
 - Giữ attribution OSM gọn một góc và giấy phép ODbL trong tệp dữ liệu; nhãn Google Maps bỏ thuật ngữ Plus Code ở luồng chính, giữ provenance trong chi tiết thu gọn.
 - Kiểm tra geometry nằm trong polygon, không gọi máy chủ tiles, lỗi dữ liệu/thử lại, bản đồ ngoại tuyến, giữ pin/GPS/tem, ba ngôn ngữ và đường dẫn GitHub Pages. Chính sách được cập nhật để phản ánh bản đồ lưu tại ứng dụng.
+
+## Sửa lớp nút bản đồ và tìm kiếm — 05/11/2026
+
+- Giới hạn stacking context của nội dung và canvas Leaflet, header có nền đặc; điều khiển bản đồ không thể vẽ đè header hoặc popup tìm kiếm khi cuộn.
+- Thay ô tìm kiếm luôn nổi bằng nút “Tìm điểm” cạnh tiêu đề. Popup dùng ô nhập gạch dưới, kết quả chọn trực tiếp, xóa lọc, Escape và bấm ngoài để đóng; giữ truy vấn khi đổi tab.
+- Kiểm tra hit-testing tại các nút header ở năm kích thước màn hình và bốn vị trí cuộn, bao gồm màn hình ngang thấp; kiểm tra riêng nút zoom không phủ popup tìm kiếm.

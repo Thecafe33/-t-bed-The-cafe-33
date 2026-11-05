@@ -265,4 +265,15 @@ export const EXTRA_MESSAGES = [
 ["Pin là vị trí tham khảo. Xác nhận đúng lối vào và giờ đón khách trước khi đến.", "This pin is a reference position. Confirm the entrance and visitor hours before arriving.", "定位仅供参考，到访前请确认入口与接待时间。"],
 ["Về vị trí trên bản đồ", "About this map position", "关于此地图位置"],
 ["Đang ngoại tuyến · bản đồ và tư liệu đã tải vẫn xem được; đồng bộ cần mạng.", "Offline · downloaded maps and stories remain available; sync needs a connection.", "离线中 · 已下载的地图与资料仍可阅读，同步需要联网。"]
+,
+["Tìm điểm đến", "Find a destination", "查找目的地"],
+["Tìm điểm", "Find a stop", "找地点"],
+["Bạn muốn ghé đâu?", "Where would you like to go?", "想去哪里？"],
+["Đóng tìm kiếm", "Close search", "关闭搜索"],
+["Tên di tích, quán hoặc món…", "Site, café or food name…", "遗址、店铺或美食名称…"],
+["Xóa tìm kiếm", "Clear search", "清除搜索"],
+["Gợi ý cho chuyến đi", "A few places to start", "推荐从这里开始"],
+["Xem điểm trên bản đồ", "Show this stop on the map", "在地图上查看此地点"],
+["Có câu chuyện · vị trí đang bổ sung", "Story available · location pending", "已有故事 · 位置待补充"],
+["Xem toàn bộ kết quả ↓", "See all results ↓", "查看全部结果 ↓"]
 ];
