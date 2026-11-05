@@ -46,16 +46,15 @@ Thông tin liên hệ Ban Quản lý được đọc từ chân trang chính th�
 
 ## Danh bạ ăn uống và nghỉ chân
 
-Đọc trang địa điểm công khai ngày 04/11/2026 bằng trình duyệt, đối chiếu tên và địa chỉ ghi Óc Eo. Bốn mục dưới đây chỉ là danh bạ tham khảo, chưa liên hệ trực tiếp để xác nhận hoạt động. Chỉ dẫn giá và giờ phục vụ yêu cầu hỏi lại cơ sở.
+Đọc trang địa điểm công khai ngày 04/11/2026 bằng trình duyệt, đối chiếu tên và địa chỉ ghi Óc Eo. Ba mục dưới đây chỉ là danh bạ tham khảo, chưa liên hệ trực tiếp để xác nhận hoạt động. Chỉ dẫn giá và giờ phục vụ yêu cầu hỏi lại cơ sở.
 
 | Mục | Nguồn công khai | Địa chỉ theo nguồn |
 | --- | --- | --- |
 | The cafe 33 | [Trang địa điểm](https://www.google.com/maps?cid=16158299998869639333) | Óc Eo, An Giang |
-| Some Cafe & Tea | [Trang địa điểm](https://www.google.com/maps?cid=13800161682624124748) | 186, Óc Eo, An Giang |
 | Quán Ăn Sân Vườn Liễu | [Trang địa điểm](https://www.google.com/maps?cid=6413189049242387973) | Phan Thanh Giản, Óc Eo, An Giang |
 | Chợ Óc Eo | [Trang địa điểm](https://www.google.com/maps?cid=9396509232398075509) | ĐT943, Óc Eo, An Giang |
 
-Các trang này được mở dưới dạng liên kết ngoài. Không lấy ảnh, điểm sao hoặc nội dung đánh giá của nền tảng khác. Ba pin cơ sở bổ sung ngày 05/11 được suy ra từ Plus Code công khai trên trang địa điểm, có nguồn riêng ghi dưới đây; không coi chúng là đối tượng OSM. Các khách sạn kết quả tìm kiếm ở Tri Tôn/Long Xuyên đã loại khỏi danh bạ xã Óc Eo. Đây là năm mục của vòng ngày 04/11. Sau bổ sung ngày 05/11, danh bạ có mười mục; Út Mập vẫn giữ tọa độ OSM cũ.
+Các trang này được mở dưới dạng liên kết ngoài. Không lấy ảnh, điểm sao hoặc nội dung đánh giá của nền tảng khác. Ba pin cơ sở bổ sung ngày 05/11 được suy ra từ Plus Code công khai trên trang địa điểm, có nguồn riêng ghi dưới đây; không coi chúng là đối tượng OSM. Các khách sạn kết quả tìm kiếm ở Tri Tôn/Long Xuyên đã loại khỏi danh bạ xã Óc Eo. Đây là năm mục của vòng ngày 04/11. Sau bổ sung ngày 05/11, danh bạ có chín mục; Út Mập vẫn giữ tọa độ OSM cũ.
 
 ## Ảnh có giấy phép mở
 

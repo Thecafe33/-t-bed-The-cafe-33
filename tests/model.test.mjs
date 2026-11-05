@@ -16,7 +16,7 @@ test("curated records distinguish collection membership from available check-in 
   const d = cloneDefault();
   assert.equal(d.places.filter(eligible).length, 7);
   assert.equal(d.places.length, 16);
-  assert.equal(d.stops.length, 10);
+  assert.equal(d.stops.length, 9);
   for (const p of d.places.filter(p=>p.recordType!=="hidden-gem")) {
     assert.ok(p.sourceUrl.startsWith("https://vanhoaoceo.angiang.gov.vn/"));
     assert.equal(p.contentVerified, true);

@@ -3,7 +3,7 @@ const APP_ROOT = new URL('./', self.location.href);
 const INDEX_URL = new URL('index.html', APP_ROOT).href;
 const ASSETS_PATH = new URL('assets/', APP_ROOT).pathname;
 const CACHE_PREFIX = `oceo-townwalk:${encodeURIComponent(APP_ROOT.pathname)}:`;
-const CACHE = CACHE_PREFIX + '2026-11-05-v8';
+const CACHE = CACHE_PREFIX + '2026-11-05-v9';
 const CORE = [
   "index.html",
   "assets/style.css",
@@ -33,7 +33,7 @@ const CORE = [
   "assets/fonts/lora-vietnamese-500-italic.woff2",
 ].map(path => new URL(path, APP_ROOT).href);
 self.addEventListener("install", (event) =>
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(CORE))),
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(CORE).then(() => self.skipWaiting()))),
 );
 self.addEventListener("activate", (event) =>
   event.waitUntil(

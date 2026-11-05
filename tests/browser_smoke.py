@@ -34,7 +34,7 @@ with sync_playwright() as p:
  expect(page.locator('#checkin')).to_have_count(0)
  page.locator('#close-modal').click()
  page.get_by_role('button',name='Nghỉ chân',exact=True).click()
- expect(page.locator('.place-card')).to_have_count(5)
+ expect(page.locator('.place-card')).to_have_count(4)
  page.get_by_role('button',name='Ăn gì ngon?').click()
  go('map');expect(page.locator('#osm-map')).to_be_visible()
  expect(page.locator('#schematic')).to_have_count(0)
