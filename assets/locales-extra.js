@@ -1,4 +1,5 @@
 export const EXTRA_MESSAGES = [
+["Biểu tượng minh hoạ · ảnh thật ở bài nguồn", "Illustrative symbol · actual photos in the source", "示意图标 · 实物照片见来源"],
   [
     "Bài được công khai ngay sau khi gửi. Có thể báo cáo nội dung không phù hợp để quản trị viên xem xét.",
     "Posts appear immediately after submission. Report unsuitable content for an administrator to review.",

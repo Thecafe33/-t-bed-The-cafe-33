@@ -113,3 +113,52 @@
  .artifact-swipe-open { margin-top:6px; font-size:10px; }
 }
 @media(max-height:700px) and (max-width:359px) { .artifact-swipe-card { padding:13px; } .artifact-swipe-title { font-size:20px; } }
+
+/* Keep navigation in view, with a proper full-screen sheet on phones. */
+.townwalk-app dialog.artifact-deck-dialog,
+.townwalk-app dialog.artifact-detail-dialog { padding:0; overflow:hidden; }
+.townwalk-app dialog:is(.artifact-deck-dialog,.artifact-detail-dialog)[open] { display:flex; flex-direction:column; }
+:is(.artifact-deck-dialog,.artifact-detail-dialog) .modal-header { flex-shrink:0; margin:0; padding:12px 18px; background:#faf8ef; border-bottom:1px solid #dce0cc; gap:12px; }
+:is(.artifact-deck-dialog,.artifact-detail-dialog) .modal-header .circle-button { width:44px; height:44px; flex-shrink:0; }
+:is(.artifact-deck-dialog,.artifact-detail-dialog) #modal-body { overflow-y:auto; overscroll-behavior:contain; min-height:0; padding:16px 18px 24px; scroll-padding-top:12px; }
+.artifact-back { color:#173f36; font-size:14px; font-weight:700; letter-spacing:0; min-height:44px; text-align:left; padding:6px 0; }
+.artifact-back[hidden] { display:none; }
+.artifact-detail-dialog #modal-kicker { display:none; }
+.artifact-detail-dialog .modal-header { justify-content:space-between; }
+.artifact-stack { height:500px; }
+.artifact-swipe-card { padding:18px; }
+.artifact-swipe-card>* { flex-shrink:0; }
+.artifact-swipe-card[aria-hidden="true"]>* { visibility:hidden; }
+.artifact-swipe-art { width:44px; height:44px; margin:7px 0 3px; border-radius:14px; }
+.artifact-swipe-art>.icon { width:29px; height:29px; }
+.artifact-swipe-art>span { font-size:20px; right:-8px; top:-6px; }
+.artifact-media-note { font-size:10px; line-height:1.5; opacity:.75; margin:3px 0 10px; }
+.artifact-swipe-title { font-size:24px; line-height:1.25; margin-bottom:9px; }
+.artifact-swipe-period { font-size:12px; margin-bottom:6px; }
+.artifact-swipe-material { font-size:12px; line-height:1.6; font-weight:700; margin-bottom:8px; }
+.artifact-swipe-story { font-size:13px; line-height:1.65; display:block; margin-bottom:14px; }
+.artifact-swipe-place { font-size:12px; }
+.artifact-swipe-open { font-size:12px; margin-top:10px; }
+.artifact-photo { display:block; width:100%; margin:8px 0 12px; }
+.artifact-photo img { display:block; width:100%; height:140px; object-fit:contain; background:#fffdf5; border-radius:12px; }
+.artifact-photo small { display:block; font-size:10px; line-height:1.5; margin-top:5px; }
+.artifact-stack:has(.artifact-photo) { height:610px; }
+.artifact-detail-media { border-radius:18px; padding:16px; margin-bottom:20px; }
+.artifact-detail-media .artifact-swipe-art { margin:0 auto 8px; }
+.artifact-detail-media .artifact-media-note { display:block; text-align:center; margin:0; }
+.artifact-detail-media .artifact-photo { margin:0; }
+.artifact-detail-media .artifact-photo img { height:auto; max-height:340px; }
+@media(max-width:600px) {
+ .townwalk-app dialog:is(.artifact-deck-dialog,.artifact-detail-dialog) { width:100%; max-width:none; height:100dvh; max-height:100dvh; margin:0; border:0; border-radius:0; }
+ :is(.artifact-deck-dialog,.artifact-detail-dialog) .modal-header { padding-top:calc(8px + env(safe-area-inset-top,0px)); padding-bottom:8px; }
+ :is(.artifact-deck-dialog,.artifact-detail-dialog) #modal-body { flex:1; padding-bottom:calc(20px + env(safe-area-inset-bottom,0px)); }
+ .artifact-browser .artifact-deck-intro { margin-bottom:10px; }
+ .artifact-guide { margin-top:4px; }
+}
+@media(max-width:359px) {
+ :is(.artifact-deck-dialog,.artifact-detail-dialog) #modal-body { padding-inline:12px; }
+ .artifact-stack { height:530px; }
+ .artifact-swipe-title { font-size:22px; }
+ .artifact-swipe-card { padding:16px; }
+ .artifact-stack:has(.artifact-photo) { height:640px; }
+}

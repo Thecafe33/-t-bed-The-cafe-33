@@ -157,6 +157,9 @@ async function saveProfile() {
 function openModal(kicker, html, view = "generic") {
   artifactDeckUI?.destroy();artifactDeckUI=null;
   modal.classList.toggle("artifact-deck-dialog",view==="artifacts");
+  modal.classList.toggle("artifact-detail-dialog",view==="artifact");
+  $("#artifact-back").hidden=view!=="artifact";
+  $("#close-modal").setAttribute("aria-label",translateText(view==="artifact"?"← Về bộ thẻ cổ vật":"Đóng hộp thoại"));
   modal.dataset.view = view;
   $("#modal-kicker").textContent = kicker;
   body.innerHTML = html;
@@ -164,8 +167,17 @@ function openModal(kicker, html, view = "generic") {
   hydrate(body);
   if (!modal.open) modal.showModal();
   modal.scrollTop = 0;
+  body.scrollTop = 0;
 }
-$("#close-modal").onclick = () => modal.close();
+function dismissModal(){
+  if(modal.dataset.view==="artifact"){showArtifactIndex();return;}
+  modal.close();
+}
+$("#close-modal").onclick = dismissModal;
+$("#artifact-back").onclick = () => showArtifactIndex();
+modal.addEventListener("cancel",event=>{
+  if(modal.dataset.view==="artifact"){event.preventDefault();showArtifactIndex();}
+});
 modal.addEventListener("click", (ev) => {
   if (ev.target === modal) {
     const r = modal.getBoundingClientRect();
@@ -175,7 +187,7 @@ modal.addEventListener("click", (ev) => {
       ev.clientY < r.top ||
       ev.clientY > r.bottom
     )
-      modal.close();
+      dismissModal();
   }
 });
 modal.addEventListener("close", () => {
@@ -395,15 +407,18 @@ function findPlace(id) {
   return [...site.places, ...site.stops].find((p) => p.id === id);
 }
 function showArtifactIndex(selected=artifactDeckState.selected){
+ const returning=modal.open&&modal.dataset.view==="artifact";
  closeMapSearch();
  const available=artifactsForPlaces(site.places);
  artifactDeckState.selected=selected==='all'||available.some(a=>a.placeId===selected)?selected:'all';
  openModal("THEO DẤU CỔ VẬT",artifactIndexHTML(site.places,artifactDeckState.selected),"artifacts");
  artifactDeckUI=mountArtifactDeck({root:body,dialog:modal,state:artifactDeckState,places:site.places,onOpen:showArtifact});
+ if(returning)$("#artifact-open")?.focus({preventScroll:true});
 }
 function showArtifact(id){
  const a=artifactsForPlaces(site.places).find(a=>a.id===id);if(!a)return;
  closeMapSearch();openModal("HIỆN VẬT ↔ ĐỊA ĐIỂM",artifactDetailHTML(a,site.places),"artifact");
+ $("#artifact-back").focus({preventScroll:true});
 }
 function placeDetail(id) {
   closeMapSearch();

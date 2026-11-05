@@ -36,3 +36,9 @@ Nội dung ba ngôn ngữ tại `assets/artifacts.js`. `assets/artifact-view.js`
 ## Cách duyệt chồng thẻ
 
 Bộ thẻ mặc định xếp lớp, có ngẫu nhiên/theo thứ tự, quẹt trái hoặc phải để sang thẻ tiếp, nút xem lại, xáo lại và danh sách tìm nhanh. Mỗi lượt không lặp cho đến khi hết bộ; chỉ xáo lại theo thao tác người dùng. Bộ đếm thể hiện vị trí trong lượt xem, không phải tiến độ nhận tem hay chứng nhận đã đến. Vị trí/thứ tự/bộ lọc chỉ nằm trong bộ nhớ phiên, không ghi tài khoản hoặc thêm dữ liệu cá nhân. Các biểu tượng trên thẻ là ký hiệu minh hoạ giao diện; ảnh tư liệu gốc vẫn mở bằng liên kết nguồn.
+
+Trên điện thoại, bộ thẻ và chi tiết dùng hộp thoại toàn màn hình, cuộn nội dung riêng để giữ thanh điều hướng trên đầu. Từ chi tiết, nút trở về, X và Escape đều quay về bộ thẻ với nguyên thứ tự/vị trí/bộ lọc; X tại bộ thẻ mới đóng hộp thoại. Mặt thẻ có niên đại, chất liệu, nơi phát hiện và câu chuyện, không cần mở chi tiết để đọc các thông tin này. Ảnh chỉ nhúng khi có trường `photo` được duyệt (`approved: true`) cùng `url`, `credit`, `license`; dùng `object-fit: contain` và ghi nguồn. Chưa gắn ảnh mới vào danh mục hiện tại.
+
+## Ảnh mẫu chia sẻ của Elio
+
+`elio-pass-preview.html` cung cấp PNG 1080 × 1920 dựng bằng mẫu xuất ảnh thật, tên Elio, 10/15 tem. Đây là dữ liệu minh hoạ riêng, không ghi hồ sơ hay giả lập GPS. Theo yêu cầu, mẫu có nhà trưng bày cũ trên đỉnh Ba Thê; ba điểm bổ sung tạm cho đủ 10 điểm khác nhau là Linh Sơn Bắc, Gò Giồng Trôm và Gò Út Trạnh. Để giữ mẫu 15 điểm có hidden gem, riêng bộ dữ liệu dựng ảnh bỏ Gò Cây Trâm. Danh mục 15 điểm và điều kiện nhận tem của ứng dụng vẫn giữ nguyên.
