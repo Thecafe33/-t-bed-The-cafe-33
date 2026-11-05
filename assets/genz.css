@@ -78,14 +78,45 @@
   border-color: transparent;
   padding: 4px 10px;
 }
-.townwalk-app .search-field {
+/* Search: a soft pill with a round "lens" badge */
+.townwalk-app #view-explore > .search-field {
+  min-height: 54px;
+  padding: 6px 18px 6px 6px;
+  gap: 12px;
   background: #fff;
-  border-color: var(--soft-line);
+  border: 1px solid var(--soft-line);
+  border-radius: 999px;
   box-shadow: var(--lift);
-  border-radius: 18px;
+  transition: box-shadow .2s, border-color .2s;
 }
-.townwalk-app .search-field:focus-within { box-shadow: 0 0 0 3px #d9f27a99, var(--lift); }
-.townwalk-app .search-field input { font-size: 13.5px; }
+.townwalk-app #view-explore > .search-field > [data-icon] {
+  width: 42px;
+  height: 42px;
+  padding: 11px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--deep);
+  color: var(--zap);
+  stroke-width: 2.2;
+  transition: transform .25s var(--bounce), background .2s;
+}
+.townwalk-app #view-explore > .search-field:hover > [data-icon] { transform: rotate(-12deg) scale(1.05); }
+.townwalk-app #view-explore > .search-field:focus-within {
+  outline: none;
+  border-color: #b9d65a;
+  box-shadow: 0 0 0 4px #d9f27a80, var(--lift);
+}
+.townwalk-app #view-explore > .search-field:focus-within > [data-icon] { background: var(--zap); color: var(--deep); }
+.townwalk-app #view-explore > .search-field input { font-size: 14px; font-weight: 500; color: var(--deep); }
+.townwalk-app #view-explore > .search-field input::placeholder { color: #7c8274; font-weight: 400; }
+.townwalk-app .search-field input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: #e9eadf url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173f36' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7 7 17'/%3E%3C/svg%3E") center / 10px no-repeat;
+}
 
 /* ── Cover: same postcard, a little more glow ───────────── */
 .townwalk-app .townwalk-cover {
@@ -329,7 +360,45 @@
 .townwalk-app .write-review-camera { background: #fff; }
 
 /* ── Map: colours only, sizes untouched ─────────────────── */
-.townwalk-app .map-search-trigger { background: var(--zap-soft); }
+.townwalk-app .map-search-trigger {
+  gap: 8px;
+  padding: 5px 15px 5px 5px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--deep);
+  color: #fbf6e8;
+  font-weight: 700;
+  box-shadow: var(--lift);
+  transition: transform .2s var(--bounce), background .2s;
+}
+.townwalk-app .map-search-trigger > [data-icon] {
+  width: 34px;
+  height: 34px;
+  padding: 8px;
+  border-radius: 50%;
+  background: var(--zap);
+  color: var(--deep);
+  stroke-width: 2.2;
+}
+.townwalk-app .map-search-trigger:hover { transform: translateY(-1px); }
+.townwalk-app .map-search-trigger[aria-expanded=true] { background: var(--zap); color: var(--deep); }
+.townwalk-app .map-search-trigger[aria-expanded=true] > [data-icon] { background: var(--deep); color: var(--zap); }
+.townwalk-app .map-search-trigger[data-search-active=true]::after { background: #f6b8d3; border-color: var(--deep); }
+.townwalk-app .map-search-input {
+  border: 1px solid var(--soft-line);
+  border-radius: 999px;
+  padding: 4px 16px 4px 5px;
+  background: #fff;
+}
+.townwalk-app .map-search-input > [data-icon] {
+  width: 36px;
+  height: 36px;
+  padding: 9px;
+  border-radius: 50%;
+  background: var(--deep);
+  color: var(--zap);
+}
+.townwalk-app .map-search-input:focus-within { border-color: #b9d65a; box-shadow: 0 0 0 4px #d9f27a80; }
 .townwalk-app .map-category-row .chip.active { background: var(--deep); color: var(--zap); }
 
 .townwalk-app :focus-visible { outline: 3px solid #7f8cff; outline-offset: 3px; }
@@ -350,3 +419,13 @@
 
 /* The map screen keeps its measured compact title so the pin card clears the nav on short phones. */
 .townwalk-app .map-title-row .eyebrow { font-size: 8px; margin-bottom: 5px; }
+
+/* Search icons: the SVG sits inside the round badge span */
+.townwalk-app #view-explore > .search-field > [data-icon],
+.townwalk-app .map-search-trigger > [data-icon],
+.townwalk-app .map-search-input > [data-icon] { display: grid; place-items: center; box-sizing: border-box; }
+.townwalk-app #view-explore > .search-field > [data-icon] .icon,
+.townwalk-app .map-search-trigger > [data-icon] .icon,
+.townwalk-app .map-search-input > [data-icon] .icon { width: 100%; height: 100%; color: inherit; stroke-width: 2.2; }
+.townwalk-app .search-field input:focus-visible,
+.townwalk-app .map-search-input input:focus-visible { outline: none; }
