@@ -68,6 +68,7 @@ python3 tests/local_cartography.py
 python3 tests/map_controls.py
 node --test tests/artifacts.test.mjs
 python3 tests/artifact_journeys.py
+python3 tests/detail_photos.py
 ```
 
 These need the local server on port 8000, Python Playwright and `/usr/bin/chromium`. The first tests mobile navigation, layout, source/search behavior and admin validation with external requests blocked; the second substitutes only the cloud transport for deterministic GPS, Pass PNG, photo-required review and report journeys. Neither is a real Google OAuth test.

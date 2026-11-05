@@ -1499,6 +1499,21 @@ dialog::backdrop {
   place-items: center;
   margin: 20px 0;
 }
+/* Photos use normal block flow; a grid's intrinsic image track can overflow
+   the old 180px frame and paint over the following credit and description. */
+.detail-illustration.has-photo {
+  display: block;
+  height: auto;
+  overflow: hidden;
+}
+.detail-illustration.has-photo > img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: inherit;
+}
 .detail-illustration .icon {
   width: 85px;
   height: 85px;
