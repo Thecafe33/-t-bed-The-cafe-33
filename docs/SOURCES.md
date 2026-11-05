@@ -109,3 +109,7 @@ Kiểm tra `tests/pass_checkins.py` dùng transport/tọa độ kiểm thử ri�
 ## Ngôn ngữ và font chữ
 
 Các đoạn Việt/Anh/Trung giản thể là bản biên tập của dự án; tên địa điểm, tên người và nội dung đánh giá không tự dịch. Khi quản trị viên thay đoạn văn nguồn, cần cập nhật bản dịch tương ứng. Hai font Townwalk SC được subset và đổi tên từ Noto Sans CJK SC (SIL Open Font License); giữ giấy phép tại `assets/fonts/noto-cjk-LICENSE`, nguồn và hướng dẫn ở `TOWNWALK-CJK-SOURCE.txt`. Công cụ dựng lại: `tools/subset_cjk_font.py`, cần fontTools và brotli.
+
+## Cụm pin trên bản đồ
+
+Leaflet.markercluster 1.5.3: https://github.com/Leaflet/Leaflet.markercluster, MIT. Bản phân phối tải từ gói cố định `leaflet.markercluster@1.5.3`; giấy phép lưu tại `assets/vendor/markercluster-LICENSE.txt`. Cụm số gom các tọa độ hiện có để tránh đè pin, không bổ sung hoặc thay tọa độ di tích. Phóng to để chọn pin riêng; có thể xem mọi hồ sơ trong danh sách, gồm cả nơi chưa có tọa độ.

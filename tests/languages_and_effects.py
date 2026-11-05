@@ -93,7 +93,7 @@ with sync_playwright() as p:
  page.emulate_media(reduced_motion='reduce');reveals=page.evaluate('window.__reveals');go('pass');assert page.evaluate('window.__reveals')==reveals
  page.locator('#language-select').select_option('vi');go('explore');expect(page.locator('h1:visible')).to_contain_text('Ngàn năm tuổi.')
  page.goto(origin+'/privacy.html',wait_until='networkidle');page.locator('#language-select').select_option('zh')
- expect(page.locator('#privacy-content')).to_contain_text('仅在点击签到时请求位置')
+ expect(page.locator('#privacy-content')).to_contain_text('仅在点击签到或地图上的附近地点按钮时请求位置')
  expect(page.locator('#privacy-content')).to_contain_text('隐私')
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  assert not page.evaluate("async()=>{const m=await import('/assets/i18n.js');return m.untranslatedUI()} ")

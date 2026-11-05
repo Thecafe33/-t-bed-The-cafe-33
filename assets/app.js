@@ -31,7 +31,8 @@ let site = cloneDefault(),
   reviewLoading = false,
   bookPage = 0,
   heritageGroup = "all";
-let mapCategory = "all";
+let mapCategory = "all", mapSelectedId = null, mapHasFramed = false, userPoint = null, userMarker;
+const mapMarkers = new Map();
 let activeTab = null,
   reviewsRequested = false,
   passNeedsRender = true;
@@ -262,6 +263,51 @@ function coordinateLabel(p) {
   return url.includes("openstreetmap.org/") ? "OSM" :
     url.includes("google.com/maps") ? "Google Maps · Plus Code" : "nguồn tọa độ";
 }
+function renderHomeStories() {
+  const stories = [
+    {id:"go-giong-cat", className:"story-ring", icon:"gem", tag:"01 / CỔ VẬT KỂ CHUYỆN", title:"Nhẫn cổ kể chuyện gì?", action:"Mở chuyện Giồng Cát"},
+    {id:"xofa", className:"story-drink", icon:"coffee", tag:"02 / MỘT NGỤM ÓC EO", title:"Vị Phù Nam, phiên bản hôm nay.", action:"Thử Sữa Gạo Phù Nam"},
+    {id:"nha-trung-bay-cu-ba-the", className:"story-mountain", icon:"compass", tag:"03 / MỘT GÓC BA THÊ", title:"Trên núi, có gì khác?", action:"Đọc lưu ý trước khi đi"},
+  ].filter(story=>findPlace(story.id));
+  $("#curiosity-trail").innerHTML=stories.map(story=>`<button class="curiosity-card ${story.className}" data-place="${e(story.id)}"><small>${story.tag}</small><span class="story-art" aria-hidden="true">${icon(story.icon)}</span><strong>${story.title}</strong><span>${story.action} ${icon("arrowup")}</span></button>`).join("");
+  $(".curiosity-section").hidden=!stories.length;
+  $("#surprise-me").disabled=!site.places.some(p=>p.collectible!==false && contentSourced(p));
+}
+let lastSurprise;
+$("#surprise-me").onclick=()=>{
+  const pool=site.places.filter(p=>p.collectible!==false && contentSourced(p));
+  const candidates=pool.filter(p=>p.id!==lastSurprise), choices=candidates.length?candidates:pool;
+  const picked=choices[Math.floor(Math.random()*choices.length)];
+  if(picked){lastSurprise=picked.id;placeDetail(picked.id);}
+};
+function renderMapSelection() {
+  const visible=mapPlaces(), located=visible.filter(eligible);
+  const p=visible.find(p=>p.id===mapSelectedId && eligible(p)) || ($("#map-search").value.trim() && located.length===1?located[0]:null);
+  if(p){
+    const distance=userPoint?Math.round(distanceMeters(userPoint,p)):null;
+    const detail=distance===null?`${p.duration} phút gợi ý`:`${distance} m · đường chim bay`;
+    $("#map-selection").innerHTML=`<div class="map-card-top"><div class="map-card-art">${safeURL(p.image,{image:true})?`<img src="${e(safeURL(p.image,{image:true}))}" alt="">`:icon(p.symbol)}</div><div class="map-card-copy"><small>${p.category==="heritage"?"CHẠM DI SẢN":p.category==="stay"?"NGHỈ LẠI ÓC EO":"DỪNG MỘT CHÚT"}</small><h2>${e(p.name)}</h2><p>${detail}</p></div></div><div class="map-card-actions"><button class="button" data-place="${e(p.id)}">Khám phá ${icon("arrowup")}</button><a class="button outline" href="https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lng}#map=18/${p.lat}/${p.lng}" target="_blank" rel="noopener noreferrer">Mở vị trí ${icon("map")}</a></div>`;
+  }else{
+    const preferred=["chua-linh-son","go-cay-thi","xofa"].map(findPlace).filter(p=>p && located.some(v=>v.id===p.id));
+    const jumps=(preferred.length?preferred:located).slice(0,3);
+    $("#map-selection").innerHTML=`<div class="map-selection-empty"><h2>${located.length?"Đi đâu tiếp nhỉ?":"Có câu chuyện, chưa có pin."}</h2><p>${located.length?"Chạm pin để xem điểm đến. Cụm số chứa các điểm gần nhau.":"Xem mô tả và mốc địa phương trong danh sách bên dưới."}</p><div class="map-quick-jumps">${jumps.length?jumps.map(p=>`<button data-map-jump="${e(p.id)}">${e(p.name)}</button>`).join(""):'<button data-open-map-directory>Danh sách điểm đến ↓</button>'}</div></div>`;
+  }
+}
+function selectMapPlace(id) {
+  const p=findPlace(id);if(!p || !eligible(p))return;
+  mapSelectedId=id;
+  for(const [key,marker] of mapMarkers){marker.getElement()?.classList.toggle("is-selected",key===id);marker.setZIndexOffset(key===id?1000:0);}
+  renderMapSelection();revealView($("#map-selection"));
+  if(map){map.setView([p.lat,p.lng],Math.max(map.getZoom(),17),{animate:false});if(map.getSize().y<420)map.panBy([0,18],{animate:false});const marker=mapMarkers.get(id);if(marker)markerLayer.zoomToShowLayer(marker,()=>{marker.getElement()?.classList.add("is-selected");marker.openTooltip();});}
+}
+function fitMapPoints() {
+  const points=mapPlaces().filter(eligible);
+  if(map && points.length){const compact=map.getSize().y<420;map.fitBounds(points.map(p=>[p.lat,p.lng]),{paddingTopLeft:[35,compact?118:127],paddingBottomRight:[62,compact?130:218],maxZoom:16,animate:false});mapHasFramed=true;}
+}
+function openMapDirectory(){
+  $("#map-directory").open=true;
+  $("#map-directory").scrollIntoView({block:"start",behavior:reducedMotion()?"instant":"smooth"});
+}
 function renderMap() {
   const visible = mapPlaces();
   const located = visible.filter(eligible).length;
@@ -279,7 +325,11 @@ function renderMap() {
         )
         .join("")
     : '<p class="map-search-empty">Chưa tìm thấy tên này trong danh sách đang biên tập.</p>';
-  if (map) renderMarkers();
+  $("#map-result-count").textContent=`${visible.length} điểm`;
+  if(mapSelectedId && !visible.some(p=>p.id===mapSelectedId))mapSelectedId=null;
+  renderMapSelection();
+  if ($("#map-search").value.trim()) $("#map-directory").open=true;
+  if (map) renderMarkers({fit:true});
 }
 function renderTimeline() {
   $("#timeline").innerHTML = site.itinerary
@@ -290,6 +340,7 @@ function renderTimeline() {
     .join("");
 }
 function renderSite() {
+  renderHomeStories();
   passNeedsRender = true;
   renderPlaces();
   renderMap();
@@ -365,7 +416,7 @@ function placeDetail(id) {
     $("#map-search").value = "";
     renderMap();
     navigate("map");
-    requestAnimationFrame(() => map?.setView([p.lat, p.lng], 17));
+    requestAnimationFrame(() => selectMapPlace(p.id));
   });
 }
 function savedSiteIds() {
@@ -431,27 +482,26 @@ async function checkIn(p) {
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
   );
 }
-function renderMarkers() {
+function renderMarkers({fit=false} = {}) {
   markerLayer.clearLayers();
+  mapMarkers.clear();
   const verified = mapPlaces().filter(eligible);
   for (const p of verified) {
     const marker = L.marker([p.lat, p.lng], {
       icon: L.divIcon({
-        className: `osm-pin pin-${p.category}`,
+        className: `osm-pin pin-${p.category}${p.id===mapSelectedId?" is-selected":""}`,
         html: icon(p.symbol),
-        iconSize: [38, 38],
+        iconSize: [44, 44],
+        iconAnchor: [22, 35],
       }),
       title: p.name,
       alt: p.name,
     }).addTo(markerLayer);
     marker.bindTooltip(e(p.name), {permanent: p.featured === true, direction: p.featured === true ? "auto" : "top", offset: p.featured === true ? [0,0] : [0,-18], className: "townwalk-map-label"});
-    marker.on("click", () => placeDetail(p.id));
+    mapMarkers.set(p.id,marker);
+    marker.on("click", () => selectMapPlace(p.id));
   }
-  if (verified.length)
-    map.fitBounds(
-      verified.map((p) => [p.lat, p.lng]),
-      { padding: [40, 40], maxZoom: 15, animate: false },
-    );
+  if (fit || !mapHasFramed) fitMapPoints();
   $("#map-disclaimer").textContent = verified.length
     ? `${verified.length} pin có nguồn · OSM và Plus Code công khai. Xem nguồn từng điểm; hỏi lối vào trước khi đến. Nét đứt là ranh giới OSM tham khảo.`
     : "Không có pin phù hợp bộ lọc này. Một số gợi ý mới chỉ có mốc tương đối; xem mô tả trong danh sách.";
@@ -463,20 +513,23 @@ function showOSM() {
   }
   if (!map) {
     // Instant zoom keeps tiles sharp when switching views and under reduced-motion CSS.
-    map = L.map("osm-map", { scrollWheelZoom: false, zoomAnimation: false,
+    map = L.map("osm-map", { maxZoom:19, scrollWheelZoom: false, zoomAnimation: false,
       fadeAnimation: false, markerZoomAnimation: false }).setView(
       [10.2557721, 105.1534925],
       13,
     );
-    markerLayer = L.layerGroup().addTo(map);
+    map.zoomControl.setPosition("topright");
+    markerLayer = L.markerClusterGroup({animate:false,showCoverageOnHover:false,maxClusterRadius:40,disableClusteringAtZoom:18,spiderfyOnMaxZoom:true,iconCreateFunction:cluster=>L.divIcon({className:"map-cluster",html:`<span data-cluster-count="${cluster.getChildCount()}" aria-label="${cluster.getChildCount()} điểm gần nhau, chạm để phóng to">${cluster.getChildCount()}</span>`,iconSize:[46,46]})}).addTo(map);
     mapTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     });
+    mapTiles.on("loading",()=>{$("#map-loading").hidden=false;});
+    mapTiles.on("load",()=>{$("#map-loading").hidden=true;});
     let failures = 0;
     mapTiles.on("tileerror", () => {
-      if (++failures >= 3) $("#map-network-state").hidden = false;
+      if (++failures >= 3) { $("#map-network-state").hidden = false; $("#map-loading").hidden = true; }
     });
     mapTiles.on("tileload", () => {
       $("#map-network-state").hidden = true;
@@ -512,9 +565,20 @@ function retryMap() {
 }
 $("#reload-map").onclick = retryMap;
 $("#retry-map").onclick = retryMap;
-$("#show-map-list").onclick = () => {
-  $("#map-search").scrollIntoView({ block: "center", behavior: "smooth" });
-  $("#map-search").focus({ preventScroll: true });
+$("#show-map-list").onclick = openMapDirectory;
+$("#fit-map").onclick = ()=>{mapSelectedId=null;renderMapSelection();renderMarkers({fit:true});};
+$("#locate-me").onclick = ()=>{
+  if(!navigator.geolocation){toast("Thiết bị không hỗ trợ định vị.");return;}
+  const button=$("#locate-me");button.disabled=true;button.setAttribute("aria-busy","true");
+  navigator.geolocation.getCurrentPosition(pos=>{
+    button.disabled=false;button.removeAttribute("aria-busy");
+    if(pos.coords.accuracy>100){toast("GPS chưa đủ chính xác. Ra nơi thoáng và thử lại.");return;}
+    userPoint={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    if(map){userMarker?.remove();userMarker=L.marker([userPoint.lat,userPoint.lng],{icon:L.divIcon({className:"map-user-location",iconSize:[18,18]}),interactive:false}).addTo(map);}
+    const nearest=mapPlaces().filter(eligible).sort((a,b)=>distanceMeters(userPoint,a)-distanceMeters(userPoint,b))[0];
+    if(nearest)selectMapPlace(nearest.id);
+    toast("Đã tìm điểm gần bạn. Khoảng cách là đường chim bay, không phải tuyến đi.");
+  },err=>{button.disabled=false;button.removeAttribute("aria-busy");toast(err.code===1?"Bạn chưa cho phép định vị. Có thể tiếp tục khám phá mà không check-in.":"Chưa lấy được vị trí. Thử lại ngoài trời hoặc kiểm tra GPS.");},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 };
 $("#map-search").addEventListener("input", renderMap);
 $("#place-search").addEventListener("input", renderPlaces);
@@ -1052,6 +1116,9 @@ document.addEventListener("click", (ev) => {
     renderPlaces();
     return;
   }
+  const mapJump=ev.target.closest("[data-map-jump]");
+  if(mapJump){selectMapPlace(mapJump.dataset.mapJump);return;}
+  if(ev.target.closest("[data-open-map-directory]")){openMapDirectory();return;}
   const r = ev.target.closest("[data-report]");
   if (r) {
     reportReview(r.dataset.report);

@@ -31,3 +31,10 @@ Mốc ghi là công việc thực hiện trong phiên, không phải lịch ch�
 - Thêm Việt/Anh/Trung giản thể cho phần công khai, hướng dẫn, chính sách và ảnh Pass; giữ nguyên tên riêng và nội dung khách viết. Bổ sung font CJK lưu tại dự án, giấy phép và công cụ dựng lại.
 - Hiệu ứng chuyển tab ngắn, mở Pass và tem nhẹ; tôn trọng giảm chuyển động. Âm thanh tùy chọn, mặc định tắt, không phát nền hoặc truy cập micro.
 - Bổ sung kiểm tra ngôn ngữ, 25 hồ sơ, ảnh xuất, bảo toàn dữ liệu nhập, âm thanh, giảm chuyển động và ngoại tuyến. Không ghi dữ liệu Firebase production.
+
+## Cập nhật Home và bản đồ — 05/11/2026
+
+- Home thành postcard Óc Eo xanh đậm, ảnh Ba Thê thật, ba thẻ gợi mở câu chuyện và nút bốc điểm không lặp liên tiếp.
+- Bản đồ ưu tiên không gian xem: tìm/lọc trên nền bản đồ, cụm số cho các pin sát nhau, thẻ điểm đến ngắn, danh sách đầy đủ thu gọn và nút xem toàn bộ pin. Giữ lựa chọn/zoom khi đổi tab.
+- Tìm điểm gần là thao tác tự nguyện: GPS chỉ giữ trong bộ nhớ phiên, khoảng cách ghi rõ là đường chim bay, không phát tem. Chính sách ba ngôn ngữ đã được cập nhật tương ứng.
+- Kiểm tra lại ảnh nền OSM thật và các pin Linh Sơn ở mức phóng to. Kiểm tra tự động dùng tiles/GPS giả lập tách biệt; không ghi dữ liệu Firebase production.

@@ -12,6 +12,11 @@ export const dateLocale=()=>({vi:'vi-VN',en:'en-GB',zh:'zh-CN'}[language]);
 const choose=(en,zh,lang)=>lang==='en'?en:zh;
 function dynamic(text,lang){
  let m;
+ if((m=text.match(/^(\d+) điểm gần nhau, chạm để phóng to$/)))return choose(`${m[1]} nearby stops; tap to zoom in`,`${m[1]} 个相邻地点，点击放大`,lang);
+
+ if((m=text.match(/^(\d+) điểm$/)))return choose(`${m[1]} stops`,`${m[1]} 个地点`,lang);
+ if((m=text.match(/^(\d+) m · đường chim bay$/)))return choose(`${m[1]} m · straight-line distance`,`${m[1]} 米 · 直线距离`,lang);
+
  if((m=text.match(/^(\d+) câu chuyện đã tải · ([\d.]+)\/5 sao trong các bài đang xem$/)))return choose(`${m[1]} stories loaded · ${m[2]}/5 across these reviews`,`${m[1]} 条故事已加载 · 当前评论均分 ${m[2]}/5`,lang);
  if((m=text.match(/^(\d+) trên 5 sao$/)))return choose(`${m[1]} out of 5 stars`,`${m[1]}星，满分5星`,lang);
  if((m=text.match(/^Báo cáo đánh giá của (.+)$/)))return choose(`Report ${m[1]}’s review`,`举报${m[1]}的评论`,lang);

@@ -45,9 +45,9 @@ export const POLICY_MESSAGES = [
     "频率限制以账户标识记录最近发帖时间，每分钟最多一条，不用于广告。"
   ],
   [
-    "Vị trí: chỉ yêu cầu khi bạn bấm check-in. Tọa độ được đối chiếu ngay trong trình duyệt, không ghi vào hồ sơ hay bài đánh giá, không theo dõi liên tục.",
-    "Location is requested only when you tap check-in. Coordinates are compared inside the browser, not saved in profiles or reviews, and are not tracked continuously.",
-    "仅在点击签到时请求位置。坐标只在浏览器内进行比对，不写入个人档案或评论，也不持续跟踪。"
+    "Vị trí: chỉ yêu cầu khi bạn bấm check-in hoặc nút tìm điểm gần bạn trên bản đồ. Tọa độ được đối chiếu ngay trong trình duyệt, không ghi vào hồ sơ hay bài đánh giá, không theo dõi liên tục.",
+    "Location is requested only when you tap check-in or the map’s nearby button. Coordinates are compared inside the browser, not saved in profiles or reviews, and are not tracked continuously.",
+    "仅在点击签到或地图上的附近地点按钮时请求位置。坐标只在浏览器内进行比对，不写入个人档案或评论，也不持续跟踪。"
   ],
   [
     "Chỉ đăng ảnh bạn có quyền sử dụng. Không đăng giấy tờ, số điện thoại, ảnh trẻ em hoặc người khác khi chưa có sự đồng ý phù hợp. Ứng dụng chuyển ảnh thành JPEG trước khi tải lên để loại bỏ metadata EXIF, gồm vị trí GPS. Hình ảnh vẫn có thể để lộ thông tin qua nội dung nhìn thấy.",
