@@ -1,0 +1,7 @@
+Townwalk SC is a renamed horizontal-text subset of Noto Sans CJK SC Regular/Bold.
+Upstream: https://github.com/notofonts/noto-cjk
+Font licence: SIL Open Font License 1.1; see noto-cjk-LICENSE.
+The original copyright and licence metadata remain in the font files.
+The subset covers Chinese characters in the shipped interface and translations.
+Build: python3 tools/subset_cjk_font.py --source-dir /path/to/noto/ttc
+Requires Python fontTools and brotli. TTC font index 2 is Simplified Chinese.

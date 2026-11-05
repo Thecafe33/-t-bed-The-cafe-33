@@ -2886,3 +2886,29 @@ dialog::backdrop {
     min-height: 310px;
   }
 }
+
+@font-face {
+  font-family: TownwalkSC;
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url(./fonts/townwalk-sc-regular.woff2) format("woff2");
+  unicode-range: U+2E80-9FFF,U+F900-FAFF,U+FF00-FFEF;
+}
+@font-face {
+  font-family: TownwalkSC;
+  font-style: normal;
+  font-weight: 700 900;
+  font-display: swap;
+  src: url(./fonts/townwalk-sc-bold.woff2) format("woff2");
+  unicode-range: U+2E80-9FFF,U+F900-FAFF,U+FF00-FFEF;
+}
+
+/* Shared language controls, including the separate privacy page. */
+.language-picker select { min-height: 40px; width: 94px; padding: 8px 6px; border: 1px solid #d6d8c8; border-radius: 24px; background: #f4f3e9; color: #303528; font: inherit; font-size: 11px; cursor: pointer; }
+html[lang=zh-Hans] body { font-family: "Be Vietnam",TownwalkSC,"PingFang SC","Microsoft YaHei",sans-serif; }
+html[lang=zh-Hans] .serif { font-family: Lora,TownwalkSC,"PingFang SC",serif; }
+html[lang=zh-Hans] .pocket-hero h1 { font-size: 31px; line-height: 1.4; }
+.sr-only { position:absolute!important; width:1px; height:1px; padding:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.site-header:has(#language-select) { gap:12px; flex-wrap:wrap; }
+@media(max-width:480px) { .site-header:has(#language-select) { padding:16px; } .site-header:has(#language-select) .button { padding:10px 12px; font-size:11px; } }

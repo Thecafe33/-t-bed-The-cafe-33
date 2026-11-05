@@ -1,35 +1,30 @@
-# Đánh giá trải nghiệm Óc Eo Townwalk trên điện thoại
+# Rà soát trải nghiệm Óc Eo Townwalk trên điện thoại
 
-Rà soát ngày 04/11/2026, vòng hai kết thúc khoảng 23:23 giờ Việt Nam. Đây là các tình huống mô phỏng nhiều nhu cầu của người trẻ; không có người tham gia khảo sát thật và không tạo đánh giá công khai giả.
+Cập nhật 05/11/2026. Đây là đánh giá theo các tình huống sử dụng và kiểm tra trình duyệt, không phải phỏng vấn người dùng thật hay các đánh giá công khai giả. Báo cáo này thay số liệu của bản trước.
 
-Báo cáo này thay đánh giá vòng đầu lúc 21:53: mạng hiện truy cập được website Ban Quản lý, nguồn ảnh và bản đồ. Những kết luận cũ về nguồn bị chặn, danh mục ít và chưa có tọa độ không còn mô tả bản hiện tại.
+## Các góc nhìn
 
-## Năm góc nhìn và việc đã kiểm tra
-
-| Góc nhìn | Việc cần làm | Kết quả kiểm tra và thay đổi |
+| Người dùng / nhu cầu | Kết quả hiện tại | Giới hạn cần biết |
 | --- | --- | --- |
-| Lần đầu biết Óc Eo | Hiểu nơi này có gì đáng đi mà không đọc một bài dài | Phần nhập môn thu gọn, tìm kiếm nằm gần đầu màn hình, ảnh Ba Thê thật; ghi đúng hồ sơ đang đề cử UNESCO. Tìm không dấu và bí danh Gò 6 Thuận/Út Trạch hoạt động. |
-| Đã quan tâm khảo cổ | Học thêm điều cụ thể và kiểm tra nguồn | Đọc Giồng Cát, câu chuyện nhẫn Nandin phát hiện năm 2018, câu hỏi quan sát và liên kết bài gốc. Có 14 hồ sơ từ nhóm A/B, tách nguồn nội dung với nguồn vị trí; ảnh có giấy phép và ghi công. |
-| Nhóm bạn tự lên kế hoạch | Lưu điểm, gửi bạn bè, cân nhắc ăn nghỉ | Lưu điểm ở máy, tải lại vẫn còn; chia sẻ liên kết mở đúng hồ sơ. Lịch một ngày tách thành tab riêng, có liên hệ quản lý và chuẩn bị. Danh bạ có năm mục ăn uống/cà phê/lưu trú tham khảo, chưa cam kết giá hoặc hoạt động. |
-| Khách trẻ không đăng nhập | Duyệt tự do và hiểu bộ tem | Mở Óc Eo Pass, đổi tên, xem hiệu ứng và các trang. Năm điểm có vị trí mở nhận tem được xếp trước, chín hồ sơ chờ tọa độ ở các trang sau. Không bắt đăng nhập khi tìm hiểu; chưa đủ tem thì khóa xuất chứng nhận hoàn thành. |
-| Đi ngoài đường, mạng yếu | Mở lại và đọc tư liệu đã tải | Kiểm tra Service Worker thật: mất mạng vẫn mở app và đọc Gò Sáu Thuận. Chỉ cache tài liệu công khai, không cache phản hồi tài khoản hoặc OSM tiles. Bản đồ lỗi có nút thử lại và chuyển tới danh sách. |
+| Lần đầu nghe về Óc Eo | Nhập môn ngắn, ảnh Ba Thê thật, 16 hồ sơ, tìm không dấu và bí danh Gò 6 Thuận/Út Trạch. | Danh mục vẫn chưa bao quát mọi di tích; hồ sơ UNESCO đang được đề cử, không ghi là đã được công nhận. |
+| Bạn trẻ thích khảo cổ | Mỗi hồ sơ có nguồn, câu chuyện và câu hỏi quan sát; phân biệt nhà trưng bày, nơi phát hiện hiện vật và công trình cũ trên núi. | Giờ đón khách và các lối tiếp cận cần hỏi Ban Quản lý. Không đoán tọa độ cho đủ pin. |
+| Nhóm bạn đi một ngày | Tab lịch trình riêng, lưu điểm, chia sẻ đúng hồ sơ, 9 gợi ý ăn/nghỉ; The cafe 33 đặt Cafe in bed qua website, XOFA có Sữa Gạo Phù Nam. | Lịch là khung tham khảo, chưa tính đường đi tối ưu; giá từ 25K và hoạt động của cơ sở cần xác nhận lại. |
+| Người thích đăng story | Bộ Óc Eo Pass gồm 15 điểm, chỉ vẽ tem thực sự đã nhận; 4 điểm đã đến cho kết quả 4/15. Ảnh PNG 1080×1920 có tên, tem viền khuyết tròn, nút lưu ngay cả khi chưa đủ bộ. | 7 điểm di sản hiện có vị trí đủ nguồn để mở check-in; những điểm khác vẫn nằm trong tổng nhưng chưa phát tem mới. GPS phía trình duyệt có thể bị giả, Pass không phải chứng nhận chính thức. |
+| Khách không muốn đăng nhập | Tra cứu, bản đồ, lịch và Pass lưu tại máy dùng được với chế độ khách. | Xóa dữ liệu trình duyệt sẽ mất Pass khách; đăng bài cần Google và ảnh. Đăng nhập/đăng bài còn chờ cấu hình đơn vị vận hành và liên hệ bảo mật. |
+| Khách đọc tiếng Anh / Trung | Chuyển Việt, Anh, Trung giản thể; hướng dẫn, cảnh báo, chính sách và ảnh Pass đều có bản dịch. Tên địa điểm, tên người và bài viết do khách tự nhập giữ nguyên. | Nội dung quản trị nội bộ vẫn dùng tiếng Việt; đoạn nội dung mới do quản trị viên viết cần được bổ sung bản dịch. |
+| Người đi ngoài đường / mạng yếu | Điều hướng pill, vùng bấm tab ≥44px, không tràn ngang từ 320px; tài liệu đã cache đọc được khi mất mạng. Hiệu ứng ngắn, tôn trọng giảm chuyển động; âm thanh mặc định tắt và chỉ phát khi bật rồi tương tác. | Nền OSM và đồng bộ cần mạng. Không cache phản hồi tài khoản hay bản đồ tiles. |
+| Người muốn thử hidden gem | Nhà trưng bày cũ trên Ba Thê là nhánh tùy chọn, tách khỏi tuyến chính và không phát tem. | Đường núi khó đi, tránh mưa/đường trơn, cân nhắc xe ôm địa phương và đội mũ; chỉ vào khu vực được phép, không vào công trình bỏ hoang. |
 
-## Kiểm tra bổ sung
+## Bằng chứng kiểm tra
 
-- Chromium ở 320, 360, 390, 430, 768 và 1440 px: năm tab tách biệt, không tràn ngang, thanh điều hướng có vùng bấm ít nhất 44 px và nhãn 12 px. Màn hình lớn vẫn giữ bố cục ứng dụng hẹp.
-- Tải tiles OSM qua mạng thật nhận HTTP 200: năm vùng khảo cổ và một cơ sở lưu trú từ OSM; không dùng sơ đồ tự vẽ thay nền địa lý. Ranh giới OSM là tham khảo, không phải bản đồ hành chính pháp lý.
-- Luồng trình duyệt với cloud transport thay thế: GPS gần nhận tem, GPS xa bị từ chối, mở/đóng Pass, xuất PNG có tên, bắt buộc ảnh, hiển thị bài ngay và gửi báo cáo. Thay thế transport không chứng minh Google OAuth thật.
-- Tám kiểm tra mô hình dữ liệu, bốn kiểm tra đầu vào Functions và năm kiểm tra tích hợp trên Firebase emulator đã qua. Emulator chạy Auth/Firestore/Storage/Functions cục bộ: kiểm tra phân quyền, ảnh thật được giải mã lại, công khai ngay, chống trùng/giới hạn tốc độ, xóa dữ liệu và tài khoản.
-- Admin xem trước chỉnh nội dung, nguồn, tọa độ, ghi công ảnh, danh bạ, lịch trình và chính sách. Chưa đăng nhập thì không xuất bản dữ liệu.
+- Trình duyệt Chromium: năm tab, tìm/lọc, nguồn, bản đồ 11 pin có nguồn, admin preview và không tràn ngang ở 320/360/390/430/768/1440px.
+- Kiểm tra lại chính GitHub Pages: stylesheet, script, font và ảnh tải được dưới thư mục dự án. Bộ kiểm tra riêng phục vụ URL có tiền tố bắt lỗi đường dẫn gốc và cache sai phạm vi.
+- Cloud transport giả lập: GPS xa/thiếu chính xác bị từ chối; bốn check-in hợp lệ cho đúng 4/15, không nhân đôi, không tự hiện tem tương lai; PNG đúng kích thước và đúng tem.
+- Luồng đánh giá: bắt buộc ảnh, hiển thị sau khi gửi và báo cáo. Tên/nội dung không bị đổi khi chuyển ngôn ngữ; nhãn lý do được dịch nhưng giá trị lưu giữ ổn định.
+- Việt/Anh/Trung: năm màn hình và 25 hồ sơ/điểm dừng, chính sách riêng, PNG có font cục bộ, chọn ngôn ngữ được nhớ khi tải lại; tiếng Trung và xuất PNG hoạt động với Service Worker thật khi ngoại tuyến.
+- Web Audio: không tạo AudioContext khi vừa mở trang; chỉ tạo sau khi bật, có âm khi tương tác, ngừng tạo âm mới sau khi tắt. Chế độ giảm chuyển động bỏ hiệu ứng chuyển tab.
+- Các kiểm tra giao diện không ghi dữ liệu Firebase thật và không chứng minh Google OAuth production. Kiểm tra emulator trước đó xác nhận quy tắc và callable bằng dự án demo; không thay thế việc kích hoạt production.
 
-Kết quả máy đọc được: `tests/mobile_personas.py`, `tests/browser_smoke.py`, `tests/browser_journeys.py`; ảnh chụp và kết quả trong `/workspace/outputs`. Không dùng số sao mô phỏng hay gán điểm hài lòng của người dùng thật.
+## Ưu tiên tiếp theo
 
-## Các điểm còn hạn chế khi quyết định đi thực tế
-
-1. Chín hồ sơ chưa có tọa độ đủ căn cứ nên chưa đặt pin/nhận tem. Năm vùng OSM hiện có là tâm vùng, không phải cổng vào đo tại hiện trường. Cần xác nhận lối tiếp cận, giờ đón khách và địa giới với đơn vị quản lý.
-2. Lịch là khung biên tập một ngày, chưa tính tuyến bằng máy định tuyến, chưa có giao thông trực tiếp và không phải cam kết đi hết các điểm bằng chân. Cần phương tiện giữa các cụm và xác nhận tiếp cận trước chuyến đi.
-3. Các cơ sở ăn nghỉ có nguồn công khai nhưng chưa gọi xác minh hoạt động, giá, thực đơn hoặc phòng trống. Các kết quả khách sạn ở Tri Tôn/Long Xuyên không được đưa vào để lấp danh sách.
-4. GPS phía trình duyệt có thể giả mạo. Óc Eo Pass là kỷ niệm tự ghi nhận, không dùng như bằng chứng chính thức hoặc trao thưởng có giá trị.
-5. Chưa triển khai Firebase/Hosting trong lượt này. Cần đơn vị vận hành và email bảo mật thật, cấu hình Google Auth/tên miền, rà soát rules dùng chung rồi kiểm tra trên môi trường triển khai. Người dưới 16 tuổi dùng chế độ khách; chưa có luồng đồng ý của người giám hộ.
-
-Ưu tiên kiểm nghiệm tiếp theo với người dùng thật: quan sát một nhóm bạn dùng ngoài trời, độ dễ đọc trong nắng, tìm được lối vào, hiểu trạng thái pin/tem và mức hữu ích của lịch trình. Năm góc nhìn mô phỏng hiện tại giúp tìm lỗi thao tác, chưa thay thế được chuyến khảo sát này.
+Xác nhận thực địa các cổng vào, giờ tham quan và cơ sở ăn/nghỉ; bổ sung tọa độ cho các hồ sơ còn chờ; thử trên Safari/iPhone thật với nhóm bạn đi Óc Eo; hoàn thiện cấu hình pháp lý/liên hệ và triển khai Firebase có kiểm soát. Không tự tạo đánh giá hay điểm sao để lấp chỗ trống.

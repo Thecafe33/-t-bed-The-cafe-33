@@ -23,3 +23,11 @@ Không có tác vụ nền tự khởi động lại sau khi kết thúc chat. C
 - Ghi giới hạn còn lại trong GENZ-REVIEW.md và hướng dẫn kích hoạt Firebase. Không triển khai Hosting, không ghi dữ liệu production.
 
 Mốc ghi là công việc thực hiện trong phiên, không phải lịch chạy nền. Phiên chat kết thúc sẽ không tự khởi động vòng mới sau 30 phút.
+
+## Cập nhật 05/11/2026 — GitHub Pages và bản đa ngôn ngữ
+
+- Sửa URL tài nguyên và phạm vi Service Worker cho đường dẫn GitHub Pages của dự án; kiểm tra trực tiếp CSS, ảnh, font và JavaScript trên link công khai.
+- Điều chỉnh danh sách điểm nghỉ theo yêu cầu chủ trang.
+- Thêm Việt/Anh/Trung giản thể cho phần công khai, hướng dẫn, chính sách và ảnh Pass; giữ nguyên tên riêng và nội dung khách viết. Bổ sung font CJK lưu tại dự án, giấy phép và công cụ dựng lại.
+- Hiệu ứng chuyển tab ngắn, mở Pass và tem nhẹ; tôn trọng giảm chuyển động. Âm thanh tùy chọn, mặc định tắt, không phát nền hoặc truy cập micro.
+- Bổ sung kiểm tra ngôn ngữ, 25 hồ sơ, ảnh xuất, bảo toàn dữ liệu nhập, âm thanh, giảm chuyển động và ngoại tuyến. Không ghi dữ liệu Firebase production.

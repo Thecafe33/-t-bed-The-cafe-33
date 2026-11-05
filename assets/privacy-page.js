@@ -1,3 +1,4 @@
+import {initI18n} from "./i18n.js";
 import { cloneDefault, validateSite } from "./model.js";
 import { privacyHTML } from "./policy.js";
 import { watchSite } from "./cloud.js";
@@ -13,3 +14,5 @@ watchSite(
   },
   () => {},
 ).catch(() => {});
+
+initI18n();

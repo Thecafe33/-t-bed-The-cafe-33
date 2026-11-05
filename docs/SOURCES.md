@@ -105,3 +105,7 @@ Hiện có bảy điểm di sản đủ nguồn vị trí, tổng bản đồ m�
 Ảnh Pass là bố cục story 9:16, thể hiện đúng các điểm đã nhận và tiến độ trên toàn bộ bộ sưu tập. Các tem không được vẽ trước cho điểm chưa đi. Biểu tượng, minh họa núi, hoa và bố cục do dự án vẽ; không dùng ảnh mới hay biểu trưng chính thức của cơ quan di sản. Font Be Vietnam Pro và Lora được nhúng từ tài nguyên có giấy phép OFL. Câu kêu gọi giảm dùng màn hình được bỏ khỏi bản sản phẩm, thay bằng thông điệp chia sẻ để lan tỏa Óc Eo.
 
 Kiểm tra `tests/pass_checkins.py` dùng transport/tọa độ kiểm thử riêng: từ 0 tem, GPS xa và sai số lớn bị từ chối; bốn lần check-in thành công cho đúng 4/15, không nhận trùng, lưu khách qua tải lại và xuất đúng bốn tem. Ảnh ví dụ bốn tem là dữ liệu kiểm thử, không phải hành trình thực của khách.
+
+## Ngôn ngữ và font chữ
+
+Các đoạn Việt/Anh/Trung giản thể là bản biên tập của dự án; tên địa điểm, tên người và nội dung đánh giá không tự dịch. Khi quản trị viên thay đoạn văn nguồn, cần cập nhật bản dịch tương ứng. Hai font Townwalk SC được subset và đổi tên từ Noto Sans CJK SC (SIL Open Font License); giữ giấy phép tại `assets/fonts/noto-cjk-LICENSE`, nguồn và hướng dẫn ở `TOWNWALK-CJK-SOURCE.txt`. Công cụ dựng lại: `tools/subset_cjk_font.py`, cần fontTools và brotli.

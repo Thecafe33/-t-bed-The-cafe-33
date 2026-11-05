@@ -1698,3 +1698,17 @@
 .townwalk-app .stamp-grid .stamp { border: 0; outline: 0; box-shadow: none; }
 .townwalk-app .stamp-grid .stamp::after { display: none; }
 .townwalk-app .stamp-grid .stamp:focus-visible { box-shadow: inset 0 0 0 3px #173f36; }
+
+/* Presentation controls stay compact; sound is deliberately opt-in. */
+.townwalk-app .app-header .header-location { display: none; }
+.header-tools { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+.header-tools .circle-button { width: 38px; height: 40px; flex-shrink: 0; }
+#sound-toggle[aria-pressed=true] { background: #e0e8c6; }
+html[lang=en] .pocket-hero h1 { font-size: clamp(25px,7.2vw,32px); }
+.townwalk-app .app-view { animation: none; }
+.townwalk-app .stamp-grid .stamp.earned { animation: quiet-stamp .28s ease-out both; }
+.townwalk-app .passport-flip { animation-duration: .32s; animation-timing-function: ease-out; }
+.townwalk-app .passport-cover,.townwalk-app .passport-spread { transition-duration: .32s; }
+@keyframes quiet-stamp { from { opacity: 0; translate: 0 5px; scale: .985; } to { opacity: 1; translate: 0 0; scale: 1; } }
+@media (prefers-reduced-motion: reduce) { .townwalk-app .stamp-grid .stamp.earned,.townwalk-app .passport-flip { animation: none; } }
+@media (max-width:359px) { .header-tools { gap: 4px; } .language-picker select { width: 84px; } .header-tools .circle-button { width: 34px; } .townwalk-app .app-header .brand { gap: 7px; } }

@@ -35,6 +35,8 @@ Open `http://localhost:8001/-t-bed-The-cafe-33/index.html`. `python3 tests/subdi
 
 ## What is implemented
 
+- Vietnamese, English and Simplified Chinese for the public app, source/access guidance, privacy page and downloaded Pass; native place names and visitor-written text stay unchanged. Language choice is stored on this device. Local Chinese font subsets ship with their source licence and rebuild script.
+- Short tab reveals, a restrained Pass-cover transition and earned-stamp motion respect reduced-motion preferences. Optional quiet paper/check-in tones use local Web Audio, start muted and only play after interaction; no audio request, microphone or ambient playback.
 - Separate Explore, Map, Day Plan, Pass and Community views; persistent readable pill navigation; browser history, deep links and retained search/map/draft state. Larger screens retain a narrow app layout.
 - Sixteen destination records: fourteen heritage records, the Óc Eo culture exhibition house and an optional former exhibition building on Ba Thê. Each has source links, a short story and an observation prompt; the summit entry separates published architectural background from the owner-supplied condition report. Five archaeological OSM area positions plus the OSM exhibition-house point and Linh Sơn Bắc from a publicly displayed Plus Code; unresolved records have no invented pin. [Source register](docs/SOURCES.md) explains selection, names, grouping and geographic limits.
 - Real photos with open-license credit for Gò Cây Thị, Linh Sơn Nam, chùa Linh Sơn and Ba Thê; locally hosted fonts and SDK. Neither the flower mark nor illustration is an official heritage logo.
@@ -57,6 +59,7 @@ python3 tests/mobile_personas.py
 python3 tests/extra_destinations.py
 python3 tests/pass_and_stops.py
 python3 tests/pass_checkins.py
+python3 tests/languages_and_effects.py
 ```
 
 These need the local server on port 8000, Python Playwright and `/usr/bin/chromium`. The first tests mobile navigation, layout, source/search behavior and admin validation with external requests blocked; the second substitutes only the cloud transport for deterministic GPS, Pass PNG, photo-required review and report journeys. Neither is a real Google OAuth test.
@@ -67,4 +70,4 @@ See [multi-perspective review](docs/GENZ-REVIEW.md) and [work rounds](docs/WORK-
 
 ## Remaining activation steps
 
-The real operator identity/privacy contact, Firebase billing/provider/domain setup, merge of shared production rules/indexes and an explicitly authorized deployment still require owner action. Current site opening hours, entrances and business operations need field confirmation. The repository is not the official site of Ban Quản lý and the privacy draft is not legal certification. No production publish has been performed by this task.
+The real operator identity/privacy contact, Firebase billing/provider/domain setup, merge of shared production rules/indexes and an explicitly authorized deployment still require owner action. Current site opening hours, entrances and business operations need field confirmation. The repository is not the official site of Ban Quản lý and the privacy draft is not legal certification. The static app is published on GitHub Pages. No production Firebase deployment has been performed by this task.

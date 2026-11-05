@@ -17,6 +17,8 @@ import { icon, mark } from "./icons.js";
 import { passArtwork, stampColor } from "./pass-art.js";
 import { stampOutline } from "./stamp-shape.js";
 import { appURL } from "./app-paths.js";
+import { initI18n, translateText, getLanguage, dateLocale } from "./i18n.js";
+import { initEffects, revealView, playEffect, armSound, reducedMotion } from "./effects.js";
 import * as cloud from "./cloud.js";
 import { privacyHTML } from "./policy.js";
 let site = cloneDefault(),
@@ -75,6 +77,7 @@ function activateTab(tab, { focus = false } = {}) {
     loadReviews(true);
   }
   window.scrollTo({ top: tabScroll[tab] || 0, behavior: "instant" });
+  revealView(document.querySelector(`.app-view[data-view="${tab}"]`));
   if (focus)
     document
       .querySelector(`[data-view="${tab}"] h1`)
@@ -82,7 +85,7 @@ function activateTab(tab, { focus = false } = {}) {
 }
 function navigate(tab) {
   if (activeTab === tab) {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: reducedMotion() ? "instant" : "smooth" });
     return;
   }
   history.pushState(null, "", `#${tab}`);
@@ -344,7 +347,7 @@ function placeDetail(id) {
       }
     } catch (err) {
       if (err.name !== "AbortError")
-        prompt("Sao chép liên kết điểm đến:", url.href);
+        prompt(translateText("Sao chép liên kết điểm đến:"), url.href);
     }
   };
   if ($("#checkin")) $("#checkin").onclick = () => checkIn(p);
@@ -388,6 +391,7 @@ async function checkIn(p) {
     toast("Thiết bị không hỗ trợ định vị.");
     return;
   }
+  armSound();
   const btn = $("#checkin");
   const radius = Math.min(site.radius, p.checkInRadius || site.radius);
   btn.disabled = true;
@@ -410,7 +414,7 @@ async function checkIn(p) {
         if (modal.dataset.view === "place") placeDetail(p.id);
         return;
       }
-      if (!profile.badges.includes(p.id)) profile.badges.push(p.id);
+      if (!profile.badges.includes(p.id)) { profile.badges.push(p.id); playEffect("stamp"); }
       await saveProfile();
       toast("Một nơi đã đến. Một con tem mới!");
       bookPage = 0;
@@ -543,7 +547,7 @@ function showPassport() {
   bookPage = Math.max(0, Math.min(pages - 1, bookPage));
   passNeedsRender = false;
   $("#pass-content").innerHTML =
-    `<div class="app-view-heading"><div class="eyebrow">GOM TEM DI SẢN. LAN TỎA ÓC EO.</div><h1 id="pass-heading" tabindex="-1">Óc Eo <span class="serif">Pass.</span></h1><p>Mỗi con tem là một lần chạm Óc Eo.</p></div><div class="pass-toolbar"><button class="button dark" id="save-pass-image">Lưu ảnh về máy ${icon("download")}</button><button class="text-button book-toggle" id="toggle-book">Đóng bìa Óc Eo Pass ${icon("passport")}</button></div><p class="pass-save-caption">Lưu ảnh tiến độ bất cứ lúc nào.</p><div class="passport-book"><button class="passport-cover" id="open-book">${mark}<small>ÓC EO TOWNWALK</small><h3>Óc Eo<br><span class="serif">Pass.</span></h3><span>Chạm để mở một chuyến đi ↗</span></button><div class="passport-spread"><div class="passport-page"><div class="eyebrow">ÓC EO TOWNWALK / YOUR PASS</div><h3>Óc Eo.<br><span class="serif">I was here.</span></h3><p>Óc Eo Pass này thuộc về</p><div class="owner-name">${e(profile.name || "Một tâm hồn tò mò")}</div><small>Xã Óc Eo · An Giang</small><div class="passport-progress"><span style="width:${total ? (count / total) * 100 : 0}%"></span></div><p>${total ? `Bạn đã đạt ${count} / ${total} tem` : "Bộ sưu tập đang được bổ sung"}</p><small>${cloud.state.user ? "Đồng bộ với tài khoản khi có mạng" : "Chế độ khách · lưu trên thiết bị này"}</small></div><div class="passport-page passport-flip"><div class="eyebrow">NHỮNG NƠI MÌNH ĐÃ CHẠM</div>${all.length ? `<div class="stamp-grid">${all
+    `<div class="app-view-heading"><div class="eyebrow">GOM TEM DI SẢN. LAN TỎA ÓC EO.</div><h1 id="pass-heading" tabindex="-1">Óc Eo <span class="serif">Pass.</span></h1><p>Mỗi con tem là một lần chạm Óc Eo.</p></div><div class="pass-toolbar"><button class="button dark" id="save-pass-image">Lưu ảnh về máy ${icon("download")}</button><button class="text-button book-toggle" id="toggle-book">Đóng bìa Óc Eo Pass ${icon("passport")}</button></div><p class="pass-save-caption">Lưu ảnh tiến độ bất cứ lúc nào.</p><div class="passport-book"><button class="passport-cover" id="open-book">${mark}<small>ÓC EO TOWNWALK</small><h3>Óc Eo<br><span class="serif">Pass.</span></h3><span>Chạm để mở một chuyến đi ↗</span></button><div class="passport-spread"><div class="passport-page"><div class="eyebrow">ÓC EO TOWNWALK / YOUR PASS</div><h3>Óc Eo.<br><span class="serif">I was here.</span></h3><p>Óc Eo Pass này thuộc về</p><div class="owner-name" data-no-translate>${e(profile.name || translateText("Một tâm hồn tò mò"))}</div><small>Xã Óc Eo · An Giang</small><div class="passport-progress"><span style="width:${total ? (count / total) * 100 : 0}%"></span></div><p>${total ? `Bạn đã đạt ${count} / ${total} tem` : "Bộ sưu tập đang được bổ sung"}</p><small>${cloud.state.user ? "Đồng bộ với tài khoản khi có mạng" : "Chế độ khách · lưu trên thiết bị này"}</small></div><div class="passport-page passport-flip"><div class="eyebrow">NHỮNG NƠI MÌNH ĐÃ CHẠM</div>${all.length ? `<div class="stamp-grid">${all
       .slice(bookPage * 4, bookPage * 4 + 4)
       .map(
         (p) =>
@@ -555,6 +559,7 @@ function showPassport() {
   hydrate($("#pass-content"));
   updateStampBorders();
   $("#toggle-book").onclick = () => {
+    playEffect("paper");
     const book = $(".passport-book");
     book.classList.toggle("closed");
     $("#toggle-book").innerHTML =
@@ -563,6 +568,7 @@ function showPassport() {
         : "Đóng bìa Óc Eo Pass ") + icon("passport");
   };
   $("#open-book").onclick = () => {
+    playEffect("paper");
     $(".passport-book").classList.remove("closed");
     $("#toggle-book").innerHTML = "Đóng bìa Óc Eo Pass " + icon("passport");
   };
@@ -581,7 +587,7 @@ function showPassport() {
     showPassport();
   };
   $("#clear-passport").onclick = async () => {
-    if (!confirm("Xóa tên và tất cả tem trong Óc Eo Pass này?")) return;
+    if (!confirm(translateText("Xóa tên và tất cả tem trong Óc Eo Pass này?"))) return;
     profile = { name: "", badges: [], policyVersion: POLICY_VERSION };
     await saveProfile();
     showPassport();
@@ -611,9 +617,9 @@ function showPassport() {
 async function showCertificate({progress = false, download = false, name = ""} = {}) {
   const {collection, earned, complete} = passProgress(site.places, profile.badges);
   if (!progress && !complete) return;
-  const exportName = (name || profile.name || "Một tâm hồn tò mò").trim().slice(0,60);
-  const date = new Intl.DateTimeFormat("vi-VN", {timeZone:"Asia/Ho_Chi_Minh"}).format(new Date());
-  const {svg,width,height} = await passArtwork({collection,earned,name:exportName,date});
+  const exportName = (name || profile.name || translateText("Một tâm hồn tò mò")).trim().slice(0,60);
+  const date = new Intl.DateTimeFormat(dateLocale(), {timeZone:"Asia/Ho_Chi_Minh"}).format(new Date());
+  const {svg,width,height} = await passArtwork({collection,earned,name:exportName,date,locale:getLanguage()});
   const url = URL.createObjectURL(
     new Blob([svg], { type: "image/svg+xml;charset=utf-8" }),
   );
@@ -770,7 +776,7 @@ async function showAccount() {
   $("#delete-account").onclick = async () => {
     if (
       !confirm(
-        "Xóa tài khoản, Óc Eo Pass trên mây, mọi đánh giá, ảnh và báo cáo của bạn? Thao tác này không thể hoàn tác.",
+        translateText("Xóa tài khoản, Óc Eo Pass trên mây, mọi đánh giá, ảnh và báo cáo của bạn? Thao tác này không thể hoàn tác."),
       )
     )
       return;
@@ -807,14 +813,14 @@ async function showMyReviews() {
         ? data
             .map(
               (r) =>
-                `<article class="admin-card"><p>${e(r.text)}</p><small>${r.status === "hidden" ? "Đã được quản trị viên ẩn" : "Đang công khai"}</small><div><button class="text-button danger" data-delete-review="${e(r.id)}">Xóa bài và ảnh</button></div></article>`,
+                `<article class="admin-card"><p data-no-translate>${e(r.text)}</p><small>${r.status === "hidden" ? "Đã được quản trị viên ẩn" : "Đang công khai"}</small><div><button class="text-button danger" data-delete-review="${e(r.id)}">Xóa bài và ảnh</button></div></article>`,
             )
             .join("")
         : "<p>Bạn chưa có bài đánh giá nào.</p>");
     body.querySelectorAll("[data-delete-review]").forEach(
       (b) =>
         (b.onclick = async () => {
-          if (!confirm("Xóa đánh giá và ảnh đính kèm?")) return;
+          if (!confirm(translateText("Xóa đánh giá và ảnh đính kèm?"))) return;
           b.disabled = true;
           try {
             await cloud.deleteReview(
@@ -838,7 +844,7 @@ function renderReviews() {
     ? reviews
         .map(
           (r) =>
-            `<article class="memory">${safeURL(r.photoURL) ? `<img src="${e(safeURL(r.photoURL))}" alt="Ảnh trải nghiệm do ${e(r.name)} chia sẻ" loading="lazy">` : ""}<div class="stars" aria-label="${Number(r.rating)} trên 5 sao">${"★".repeat(Math.max(0, Math.min(5, Number(r.rating) || 0)))}${"☆".repeat(5 - Math.max(0, Math.min(5, Number(r.rating) || 0)))}</div><p>${e(r.text)}</p><div class="memory-footer"><span>${e(r.name)}<small>${r.createdAt?.toDate ? new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" }).format(r.createdAt.toDate()) : "Vừa chia sẻ"}</small></span><button data-report="${e(r.id)}" aria-label="Báo cáo đánh giá của ${e(r.name)}">${icon("flag")} Báo cáo</button></div></article>`,
+            `<article class="memory">${safeURL(r.photoURL) ? `<img src="${e(safeURL(r.photoURL))}" alt="Ảnh trải nghiệm do ${e(r.name)} chia sẻ" loading="lazy">` : ""}<div class="stars" aria-label="${Number(r.rating)} trên 5 sao">${"★".repeat(Math.max(0, Math.min(5, Number(r.rating) || 0)))}${"☆".repeat(5 - Math.max(0, Math.min(5, Number(r.rating) || 0)))}</div><p data-no-translate>${e(r.text)}</p><div class="memory-footer"><span><span data-no-translate>${e(r.name)}</span><small>${r.createdAt?.toDate ? new Intl.DateTimeFormat(dateLocale(), { timeZone: "Asia/Ho_Chi_Minh" }).format(r.createdAt.toDate()) : "Vừa chia sẻ"}</small></span><button data-report="${e(r.id)}" aria-label="Báo cáo đánh giá của ${e(r.name)}">${icon("flag")} Báo cáo</button></div></article>`,
         )
         .join("")
     : `<div class="review-zero"><article class="memory"><div class="eyebrow">YOUR ÓC EO STORY</div><div class="blank-photo">${icon("camera")} Một bức ảnh của bạn</div><h3>Góc này chờ<br><span class="serif">Óc Eo của bạn.</span></h3><p>Chưa có bài đánh giá được tải. Câu chuyện đầu tiên ở đây có thể là của bạn.</p><button class="text-button" data-action="review">Viết một chút thương ${icon("arrow")}</button></article><div class="review-note">${icon("camera")}<h3>Có ảnh mới<br>có chuyện kể.</h3><p>Mỗi đánh giá cần ít nhất một ảnh tự chụp. Giữ một khoảnh khắc thật, đừng mượn chuyến đi Óc Eo của ai.</p></div><div class="review-note">${icon("heart")}<h3>Thật lòng.<br>Và tử tế.</h3><p>Bài được công khai ngay sau khi gửi. Có thể báo cáo nội dung không phù hợp để quản trị viên xem xét.</p></div></div>`;
@@ -968,7 +974,7 @@ function reportReview(id) {
   }
   openModal(
     "GIỮ GÓC CHIA SẺ TỬ TẾ",
-    `<h2>Báo cáo <span class="serif">bài viết.</span></h2><p>Bài vẫn hiển thị trong khi quản trị viên xem xét báo cáo.</p><form id="report-form"><label class="field">Lý do<select name="reason"><option>Xâm phạm quyền riêng tư</option><option>Ảnh hoặc nội dung không phù hợp</option><option>Sai thông tin / quảng cáo</option><option>Quấy rối / xúc phạm</option></select></label><button class="button dark" type="submit">Gửi báo cáo ${icon("flag")}</button><p id="report-error" class="error-text" role="alert"></p></form>`,
+    `<h2>Báo cáo <span class="serif">bài viết.</span></h2><p>Bài vẫn hiển thị trong khi quản trị viên xem xét báo cáo.</p><form id="report-form"><label class="field">Lý do<select name="reason"><option value="Xâm phạm quyền riêng tư">Xâm phạm quyền riêng tư</option><option value="Ảnh hoặc nội dung không phù hợp">Ảnh hoặc nội dung không phù hợp</option><option value="Sai thông tin / quảng cáo">Sai thông tin / quảng cáo</option><option value="Quấy rối / xúc phạm">Quấy rối / xúc phạm</option></select></label><button class="button dark" type="submit">Gửi báo cáo ${icon("flag")}</button><p id="report-error" class="error-text" role="alert"></p></form>`,
     "report",
   );
   $("#report-form").onsubmit = async (ev) => {
@@ -998,7 +1004,7 @@ function showSources() {
       )
       .join(
         "",
-      )}<h3>Tọa độ và bản đồ</h3><p>© OpenStreetMap contributors, ODbL; Leaflet 1.9.4, BSD-2-Clause. Các điểm có tọa độ OSM là vị trí tham khảo, không phải đo đạc cổng vào. Một số quán và chỗ nghỉ dùng tâm ô Plus Code công khai ghi trên trang địa điểm Google Maps; nguồn riêng được dẫn trong từng hồ sơ. Đường nét đứt là ranh giới theo OSM, không thay thế bản đồ hành chính pháp lý. Điểm chưa có tọa độ không được đặt pin.</p><h3>Ảnh và thiết kế</h3><p>Ảnh Gò Cây Thị, Linh Sơn Nam, chùa Linh Sơn và núi Ba Thê: Bùi Thụy Đào Nguyên, Wikimedia Commons, CC BY-SA 3.0; nguồn từng ảnh được ghi trong thẻ chi tiết. Ảnh có thể được thu nhỏ bởi Wikimedia và cắt khung bằng CSS; bản gốc giữ giấy phép ghi tại trang nguồn. Các hình vẽ và logo hoa là thiết kế của dự án, không phải biểu trưng chính thức của di sản.</p><p><a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener noreferrer">Giấy phép ảnh CC BY-SA 3.0 ↗</a> · Phông Be Vietnam Pro/Lora: SIL OFL.</p></div>`,
+      )}<h3>Tọa độ và bản đồ</h3><p>© OpenStreetMap contributors, ODbL; Leaflet 1.9.4, BSD-2-Clause. Các điểm có tọa độ OSM là vị trí tham khảo, không phải đo đạc cổng vào. Một số quán và chỗ nghỉ dùng tâm ô Plus Code công khai ghi trên trang địa điểm Google Maps; nguồn riêng được dẫn trong từng hồ sơ. Đường nét đứt là ranh giới theo OSM, không thay thế bản đồ hành chính pháp lý. Điểm chưa có tọa độ không được đặt pin.</p><h3>Ảnh và thiết kế</h3><p>Ảnh Gò Cây Thị, Linh Sơn Nam, chùa Linh Sơn và núi Ba Thê: Bùi Thụy Đào Nguyên, Wikimedia Commons, CC BY-SA 3.0; nguồn từng ảnh được ghi trong thẻ chi tiết. Ảnh có thể được thu nhỏ bởi Wikimedia và cắt khung bằng CSS; bản gốc giữ giấy phép ghi tại trang nguồn. Các hình vẽ và logo hoa là thiết kế của dự án, không phải biểu trưng chính thức của di sản.</p><p><a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener noreferrer">Giấy phép ảnh CC BY-SA 3.0 ↗</a> · Phông Be Vietnam Pro/Lora/Townwalk SC (từ Noto CJK): SIL OFL.</p></div>`,
     "sources",
   );
 }
@@ -1117,3 +1123,11 @@ if ("serviceWorker" in navigator)
   );
 const linkedPlace = new URLSearchParams(location.search).get("place");
 if (linkedPlace && findPlace(linkedPlace)) placeDetail(linkedPlace);
+
+window.addEventListener('oceo-language-change', () => {
+  renderReviews();
+  const owner=document.querySelector('.owner-name');
+  if(owner && !profile.name)owner.textContent=translateText('Một tâm hồn tò mò');
+});
+initI18n();
+initEffects();
