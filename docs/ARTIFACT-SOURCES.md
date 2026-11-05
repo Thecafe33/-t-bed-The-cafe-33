@@ -32,3 +32,7 @@ Nội dung ba ngôn ngữ tại `assets/artifacts.js`. `assets/artifact-view.js`
 - “Ảnh tư liệu / trưng bày”: tìm chi tiết hình thức được nguồn mô tả, phân biệt quan sát với diễn giải. Ảnh xem ở bài nguồn bên ngoài; dự án không tải lại ảnh chưa xác nhận giấy phép hoặc lấy ảnh hiện vật khác để thay.
 - Câu hỏi ngắn phản hồi ngay trong trình duyệt, không lưu điểm, không xác nhận có mặt, không cấp tem hay sửa Óc Eo Pass. Không tuyên bố có nhận diện ảnh/AR/3D.
 - Thẻ, nguồn liên kết, gợi ý và câu hỏi đọc được ngoại tuyến sau khi cache; mở website nguồn/ảnh cần mạng. Giao diện mới kế thừa lớp `genz.css` của commit `6612b12`, không sửa lớp thiết kế đó.
+
+## Cách duyệt chồng thẻ
+
+Bộ thẻ mặc định xếp lớp, có ngẫu nhiên/theo thứ tự, quẹt trái hoặc phải để sang thẻ tiếp, nút xem lại, xáo lại và danh sách tìm nhanh. Mỗi lượt không lặp cho đến khi hết bộ; chỉ xáo lại theo thao tác người dùng. Bộ đếm thể hiện vị trí trong lượt xem, không phải tiến độ nhận tem hay chứng nhận đã đến. Vị trí/thứ tự/bộ lọc chỉ nằm trong bộ nhớ phiên, không ghi tài khoản hoặc thêm dữ liệu cá nhân. Các biểu tượng trên thẻ là ký hiệu minh hoạ giao diện; ảnh tư liệu gốc vẫn mở bằng liên kết nguồn.

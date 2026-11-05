@@ -13,6 +13,9 @@ export const dateLocale=()=>({vi:'vi-VN',en:'en-GB',zh:'zh-CN'}[language]);
 const choose=(en,zh,lang)=>lang==='en'?en:zh;
 function dynamic(text,lang){
  let m;
+ if((m=text.match(/^Thẻ (\d+) \/ (\d+)$/)))return choose(`Card ${m[1]} / ${m[2]}`,`第 ${m[1]} / ${m[2]} 张`,lang);
+ if((m=text.match(/^(\d+) thẻ$/)))return choose(`${m[1]} cards`,`${m[1]} 张卡片`,lang);
+
  if((m=text.match(/^(\d+) kết quả$/)))return choose(`${m[1]} results`,`${m[1]} 个结果`,lang);
  if((m=text.match(/^(\d+) vị trí tham khảo trên bản đồ Óc Eo Townwalk\./)))return choose(`${m[1]} reference positions on the Townwalk map. Custom cartography uses open data; coordinate sources remain in each record. The OSM illustration extent is not a legal administrative map.`,`${m[1]} 个Townwalk地图参考位置。地图采用开放数据自行绘制，各档案保留坐标来源。OSM参考范围不代替法定行政地图。`,lang);
 

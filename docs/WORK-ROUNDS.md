@@ -57,3 +57,9 @@ Mốc ghi là công việc thực hiện trong phiên, không phải lịch ch�
 - Đọc lại tư liệu Ban Quản lý, bổ sung chín thẻ hiện vật/nhóm gắn tám nơi phát hiện; nguồn và giới hạn ở ARTIFACT-SOURCES.md.
 - Thêm hai bối cảnh quan sát, câu hỏi phản hồi tại trình duyệt, tìm theo tên hiện vật, liên kết hồ sơ và bản đồ hiện có. Không tạo tọa độ mới, không đổi tem GPS và không ghi Firebase.
 - Kiểm tra nguồn/liên kết, ngôn ngữ, điện thoại, quiz không ghi tem, offline và tiền tố GitHub Pages.
+
+## Chồng thẻ cổ vật có quẹt — 05/11/2026
+
+- Đổi bộ thẻ từ danh sách mặc định sang ba lớp thẻ, quẹt chuột/cảm ứng, ngẫu nhiên, xáo lại, xem thẻ trước và danh sách thay thế. Giữ bộ lọc/thứ tự/vị trí khi quay về từ chi tiết.
+- Một lượt đi hết bộ không lặp và có điểm kết thúc; không thêm tem, điểm thưởng hoặc ghi hồ sơ. Tôn trọng giảm chuyển động và âm thanh tự bật/tắt đã có.
+- Kiểm tra chuột và sự kiện cảm ứng trong Chromium, cuộn dọc/kéo ngắn/hủy, phím điều hướng, thẻ đơn, hết bộ, ba ngôn ngữ, nội dung không tràn ở màn hình nhỏ và đọc ngoại tuyến.

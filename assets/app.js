@@ -20,6 +20,8 @@ import { appURL } from "./app-paths.js";
 import { mountTownMap } from "./town-map.js";
 import {ARTIFACTS,artifactsForPlaces} from "./artifacts.js";
 import {artifactSection,artifactIndexHTML,artifactDetailHTML,getArtifact} from "./artifact-view.js";
+import {ArtifactDeckState} from "./artifact-deck-state.js";
+import {mountArtifactDeck} from "./artifact-deck.js";
 import { initI18n, translateText, getLanguage, dateLocale } from "./i18n.js";
 import { initEffects, revealView, playEffect, armSound, reducedMotion } from "./effects.js";
 import * as cloud from "./cloud.js";
@@ -40,6 +42,8 @@ let activeTab = null,
   reviewsRequested = false,
   passNeedsRender = true;
 history.scrollRestoration = "manual";
+const artifactDeckState=new ArtifactDeckState();
+let artifactDeckUI=null;
 const tabScroll = {};
 const tabTitles = {
   explore: "Khám phá",
@@ -151,6 +155,8 @@ async function saveProfile() {
   }
 }
 function openModal(kicker, html, view = "generic") {
+  artifactDeckUI?.destroy();artifactDeckUI=null;
+  modal.classList.toggle("artifact-deck-dialog",view==="artifacts");
   modal.dataset.view = view;
   $("#modal-kicker").textContent = kicker;
   body.innerHTML = html;
@@ -173,6 +179,7 @@ modal.addEventListener("click", (ev) => {
   }
 });
 modal.addEventListener("close", () => {
+  artifactDeckUI?.destroy();artifactDeckUI=null;
   if (photoURL) {
     URL.revokeObjectURL(photoURL);
     photoURL = "";
@@ -387,10 +394,12 @@ function renderSite() {
 function findPlace(id) {
   return [...site.places, ...site.stops].find((p) => p.id === id);
 }
-function showArtifactIndex(selected="all"){
+function showArtifactIndex(selected=artifactDeckState.selected){
  closeMapSearch();
- openModal("THEO DẤU CỔ VẬT",artifactIndexHTML(site.places,selected),"artifacts");
- $("#artifact-site-filter").onchange=ev=>{showArtifactIndex(ev.target.value);$("#artifact-site-filter").focus({preventScroll:true});};
+ const available=artifactsForPlaces(site.places);
+ artifactDeckState.selected=selected==='all'||available.some(a=>a.placeId===selected)?selected:'all';
+ openModal("THEO DẤU CỔ VẬT",artifactIndexHTML(site.places,artifactDeckState.selected),"artifacts");
+ artifactDeckUI=mountArtifactDeck({root:body,dialog:modal,state:artifactDeckState,places:site.places,onOpen:showArtifact});
 }
 function showArtifact(id){
  const a=artifactsForPlaces(site.places).find(a=>a.id===id);if(!a)return;

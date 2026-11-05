@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {ARTIFACTS,artifactsForPlaces,artifactMessageRows} from '../assets/artifacts.js';
-import {artifactSection,artifactIndexHTML} from '../assets/artifact-view.js';
+import {artifactSection,artifactListHTML} from '../assets/artifact-view.js';
 import {CURATED} from '../assets/content.js';
 import {passProgress} from '../assets/model.js';
 globalThis.location={origin:'https://oceotownwalk.web.app'};
@@ -34,7 +34,7 @@ test('the exhibition house only claims the two displays explicitly shown by the 
  const html=artifactSection(museum,CURATED.places);
  assert.match(html,/data-artifact="phat-linh-son-bac"/);assert.match(html,/data-artifact="mo-vo-cay-tram"/);
  assert.doesNotMatch(html,/data-artifact="nandin-giong-cat"/);assert.doesNotMatch(html,/data-artifact="dau-phat-naga"/);
- const filtered=artifactIndexHTML(CURATED.places,'go-giong-cat');
+ const filtered=artifactListHTML(CURATED.places,'go-giong-cat');
  assert.match(filtered,/data-artifact="nandin-giong-cat"/);assert.doesNotMatch(filtered,/data-artifact="hat-chuoi-giong-trom"/);
 });
 test('admin scope changes suppress related cards and research cards do not add stamp destinations',()=>{

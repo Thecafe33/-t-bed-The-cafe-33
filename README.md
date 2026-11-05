@@ -35,6 +35,7 @@ Open `http://localhost:8001/-t-bed-The-cafe-33/index.html`. `python3 tests/subdi
 
 ## What is implemented
 
+- A layered, swipeable artifact deck supports left/right touch or mouse swipes, a random mode, explicit reshuffle, previous-card history and list view. Each round contains every card once and stops at the end; position/filter/order are retained when returning from a detail. Buttons and keyboard navigation provide alternatives; reduced motion and opt-in sounds are respected. All browsing state stays in session memory and never issues a stamp.
 - Nine sourced artifact/group cards connect eight discovery areas with their documented finds; the museum links only to the two displays explicitly pictured in the sources. Read at-site vs display/photo prompts, try a short local quiz, search by object name, and open existing site/map records. This does not add map pins or award stamps. All content is VI/EN/Chinese and cached offline; original source photos open externally. Editorial data lives in `assets/artifacts.js` (not a new admin form). See [artifact source register](docs/ARTIFACT-SOURCES.md).
 
 - Vietnamese, English and Simplified Chinese for the public app, source/access guidance, privacy page and downloaded Pass; native place names and visitor-written text stay unchanged. Language choice is stored on this device. Local Chinese font subsets ship with their source licence and rebuild script.
@@ -66,8 +67,9 @@ python3 tests/languages_and_effects.py
 python3 tests/discover_and_map.py
 python3 tests/local_cartography.py
 python3 tests/map_controls.py
-node --test tests/artifacts.test.mjs
+node --test tests/artifacts.test.mjs tests/artifact-deck.test.mjs
 python3 tests/artifact_journeys.py
+python3 tests/artifact_swipes.py
 python3 tests/detail_photos.py
 ```
 
