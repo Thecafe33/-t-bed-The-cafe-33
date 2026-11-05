@@ -5,13 +5,72 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "docs/**",
+      "tests/**",
+      "tools/**",
+      "package*.json",
+      "README.md",
+      "firestore.rules",
+      "firestore.indexes.json",
+      "storage.rules",
+      "assets/firebase-sdk.js",
+      "Thecafe33",
+      "functions/**",
+      "firebase.emulators.json",
+      "**/*-debug.log",
+      "assets/photos/credits.json"
     ],
     "rewrites": [
       {
         "source": "/admin",
         "destination": "/admin.html"
+      },
+      {
+        "source": "/privacy",
+        "destination": "/privacy.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          },
+          {
+            "key": "Permissions-Policy",
+            "value": "geolocation=(self), camera=(), microphone=()"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "SAMEORIGIN"
+          }
+        ]
       }
     ]
-  }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "townwalk",
+      "ignore": [
+        "node_modules",
+        "firebase-debug.log",
+        "*.local"
+      ]
+    }
+  ]
 }

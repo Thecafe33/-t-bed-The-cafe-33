@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function admin() {
+      return signedIn() && request.auth.token.email_verified == true
+        && request.auth.token.email == 'vulpoz.com@gmail.com';
+    }
+    function owns(uid) { return signedIn() && request.auth.uid == uid; }
+    match /sites/oceotownwalk-v2 {
+      allow read: if true;
+      allow create, update: if admin() && request.resource.data.schemaVersion == 2
+        && request.resource.data.places is list && request.resource.data.places.size() <= 40
+        && request.resource.data.stops is list && request.resource.data.stops.size() <= 60
+        && request.resource.data.itinerary is list && request.resource.data.itinerary.size() <= 20
+        && request.resource.data.radius is number
+        && request.resource.data.radius >= 50 && request.resource.data.radius <= 500;
+      allow delete: if admin();
+    }
+    match /townwalkProfiles/{uid} {
+      allow read, delete: if owns(uid);
+      allow create, update: if owns(uid)
+        && request.resource.data.keys().hasAll(['name', 'badges', 'policyVersion', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['name', 'badges', 'policyVersion', 'updatedAt'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 60
+        && request.resource.data.badges is list && request.resource.data.badges.size() <= 40
+        && request.resource.data.policyVersion == '2026-11-04'
+        && request.resource.data.updatedAt == request.time;
+    }
+    match /townwalkReviews/{id} {
+      allow read: if resource.data.status == 'published' || admin() || owns(resource.data.uid);
+      allow create: if false; // publishReview callable verifies the actual uploaded image.
+      allow update: if admin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'moderatedAt'])
+        && request.resource.data.status in ['published', 'hidden']
+        && request.resource.data.moderatedAt == request.time;
+      allow delete: if admin() || owns(resource.data.uid);
+    }
+    match /townwalkReports/{id} {
+      allow read: if admin() || owns(resource.data.uid);
+      allow create: if signedIn()
+        && request.resource.data.keys().hasAll(['uid','reviewId','reason','createdAt'])
+        && request.resource.data.keys().hasOnly(['uid','reviewId','reason','createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.reviewId is string && request.resource.data.reviewId.size() <= 100
+        && id == request.resource.data.reviewId + '_' + request.auth.uid
+        && request.resource.data.reason is string && request.resource.data.reason.size() > 0 && request.resource.data.reason.size() <= 300
+        && exists(/databases/$(database)/documents/townwalkReviews/$(request.resource.data.reviewId))
+        && request.resource.data.createdAt == request.time;
+      allow delete: if admin() || owns(resource.data.uid);
+    }
+    // All unspecified documents, including legacy content, remain denied by this file.
+    // Merge with your project's existing rules rather than replacing unrelated rules blindly.
+  }
+}

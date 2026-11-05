@@ -1,0 +1,17 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function admin() { return request.auth != null && request.auth.token.email_verified == true && request.auth.token.email == 'vulpoz.com@gmail.com'; }
+    match /townwalkReviews/{uid}/{reviewId}/photo.jpg {
+      // Images are intentionally public, including tokenized URLs. Hidden review photos
+      // may remain accessible to people who already have the URL until deleted.
+      allow read: if true;
+      allow create: if resource == null && request.auth != null && request.auth.uid == uid
+        && request.resource.size > 0 && request.resource.size < 2 * 1024 * 1024
+        && request.resource.contentType == 'image/jpeg';
+      allow update: if false;
+      allow delete: if (request.auth != null && request.auth.uid == uid) || admin();
+    }
+    // Preserve unrelated existing storage paths when merging project rules.
+  }
+}

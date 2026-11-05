@@ -1,1321 +1,393 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>Oc Eo Town Walk</title>
-<style>
-:root{
-  --bg:#06050300;--page:#07060400;
-  --br:#6B5233;--brl:#A98C60;--brx:#C7AD84;--brs:#E4D4B4;
-  --txt:#F4ECD8;--txt2:rgba(244,236,216,.7);--txt3:rgba(244,236,216,.38);
-  --liq:rgba(171,140,96,.09);--liqs:rgba(171,140,96,.17);
-  --liqb:rgba(171,140,96,.28);--liqbs:rgba(171,140,96,.52);
-  --glass-fill:linear-gradient(155deg,rgba(196,168,120,.24),rgba(171,140,96,.10) 55%,rgba(107,82,51,.14));
-  --glass-fill-soft:linear-gradient(155deg,rgba(196,168,120,.14),rgba(171,140,96,.05) 60%,rgba(107,82,51,.08));
-  --glass-border:rgba(230,210,170,.55);
-  --glass-border-soft:rgba(171,140,96,.32);
-  --r:32px;--r2:24px;--rp:999px;
-  --sb:env(safe-area-inset-bottom,0px);
-  --st:env(safe-area-inset-top,0px);
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:#060503;color:var(--txt);
-  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
-  overflow:hidden;-webkit-font-smoothing:antialiased}
-#app{width:100vw;height:100dvh;max-width:480px;margin:0 auto;
-  position:relative;overflow:hidden;display:flex;flex-direction:column}
-
-/* ── TOPBAR ── */
-#topbar{flex-shrink:0;padding:max(18px,var(--st)) 20px 10px;
-  display:flex;align-items:flex-end;justify-content:space-between;
-  position:relative;z-index:20;
-  background:linear-gradient(to bottom,#060503 60%,transparent)}
-.top-left h1{font-size:23px;font-weight:800;color:var(--txt);letter-spacing:-.5px;line-height:1}
-.top-left p{font-size:11px;color:var(--brx);margin-top:3px;
-  display:flex;align-items:center;gap:4px;letter-spacing:.04em}
-.lang-pill{display:flex;gap:2px;
-  background:rgba(171,140,96,.08);
-  border:0.5px solid var(--liqb);
-  border-top:0.5px solid rgba(171,140,96,.5);
-  border-radius:var(--rp);padding:4px 5px;
-  backdrop-filter:blur(24px) saturate(180%);
-  -webkit-backdrop-filter:blur(24px) saturate(180%);
-  box-shadow:0 1px 0 rgba(255,255,255,.05) inset}
-.ltag{font-size:11px;font-weight:700;padding:5px 13px;border-radius:var(--rp);
-  cursor:pointer;transition:all .22s cubic-bezier(.34,1.1,.64,1);color:var(--txt3);
-  border:0.5px solid transparent}
-.ltag.on{background:var(--glass-fill);color:var(--brs);
-  border:0.5px solid var(--glass-border-soft);border-top:0.5px solid var(--glass-border);
-  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
-  box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 4px 14px rgba(171,140,96,.22)}
-
-/* ── SCROLL ── */
-#scrl{flex:1;overflow-y:auto;overflow-x:hidden;
-  padding:0 0 calc(90px + var(--sb));scroll-behavior:smooth;
-  -webkit-overflow-scrolling:touch}
-#scrl::-webkit-scrollbar{display:none}
-.sl{font-size:10px;font-weight:800;color:var(--brx);letter-spacing:.12em;
-  text-transform:uppercase;padding:0 18px;margin:22px 0 12px}
-.sl:first-child{margin-top:4px}
-.sl.sl-sub{font-size:9.5px;color:var(--txt3);letter-spacing:.1em}
-
-/* ══════════════════════════════════════
-   PHOTO CARD STACK — full bleed, infinite feel
-══════════════════════════════════════ */
-#stackWrap{position:relative;height:300px;margin:0 16px;
-  display:flex;align-items:center;justify-content:center;touch-action:none}
-
-.pcard{
-  position:absolute;width:100%;height:286px;
-  border-radius:40px;overflow:hidden;cursor:pointer;
-  transform-origin:center bottom;
-  will-change:transform,opacity;
-  transition:transform .4s cubic-bezier(.16,1,.3,1),opacity .3s ease;
-  border:1.5px solid rgba(230,210,170,.38);
-  box-shadow:0 30px 80px rgba(0,0,0,.85),0 8px 24px rgba(0,0,0,.6),
-    0 0 0 1px rgba(171,140,96,.22),0 1px 0 rgba(255,255,255,.1) inset;
-  user-select:none;-webkit-user-select:none;
-  -webkit-backface-visibility:hidden;backface-visibility:hidden;
-}
-/* photo layer */
-.pcard-photo{position:absolute;inset:0;background-size:cover;background-position:center;
-  background-color:#14120f;
-  background-image:var(--pimg,none);
-  transition:transform .5s ease}
-.pcard:hover .pcard-photo{transform:scale(1.04)}
-/* infinite-depth gradient overlay */
-.pcard-grad{position:absolute;inset:0;
-  background:linear-gradient(
-    to bottom,
-    rgba(0,0,0,.02) 0%,
-    rgba(0,0,0,.0) 30%,
-    rgba(0,0,0,.25) 55%,
-    rgba(0,0,0,.75) 80%,
-    rgba(0,0,0,.92) 100%)}
-/* top pill tag */
-.pcard-badge{
-  position:absolute;top:16px;left:16px;z-index:3;
-  background:rgba(8,6,3,.45);
-  border:0.5px solid rgba(171,140,96,.35);
-  border-top:0.5px solid rgba(171,140,96,.6);
-  border-radius:var(--rp);padding:5px 12px;
-  font-size:10px;font-weight:700;color:rgba(244,236,216,.85);
-  letter-spacing:.06em;text-transform:uppercase;
-  backdrop-filter:blur(16px) saturate(160%);
-  -webkit-backdrop-filter:blur(16px) saturate(160%);
-  box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
-/* top-right heart */
-.pcard-fav{position:absolute;top:14px;right:14px;z-index:3;
-  width:34px;height:34px;border-radius:50%;cursor:pointer;
-  background:rgba(8,6,3,.4);
-  border:0.5px solid rgba(171,140,96,.3);
-  border-top:0.5px solid rgba(171,140,96,.55);
-  display:flex;align-items:center;justify-content:center;
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:0 1px 0 rgba(255,255,255,.05) inset;
-  transition:background .18s}
-.pcard-fav:hover{background:rgba(171,140,96,.25)}
-/* bottom text */
-.pcard-foot{position:absolute;bottom:0;left:0;right:0;z-index:3;
-  padding:18px 18px 20px}
-.pcard-eyebrow{font-size:10px;font-weight:700;color:var(--brx);
-  letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
-.pcard-name{font-size:20px;font-weight:800;color:#fff;
-  letter-spacing:-.4px;line-height:1.15;margin-bottom:4px}
-.pcard-desc{font-size:12px;color:rgba(255,255,255,.62);line-height:1.45;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pcard-meta{display:flex;align-items:center;gap:8px;margin-top:10px}
-.pcard-pill{font-size:10px;font-weight:600;padding:4px 10px;border-radius:var(--rp);
-  background:rgba(171,140,96,.22);border:0.5px solid rgba(171,140,96,.4);
-  color:var(--brs);display:flex;align-items:center;gap:4px}
-/* stack dots */
-.stack-dots{display:flex;gap:5px;justify-content:center;padding:10px 0 2px}
-.sdot{width:5px;height:5px;border-radius:var(--rp);
-  background:rgba(171,140,96,.22);transition:all .28s;cursor:pointer}
-.sdot.on{background:var(--brl);width:16px}
-.swipe-hint{display:flex;align-items:center;justify-content:center;gap:5px;
-  font-size:10px;color:var(--txt3);margin-top:4px;letter-spacing:.04em}
-
-/* ── MAP ── */
-.map-outer{margin:0 14px;border-radius:30px;overflow:hidden;
-  border:0.5px solid rgba(171,140,96,.28);
-  border-top:0.5px solid rgba(171,140,96,.52);
-  box-shadow:0 1px 0 rgba(255,255,255,.04) inset,
-    0 20px 56px rgba(0,0,0,.55),0 2px 12px rgba(171,140,96,.08);
-  position:relative}
-.map-outer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;z-index:10;
-  background:linear-gradient(90deg,transparent,rgba(171,140,96,.55) 30%,
-    rgba(232,214,174,.3) 50%,rgba(171,140,96,.55) 70%,transparent);pointer-events:none}
-.gmap-frame{width:100%;height:280px;display:block;border:0;filter:brightness(.92) contrast(1.04)}
-.map-chips{display:flex;gap:8px;overflow-x:auto;padding:12px 14px 4px;scrollbar-width:none}
-.map-chips::-webkit-scrollbar{display:none}
-.map-chip{flex:0 0 auto;padding:8px 15px;border-radius:var(--rp);font-size:12px;font-weight:700;
-  background:var(--glass-fill);border:0.5px solid var(--glass-border-soft);border-top:0.5px solid var(--glass-border);
-  color:var(--txt2);white-space:nowrap;cursor:pointer;transition:all .18s}
-.map-chip.on{background:rgba(200,134,42,.22);border-color:rgba(200,134,42,.4);color:var(--brs)}
-.map-open-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 14px 0;
-  padding:12px;border-radius:var(--rp);background:rgba(200,134,42,.15);
-  border:0.5px solid var(--liqb);color:var(--brx);font-size:13px;font-weight:700;cursor:pointer;transition:all .18s}
-.map-open-btn:active{transform:scale(.98)}
-@keyframes mpu{0%{r:11;opacity:.55;stroke-width:1.5}100%{r:26;opacity:0;stroke-width:.3}}
-.mpu{animation:mpu 2.4s ease-out infinite}
-
-/* ══ GLASS utility ══ */
-.glass{background:var(--glass-fill-soft);
-  border:0.5px solid rgba(171,140,96,.24);
-  border-top:0.5px solid rgba(230,210,170,.42);
-  border-radius:var(--r);
-  backdrop-filter:blur(26px) saturate(190%) brightness(1.05);
-  -webkit-backdrop-filter:blur(26px) saturate(190%) brightness(1.05);
-  box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 12px 36px rgba(0,0,0,.46);
-  position:relative;overflow:hidden}
-.glass::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(171,140,96,.45) 40%,
-    rgba(232,214,174,.25) 50%,rgba(171,140,96,.45) 60%,transparent);pointer-events:none}
-
-/* ══════════════════════════════════════
-   FOOD CARDS — photo style grid layout
-══════════════════════════════════════ */
-.food-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 4px}
-.food-photo-card{
-  width:100%;height:172px;border-radius:26px;overflow:hidden;
-  position:relative;cursor:pointer;
-  border:1.5px solid rgba(230,210,170,.4);
-  box-shadow:0 12px 36px rgba(0,0,0,.7),0 0 0 1px rgba(171,140,96,.22),
-    0 1px 0 rgba(255,255,255,.1) inset;
-  transition:transform .22s;
-}
-.food-photo-card:hover{transform:scale(1.02)}
-.food-photo-card .fp-photo{position:absolute;inset:0;background-size:cover;
-  background-color:#14120f;
-  background-image:var(--pimg,none);
-  background-position:center;transition:transform .4s ease}
-.food-photo-card:hover .fp-photo{transform:scale(1.06)}
-.food-photo-card .fp-grad{position:absolute;inset:0;
-  background:linear-gradient(to bottom,transparent 35%,rgba(0,0,0,.85) 100%)}
-.food-photo-card .fp-local{
-  position:absolute;top:11px;left:11px;
-  background:var(--glass-fill);
-  border:0.5px solid var(--glass-border-soft);border-top:0.5px solid var(--glass-border);
-  backdrop-filter:blur(14px) saturate(180%);-webkit-backdrop-filter:blur(14px) saturate(180%);
-  border-radius:var(--rp);
-  padding:3px 9px;font-size:9px;font-weight:800;color:var(--brs);letter-spacing:.06em;
-  box-shadow:0 1px 0 rgba(255,255,255,.12) inset}
-.food-photo-card .fp-body{position:absolute;bottom:0;left:0;right:0;padding:12px 12px 14px}
-.food-photo-card .fp-name{font-size:13px;font-weight:700;color:#fff;
-  line-height:1.25;margin-bottom:4px}
-.food-photo-card .fp-tags{display:flex;gap:4px;flex-wrap:wrap}
-.food-photo-card .fp-tag{font-size:9px;font-weight:600;
-  background:rgba(255,255,255,.14);border-radius:var(--rp);
-  padding:2px 7px;color:rgba(255,255,255,.85)}
-
-/* ══ LOCAL SEAL ══ */
-.local-seal{display:flex;align-items:center;gap:10px;margin:0 14px 14px;
-  background:linear-gradient(90deg,rgba(171,140,96,.11),rgba(107,82,51,.07));
-  border:0.5px solid rgba(171,140,96,.42);
-  border-top:0.5px solid rgba(226,202,156,.5);
-  border-radius:var(--rp);padding:10px 15px;
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 4px 16px rgba(0,0,0,.3)}
-.seal-ic{width:22px;height:22px;border-radius:50%;background:var(--glass-fill);
-  border:0.5px solid var(--glass-border-soft);border-top:0.5px solid var(--glass-border);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  box-shadow:0 1px 0 rgba(255,255,255,.14) inset;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.seal-ic svg{stroke:var(--brs)}
-.seal-txt{font-size:11px;color:var(--txt);font-weight:500;line-height:1.45}
-
-/* ══ STAY/CAFE ══ */
-.sub-tabs{display:flex;gap:6px;padding:0 14px;margin-bottom:12px}
-.stab{font-size:11px;font-weight:700;padding:7px 16px;border-radius:var(--rp);
-  border:0.5px solid var(--liqb);background:transparent;color:var(--txt3);
-  cursor:pointer;transition:all .22s cubic-bezier(.34,1.1,.64,1)}
-.stab.on{background:var(--glass-fill);color:var(--brs);
-  border-color:var(--glass-border-soft);border-top:0.5px solid var(--glass-border);
-  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
-  box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 6px 18px rgba(171,140,96,.2)}
-.lcard{padding:14px 16px;margin:0 14px 10px;cursor:pointer;transition:transform .15s}
-.lcard:active{transform:scale(.98)}
-.lcard-hd{display:flex;align-items:center;gap:10px;margin-bottom:11px}
-.lcard-ico{width:38px;height:38px;border-radius:18px;
-  background:rgba(171,140,96,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.lcard-name{font-size:14px;font-weight:700;color:var(--txt);flex:1}
-.lcard-tag{font-size:10px;padding:3px 10px;border-radius:var(--rp);
-  background:rgba(171,140,96,.14);color:var(--brx);font-weight:700;flex-shrink:0}
-.info-row{display:flex;align-items:center;gap:10px;font-size:12.5px;
-  color:var(--txt2);padding:7px 0;border-bottom:0.5px solid rgba(171,140,96,.09)}
-.info-row:last-child{border-bottom:none}
-.ic{width:14px;height:14px;flex-shrink:0;color:var(--brx)}
-.cafe-row{display:flex;gap:11px;align-items:center;
-  padding:12px 14px;margin:0 14px 9px;border-radius:26px;
-  cursor:pointer;transition:transform .15s}
-.cafe-row:active{transform:scale(.98)}
-.cafe-ico{width:40px;height:40px;border-radius:18px;
-  background:rgba(171,140,96,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-
-/* ══ ITINERARY ══ */
-.itin-banner{padding:14px 16px;margin:0 14px 12px}
-.itin-list{margin:0 14px;overflow:hidden;border-radius:28px;
-  border:0.5px solid rgba(171,140,96,.24);
-  border-top:0.5px solid rgba(171,140,96,.48);
-  background:rgba(171,140,96,.07);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 10px 30px rgba(0,0,0,.5);
-  position:relative}
-.itin-list::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;z-index:2;
-  background:linear-gradient(90deg,transparent,rgba(171,140,96,.5) 40%,rgba(232,214,174,.28) 50%,rgba(171,140,96,.5) 60%,transparent);pointer-events:none}
-.itin-step{display:flex;gap:10px;padding:13px 15px;
-  border-bottom:0.5px solid rgba(171,140,96,.08)}
-.itin-step:last-child{border-bottom:none}
-.itime{width:44px;font-size:11px;font-weight:800;color:var(--brx);text-align:right;flex-shrink:0;padding-top:1px}
-.iline{display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding-top:3px}
-.idot{width:8px;height:8px;border-radius:50%;background:var(--brl);flex-shrink:0;
-  box-shadow:0 0 8px rgba(171,140,96,.55)}
-.iconn{width:1px;flex:1;background:rgba(171,140,96,.18);margin-top:4px}
-.ititle{font-size:13px;font-weight:700;color:var(--txt)}
-.inote{font-size:11px;color:var(--txt2);margin-top:3px;line-height:1.5}
-.idur{font-size:10px;padding:2px 9px;border-radius:var(--rp);
-  background:rgba(171,140,96,.14);color:var(--brx);display:inline-block;margin-top:5px;font-weight:700}
-
-/* ══════════════════════════════════════
-   BOTTOM BAR — liquid glass pill floating
-══════════════════════════════════════ */
-#btmBar{
-  position:absolute;bottom:calc(14px + var(--sb));left:50%;transform:translateX(-50%);
-  display:flex;gap:1px;
-  background:rgba(7,6,4,.42);
-  border:0.5px solid rgba(171,140,96,.3);
-  border-top:0.5px solid rgba(171,140,96,.62);
-  border-radius:30px;padding:5px 6px;z-index:50;white-space:nowrap;
-  backdrop-filter:blur(36px) saturate(220%) brightness(1.12);
-  -webkit-backdrop-filter:blur(36px) saturate(220%) brightness(1.12);
-  box-shadow:
-    0 2px 0 rgba(255,255,255,.07) inset,
-    0 -1px 0 rgba(0,0,0,.28) inset,
-    0 16px 48px rgba(0,0,0,.75),
-    0 4px 20px rgba(171,140,96,.14),
-    0 0 0 0.5px rgba(171,140,96,.12)}
-.btab{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-  padding:8px 14px;border-radius:24px;cursor:pointer;
-  transition:transform .5s cubic-bezier(.22,1,.36,1);min-width:60px}
-.btab:active{transform:scale(.91)}
-#btmIndicator{position:absolute;top:5px;bottom:5px;left:0;z-index:0;pointer-events:none;
-  border-radius:24px;background:var(--glass-fill);
-  border:0.5px solid var(--glass-border-soft);border-top:0.5px solid var(--glass-border);
-  box-shadow:0 1px 0 rgba(255,255,255,.16) inset,0 6px 20px rgba(171,140,96,.22);
-  transition:transform .52s cubic-bezier(.22,1,.36,1),width .52s cubic-bezier(.22,1,.36,1)}
-.btab-ic{width:22px;height:22px;display:flex;align-items:center;justify-content:center;
-  transition:all .22s;opacity:.3}
-.btab.on .btab-ic{opacity:1}
-.btab-lbl{font-size:9px;font-weight:700;color:var(--txt3);transition:color .22s;letter-spacing:.03em;white-space:nowrap}
-.btab.on .btab-lbl{color:var(--brx)}
-
-/* ══════════════════════════════════════
-   FOOD DETAIL — expanded card, NOT full screen
-══════════════════════════════════════ */
-#foodModal{position:absolute;inset:0;z-index:85;pointer-events:none;opacity:0;
-  transition:opacity .28s ease;display:flex;align-items:center;justify-content:center}
-#foodModal.open{pointer-events:all;opacity:1}
-.fm-backdrop{position:absolute;inset:0;background:rgba(6,5,3,.7);
-  backdrop-filter:blur(8px) saturate(140%);-webkit-backdrop-filter:blur(8px) saturate(140%)}
-.fm-card{position:relative;width:calc(100% - 44px);max-width:400px;
-  margin:0;
-  border-radius:34px;overflow:hidden;
-  background:linear-gradient(165deg,rgba(34,27,18,.94),rgba(14,11,7,.97));
-  border:1px solid rgba(230,210,170,.3);border-top:1px solid rgba(230,210,170,.55);
-  backdrop-filter:blur(34px) saturate(190%);-webkit-backdrop-filter:blur(34px) saturate(190%);
-  box-shadow:0 30px 90px rgba(0,0,0,.8),
-    0 1px 0 rgba(255,255,255,.08) inset;
-  transform:scale(.92);opacity:0;
-  transition:transform .38s cubic-bezier(.16,1,.3,1),opacity .28s ease;
-  max-height:78vh;display:flex;flex-direction:column}
-#foodModal.open .fm-card{transform:scale(1);opacity:1}
-.fm-photo{height:190px;flex-shrink:0;position:relative;background-size:cover;
-  background-position:center;background-color:#14120f;
-  background-image:var(--pimg,none)}
-.fm-photo-grad{position:absolute;inset:0;
-  background:linear-gradient(to bottom,rgba(0,0,0,.05) 40%,rgba(10,8,5,.92) 100%)}
-.fm-close{position:absolute;top:13px;right:13px;width:32px;height:32px;border-radius:50%;
-  background:rgba(6,5,3,.55);border:0.5px solid rgba(255,255,255,.16);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
-.fm-body{padding:18px 20px 20px;overflow-y:auto}
-.fm-name{font-size:19px;font-weight:800;color:var(--txt);margin-bottom:8px;line-height:1.25}
-.fm-price{display:inline-flex;align-items:center;font-size:12.5px;font-weight:700;color:var(--brs);
-  background:var(--glass-fill);border:0.5px solid var(--glass-border-soft);
-  border-top:0.5px solid var(--glass-border);
-  padding:5px 13px;border-radius:var(--rp);margin-bottom:13px}
-.fm-desc{font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:15px}
-.fm-addr{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--txt2);
-  line-height:1.55;margin-bottom:18px}
-.fm-addr svg{flex-shrink:0;margin-top:1px;color:var(--brx)}
-.fm-actions{display:flex;gap:10px}
-.fm-directions{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
-  background:var(--glass-fill);color:var(--brs);
-  border:0.5px solid var(--glass-border-soft);border-top:0.5px solid var(--glass-border);
-  border-radius:var(--rp);
-  backdrop-filter:blur(22px) saturate(190%);-webkit-backdrop-filter:blur(22px) saturate(190%);
-  padding:13px;font-size:13.5px;font-weight:700;cursor:pointer;
-  box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 4px 18px rgba(171,140,96,.2);
-  transition:transform .12s}
-.fm-directions:active{transform:scale(.97)}
-
-/* ══════════════════════════════════════
-   PLACE DETAIL (hotel/cafe) — swipeable photo gallery
-══════════════════════════════════════ */
-#placeModal{position:absolute;inset:0;z-index:85;pointer-events:none;opacity:0;
-  transition:opacity .28s ease;display:flex;align-items:center;justify-content:center}
-#placeModal.open{pointer-events:all;opacity:1}
-.pm-backdrop{position:absolute;inset:0;background:rgba(6,5,3,.7);
-  backdrop-filter:blur(8px) saturate(140%);-webkit-backdrop-filter:blur(8px) saturate(140%)}
-.pm-card{position:relative;width:calc(100% - 44px);max-width:400px;
-  border-radius:34px;overflow:hidden;
-  background:linear-gradient(165deg,rgba(34,27,18,.94),rgba(14,11,7,.97));
-  border:1px solid rgba(230,210,170,.3);border-top:1px solid rgba(230,210,170,.55);
-  backdrop-filter:blur(34px) saturate(190%);-webkit-backdrop-filter:blur(34px) saturate(190%);
-  box-shadow:0 30px 90px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.08) inset;
-  transform:scale(.92);opacity:0;
-  transition:transform .38s cubic-bezier(.16,1,.3,1),opacity .28s ease;
-  max-height:82vh;display:flex;flex-direction:column}
-#placeModal.open .pm-card{transform:scale(1);opacity:1}
-.pm-photos-wrap{height:190px;flex-shrink:0;position:relative;overflow:hidden}
-.pm-photos{height:100%;width:100%;display:flex;overflow-x:auto;
-  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-.pm-photos::-webkit-scrollbar{display:none}
-.pm-photo{flex:0 0 100%;height:100%;position:relative;background-size:cover;background-position:center;
-  background-color:#14120f;
-  background-image:var(--pimg,none);
-  scroll-snap-align:start}
-.pm-photo-grad{position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(to bottom,rgba(0,0,0,.05) 40%,rgba(10,8,5,.9) 100%)}
-.pm-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;gap:5px;
-  justify-content:center;z-index:2;pointer-events:none}
-.pm-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.35);
-  transition:all .25s}
-.pm-dot.on{background:var(--brs);width:14px;border-radius:3px}
-.pm-close{position:absolute;top:13px;right:13px;width:32px;height:32px;border-radius:50%;
-  background:rgba(6,5,3,.55);border:0.5px solid rgba(255,255,255,.16);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3}
-.pm-body{padding:18px 20px 20px;overflow-y:auto}
-.pm-name{font-size:19px;font-weight:800;color:var(--txt);margin-bottom:8px;line-height:1.25}
-.pm-tag{display:inline-flex;align-items:center;font-size:12.5px;font-weight:700;color:var(--brs);
-  background:var(--glass-fill);border:0.5px solid var(--glass-border-soft);
-  border-top:0.5px solid var(--glass-border);
-  padding:5px 13px;border-radius:var(--rp);margin-bottom:13px}
-.pm-row{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--txt2);
-  line-height:1.55;margin-bottom:9px}
-.pm-row svg{flex-shrink:0;margin-top:1px;color:var(--brx)}
-.pm-actions{display:flex;gap:10px;margin-top:9px}
-.pm-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
-  border-radius:var(--rp);padding:13px;font-size:13.5px;font-weight:700;cursor:pointer;
-  transition:transform .12s}
-.pm-btn:active{transform:scale(.97)}
-.pm-btn.primary{background:var(--glass-fill);color:var(--brs);
-  border:0.5px solid var(--glass-border-soft);border-top:0.5px solid var(--glass-border);
-  backdrop-filter:blur(22px) saturate(190%);-webkit-backdrop-filter:blur(22px) saturate(190%);
-  box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 4px 18px rgba(171,140,96,.2)}
-.pm-btn.secondary{background:rgba(244,236,216,.06);color:var(--txt2);
-  border:0.5px solid rgba(244,236,216,.14)}
-
-
-/* ══════════════════════════════════════
-   DETAIL — FULL-SCREEN, infinite photo top
-══════════════════════════════════════ */
-#detailOv{position:absolute;inset:0;z-index:80;background:#060503;
-  display:flex;flex-direction:column;pointer-events:none;opacity:0}
-#detailOv.open{pointer-events:all;opacity:1}
-#detailOv .inner{display:flex;flex-direction:column;height:100%;
-  transform:translateY(60px);opacity:0;
-  transition:transform .46s cubic-bezier(.34,1.18,.64,1),opacity .3s ease}
-#detailOv.open .inner{transform:translateY(0);opacity:1}
-
-/* Full-screen photo hero */
-.d-photo-hero{
-  position:relative;
-  height:55vh;min-height:260px;max-height:380px;
-  flex-shrink:0;overflow:hidden;
-}
-.d-photo-bg{position:absolute;inset:0;background-size:cover;background-position:center;
-  background-color:#14120f;
-  background-image:radial-gradient(140% 140% at 25% 15%,#211d18 0%,#15120e 45%,#0a0908 100%);
-  transform:scale(1.06);
-  transition:transform .6s cubic-bezier(.34,1.12,.64,1)}
-#detailOv.open .d-photo-bg{transform:scale(1)}
-/* sky gradient top + deep gradient bottom */
-.d-photo-top-fade{position:absolute;top:0;left:0;right:0;height:100px;
-  background:linear-gradient(to bottom,rgba(6,5,3,.85),transparent);z-index:2}
-.d-photo-bot-fade{position:absolute;bottom:0;left:0;right:0;height:55%;
-  background:linear-gradient(to top,#060503 0%,rgba(6,5,3,.7) 55%,transparent 100%);z-index:2}
-/* back btn */
-.d-back{position:absolute;top:max(16px,var(--st));left:16px;z-index:10;
-  width:38px;height:38px;border-radius:50%;
-  background:rgba(6,5,3,.55);border:0.5px solid rgba(171,140,96,.38);
-  border-top:0.5px solid rgba(171,140,96,.65);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:0 1px 0 rgba(255,255,255,.06) inset;transition:background .15s,transform .12s}
-.d-back:active{transform:scale(.9)}
-/* floating title over photo bottom */
-.d-photo-caption{position:absolute;bottom:0;left:0;right:0;z-index:3;padding:0 20px 20px}
-.d-eyebrow{font-size:10px;font-weight:800;color:var(--brx);
-  letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
-.d-title{font-size:26px;font-weight:900;color:#fff;
-  letter-spacing:-.5px;line-height:1.15;margin-bottom:3px}
-
-/* scrollable body below hero */
-.d-body{flex:1;overflow-y:auto;padding:20px 20px calc(28px + var(--sb))}
-.d-body::-webkit-scrollbar{display:none}
-.d-cat{font-size:12px;color:var(--txt3);font-weight:500;margin-bottom:16px}
-.lang-row{display:flex;gap:6px;margin-bottom:14px}
-.ltag2{font-size:11px;font-weight:700;padding:6px 18px;border-radius:var(--rp);
-  cursor:pointer;transition:all .22s cubic-bezier(.34,1.1,.64,1);border:0.5px solid rgba(171,140,96,.28);
-  color:var(--txt3);background:transparent}
-.ltag2.on{background:var(--glass-fill);color:var(--brs);border-color:var(--glass-border-soft);
-  border-top:0.5px solid var(--glass-border);
-  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
-  box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 6px 18px rgba(171,140,96,.2)}
-.d-info{padding:4px 15px;margin-bottom:14px}
-.d-row{display:flex;align-items:center;gap:10px;
-  font-size:12.5px;color:var(--txt2);padding:9px 0;
-  border-bottom:0.5px solid rgba(171,140,96,.09)}
-.d-row:last-child{border-bottom:none}
-.d-ic{width:14px;height:14px;color:var(--brx);flex-shrink:0}
-.d-vtxt{font-size:13px;color:var(--txt2);line-height:1.78;
-  padding:14px 16px;border-radius:24px;margin-bottom:15px}
-.voice-btn{display:flex;align-items:center;gap:10px;
-  background:var(--glass-fill);color:var(--brs);
-  border:0.5px solid var(--glass-border-soft);border-top:0.5px solid var(--glass-border);
-  border-radius:var(--rp);
-  backdrop-filter:blur(24px) saturate(190%) brightness(1.08);
-  -webkit-backdrop-filter:blur(24px) saturate(190%) brightness(1.08);
-  padding:14px 24px;font-size:14px;font-weight:700;cursor:pointer;
-  width:100%;justify-content:center;
-  transition:opacity .18s,transform .12s;
-  box-shadow:0 4px 24px rgba(171,140,96,.24),0 1px 0 rgba(255,255,255,.18) inset}
-.voice-btn:active{transform:scale(.97)}
-.waves{display:flex;align-items:center;gap:2.5px;height:16px}
-.wb{width:2.5px;border-radius:3px;background:var(--brs);animation:wv .7s ease-in-out infinite}
-.wb:nth-child(1){height:4px;animation-delay:0s}.wb:nth-child(2){height:11px;animation-delay:.08s}
-.wb:nth-child(3){height:7px;animation-delay:.16s}.wb:nth-child(4){height:13px;animation-delay:.24s}
-.wb:nth-child(5){height:5px;animation-delay:.32s}.wb:nth-child(6){height:9px;animation-delay:.40s}
-@keyframes wv{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
-
-.sec{display:none}.sec.on{display:block}
-</style>
-</head>
-<body>
-<div id="app">
-
-<div id="topbar">
-  <div class="top-left">
-    <h1 id="topTitle">Oc Eo Town Walk</h1>
-  </div>
-  <div class="lang-pill">
-    <span class="ltag on" id="lvi" onclick="setLang('vi')">VI</span>
-    <span class="ltag" id="len" onclick="setLang('en')">EN</span>
-  </div>
-</div>
-
-<div id="scrl">
-
-  <!-- PLACES -->
-  <div class="sec on" id="sec-places">
-    <div class="sl" id="sl-places">Địa điểm tham quan</div>
-
-    <!-- PHOTO CARD STACK -->
-    <div id="stackWrap"></div>
-    <div class="stack-dots" id="dots"></div>
-    <p class="swipe-hint">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8L22 12L18 16"/><path d="M6 8L2 12L6 16"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
-      <span id="swipeHint">Vuốt trái / phải · Bấm để xem chi tiết</span>
-    </p>
-
-    <div class="sl" id="sl-map" style="margin-top:26px">Bản đồ Óc Eo</div>
-    <div class="map-outer">
-      <iframe id="mapFrame" class="gmap-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-        src="https://maps.google.com/maps?q=10.2557721,105.1534925&z=15&output=embed"></iframe>
-    </div>
-    <div class="map-chips" id="mapChips"></div>
-    <button class="map-open-btn" id="mapOpenBtn" onclick="openMapChipDirections()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-      <span id="mapOpenLbl">Mở trong Google Maps</span>
-    </button>
-  </div>
-
-
-  <!-- FOOD -->
-  <div class="sec" id="sec-food">
-    <div class="sl" id="sl-food">Ăn uống</div>
-    <div class="local-seal">
-      <div class="seal-ic">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f7f5ed" />
+    <meta
+      name="description"
+      content="Óc Eo townwalk — khám phá văn hóa Óc Eo theo cách của bạn. Bản đồ bỏ túi, lịch trình một ngày và bộ tem Óc Eo Pass."
+    />
+    <title>Óc Eo townwalk — Đi một vòng. Chạm ngàn năm.</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/assets/app-icon-192.png" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <link rel="stylesheet" href="/assets/app-shell.css" />
+    <link rel="stylesheet" href="/assets/vendor/leaflet.css" />
+    <script src="/assets/vendor/leaflet.js" defer></script>
+    <script type="module" src="/assets/app.js"></script>
+  </head>
+  <body class="townwalk-app">
+    <a class="skip-link" href="#main">Bỏ qua đến nội dung</a>
+    <header class="site-header app-header">
+      <a
+        href="#explore"
+        data-route="explore"
+        class="brand"
+        aria-label="Óc Eo townwalk, khám phá"
+        ><span data-mark></span
+        ><span>óc eo<span class="brand-sub">TOWNWALK</span></span></a
+      >
+      <div class="header-location">
+        <span data-icon="pin"></span
+        ><span>Óc Eo, An Giang<small>ĐI GẦN. CHẠM SÂU.</small></span>
       </div>
-      <span class="seal-txt" id="sealTxt">Chứng nhận Local Óc Eo — nơi người địa phương thực sự hay lui tới</span>
-    </div>
-    <div class="food-grid" id="foodGrid"></div>
-  </div>
-
-  <!-- STAY -->
-  <div class="sec" id="sec-stay">
-    <div class="sl" id="sl-stay">Dừng chân</div>
-
-    <div id="stayCafe"></div>
-
-    <div class="sl sl-sub" id="stayLbl" style="margin:24px 0 10px">Lưu trú</div>
-    <div id="stayHotel"></div>
-  </div>
-
-  <!-- ITINERARY -->
-  <div class="sec" id="sec-itin">
-    <div class="sl" id="sl-itin">Lịch trình</div>
-    <div class="itin-banner glass">
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A98C60" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span style="font-size:14px;font-weight:700;color:var(--txt)" id="itinTitle">Lịch trình 1 ngày — Óc Eo cơ bản</span>
-      </div>
-      <div style="font-size:11px;color:var(--txt2)" id="itinSub">Phù hợp khách trong ngày, xe máy hoặc ô tô</div>
-    </div>
-    <div class="itin-list" id="itinList"></div>
-  </div>
-
-</div><!-- /scrl -->
-
-<!-- BOTTOM BAR -->
-<div id="btmBar">
-  <div id="btmIndicator"></div>
-  <div class="btab on" id="bt0" onclick="switchMain('places',0)">
-    <div class="btab-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A98C60" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-    <span class="btab-lbl" id="bl0">Tham quan</span>
-  </div>
-  <div class="btab" id="bt1" onclick="switchMain('food',1)">
-    <div class="btab-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A98C60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="9" rx="9" ry="2.2"/><path d="M3 9v2c0 4.4 4 7.6 9 7.6s9-3.2 9-7.6V9"/><path d="M8.5 1.8c-.6 1-.6 1.6 0 2.6"/><path d="M12 1.2c-.6 1-.6 1.8 0 2.8"/><path d="M15.5 1.8c-.6 1-.6 1.6 0 2.6"/></svg></div>
-    <span class="btab-lbl" id="bl1">Ăn uống</span>
-  </div>
-  <div class="btab" id="bt2" onclick="switchMain('stay',2)">
-    <div class="btab-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A98C60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="21" x2="5" y2="3"/><path d="M5 4s1.2-1 4-1 4.5 2 7.5 2 3.5-1 3.5-1v10s-1.2 1-3.5 1-4.5-2-7.5-2-4 1-4 1"/></svg></div>
-    <span class="btab-lbl" id="bl2">Lưu trú</span>
-  </div>
-  <div class="btab" id="bt3" onclick="switchMain('itin',3)">
-    <div class="btab-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A98C60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.2 18h7.5a3.3 3.3 0 0 0 0-6.6h-7.4a3.3 3.3 0 0 1 0-6.6h7.3"/></svg></div>
-    <span class="btab-lbl" id="bl3">Lịch trình</span>
-  </div>
-</div>
-
-<!-- DETAIL OVERLAY — full screen photo -->
-<div id="detailOv">
-  <div class="inner">
-    <div class="d-photo-hero" id="dHero">
-      <div class="d-photo-bg" id="dPhotoBg"></div>
-      <div class="d-photo-top-fade"></div>
-      <div class="d-photo-bot-fade"></div>
-      <div class="d-back" onclick="closeDetail()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A98C60" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </div>
-      <div class="d-photo-caption">
-        <div class="d-eyebrow" id="dEyebrow"></div>
-        <div class="d-title" id="dTitle"></div>
-      </div>
-    </div>
-    <div class="d-body">
-      <div class="d-cat" id="dCat"></div>
-      <div class="lang-row">
-        <span class="ltag2 on" id="dl_vi" onclick="detailLang('vi')">Tiếng Việt</span>
-        <span class="ltag2" id="dl_en" onclick="detailLang('en')">English</span>
-      </div>
-      <div class="d-info glass" id="dInfo"></div>
-      <div class="d-vtxt glass" id="dVtxt"></div>
-      <audio id="voicePlayer" preload="none" style="display:none"></audio>
-      <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">
-        <svg id="vIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        <span id="vLbl">Nghe giới thiệu</span>
-        <div class="waves" id="vWave" style="display:none">
-          <div class="wb"></div><div class="wb"></div><div class="wb"></div>
-          <div class="wb"></div><div class="wb"></div><div class="wb"></div>
-        </div>
+      <button
+        class="circle-button"
+        id="account-button"
+        aria-label="Đăng nhập hoặc mở tài khoản"
+      >
+        <span data-icon="user"></span
+        ><span class="sr-only" id="account-label">Đăng nhập</span>
       </button>
-      <button class="fm-directions" style="width:100%;margin-top:10px" onclick="openMainPlaceDirections()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-        <span id="dDirLbl">Chỉ đường</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- FOOD DETAIL — expanded card, not full screen -->
-<div id="foodModal">
-  <div class="fm-backdrop" onclick="closeFoodDetail()"></div>
-  <div class="fm-card">
-    <div class="fm-photo" id="fmPhoto">
-      <div class="fm-photo-grad"></div>
-      <div class="fm-close" onclick="closeFoodDetail()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </div>
-    </div>
-    <div class="fm-body">
-      <div class="fm-name" id="fmName"></div>
-      <div class="fm-price" id="fmPrice"></div>
-      <div class="fm-desc" id="fmDesc"></div>
-      <div class="fm-addr">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <span id="fmAddr"></span>
-      </div>
-      <div class="fm-actions">
-        <button class="fm-directions" onclick="openFoodDirections()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-          <span id="fmDirLbl">Chỉ đường</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PLACE DETAIL (hotel/cafe) — swipeable photo gallery -->
-<div id="placeModal">
-  <div class="pm-backdrop" onclick="closePlaceDetail()"></div>
-  <div class="pm-card">
-    <div class="pm-photos-wrap">
-      <div class="pm-photos" id="pmPhotos"></div>
-      <div class="pm-dots" id="pmDots"></div>
-    </div>
-    <div class="pm-close" onclick="closePlaceDetail()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </div>
-    <div class="pm-body">
-      <div class="pm-name" id="pmName"></div>
-      <div class="pm-tag" id="pmTag"></div>
-      <div class="pm-row">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        <span id="pmAddr"></span>
-      </div>
-      <div class="pm-row" id="pmNoteRow">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span id="pmNote"></span>
-      </div>
-      <div class="pm-row">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        <span id="pmPhone"></span>
-      </div>
-      <div class="pm-actions">
-        <button class="pm-btn primary" onclick="openPlaceDirections()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-          <span id="pmDirLbl">Chỉ đường</span>
-        </button>
-        <button class="pm-btn secondary" onclick="openPlaceContact()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          <span id="pmContactLbl">Liên hệ</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-</div><!-- /app -->
-<script>
-/* ══ ICONS ══ */
-const IC={
-  pin:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
-  clock:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
-  ticket:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/></svg>`,
-  mappin:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
-  car:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-3"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>`,
-  mountain:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="3 20 15 4 21 14 17 14 20 20"/></svg>`,
-  sunset:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/></svg>`,
-  history:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>`,
-  fish:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6z"/></svg>`,
-  users:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-  hotel:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A98C60" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
-  wifi:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>`,
-  coffee:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A98C60" stroke-width="2" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
-  phone:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
-  route:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A98C60" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>`,
-};
-
-/* ══ PHOTO URLS — Unsplash open access themed to each place ══ */
-// In production: replace with real local photos from Óc Eo
-const PHOTOS = [
-  // Di tích Óc Eo — ancient ruins feel
-  'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800&q=80',
-  // Núi Ba Thê — mountain/hill landscape
-  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
-  // Kênh Thoại Hà — river canal sunset
-  'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80',
-  // Chợ Óc Eo — market scene
-  'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=800&q=80',
-  // Chùa Linh Sơn — temple / pagoda
-  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
-];
-
-const FOOD_PHOTOS = [
-  'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=75',
-  'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=75',
-  'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=75',
-  'https://images.unsplash.com/photo-1607189699688-c84c3e59af56?w=400&q=75',
-  'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=75',
-  'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=75',
-];
-
-const HOTEL_PHOTOS = [
-  ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80',
-   'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&q=80',
-   'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80'],
-  ['https://images.unsplash.com/photo-1521783988139-89397d761dce?w=800&q=80',
-   'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800&q=80',
-   'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800&q=80'],
-];
-const CAFE_PHOTOS = [
-  ['https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80',
-   'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80'],
-  ['https://images.unsplash.com/photo-1495556650867-99590cea3657?w=800&q=80',
-   'https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=800&q=80'],
-  ['https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80',
-   'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&q=80'],
-];
-
-/* ══ DATA ══ */
-const DEFAULT_DATA = {
-  places:[
-    {photo:PHOTOS[0],
-     name:{vi:'Di tích Óc Eo',en:'Óc Eo Heritage Site'},
-     eyebrow:{vi:'Khảo cổ học',en:'Archaeology'},
-     cat:{vi:'Di sản văn hóa quốc gia · Thế kỷ I–VII',en:'National Cultural Heritage · 1st–7th century'},
-     badge:{vi:'Miễn phí',en:'Free entry'},
-     desc:{vi:'Trung tâm thương mại cảng thị của vương quốc Phù Nam',en:'Commercial port hub of the ancient Funan Kingdom'},
-     info:{
-       vi:[{icon:'clock',text:'Mở cửa 7h–17h hằng ngày'},{icon:'ticket',text:'Vào cửa miễn phí'},{icon:'mappin',text:'TT Óc Eo, Thoại Sơn, An Giang'},{icon:'car',text:'~15km từ Long Xuyên'}],
-       en:[{icon:'clock',text:'Open daily 7am–5pm'},{icon:'ticket',text:'Free admission'},{icon:'mappin',text:'Óc Eo Town, Thoai Son, An Giang'},{icon:'car',text:'~15km from Long Xuyen'}]
-     },
-     text:{vi:'Khu di tích khảo cổ Óc Eo là trung tâm thương mại cảng thị của vương quốc Phù Nam từ thế kỷ 1–7 sau Công nguyên. Đây từng là điểm giao thương giữa Ấn Độ, Trung Quốc và các nước Đông Nam Á — một trong những nền văn minh lớn nhất Đông Nam Á cổ đại.',
-          en:'The Óc Eo Archaeological Site was the thriving commercial port of the Funan Kingdom (1st–7th century AD) — a major crossroads of trade between India, China, and Southeast Asia, and one of the greatest ancient civilizations in the region.'},
-     audio:{vi:'',en:''},geo:''},
-    {photo:PHOTOS[1],
-     name:{vi:'Núi Ba Thê',en:'Ba The Mountain'},
-     eyebrow:{vi:'Văn hóa · Tâm linh',en:'Culture · Spirituality'},
-     cat:{vi:'Ngọn núi duy nhất vùng đồng bằng · 221m',en:'Only mountain in the Mekong Delta · 221m'},
-     badge:{vi:'~5k/người',en:'~5k VND'},
-     desc:{vi:'Leo núi, thăm chùa chiền, ngắm toàn cảnh Thoại Sơn',en:'Hike, visit pagodas, panoramic view of Thoai Son'},
-     info:{
-       vi:[{icon:'mountain',text:'Cao 221m — ngọn núi duy nhất đồng bằng'},{icon:'ticket',text:'~5.000đ/người'},{icon:'sunset',text:'Đẹp nhất vào sáng sớm'},{icon:'mappin',text:'Thị trấn Óc Eo'}],
-       en:[{icon:'mountain',text:'221m — only mountain in the Mekong Delta'},{icon:'ticket',text:'~5,000 VND/person'},{icon:'sunset',text:'Best visited early morning'},{icon:'mappin',text:'Óc Eo Town'}]
-     },
-     text:{vi:'Núi Ba Thê cao 221m, là ngọn núi duy nhất vùng đồng bằng sông Cửu Long. Trên núi có nhiều chùa chiền và hàng nghìn hiện vật khảo cổ Óc Eo quý giá. Từ đỉnh núi có thể ngắm toàn cảnh vùng Thoại Sơn tuyệt đẹp.',
-          en:'Ba The Mountain stands 221m — the only mountain in the entire Mekong Delta. It houses several sacred pagodas and thousands of precious Óc Eo artifacts. The summit offers a stunning panoramic view of Thoai Son.'},
-     audio:{vi:'',en:''},geo:''},
-    {photo:PHOTOS[2],
-     name:{vi:'Kênh Thoại Hà',en:'Thoai Ha Canal'},
-     eyebrow:{vi:'Thiên nhiên · Lịch sử',en:'Nature · History'},
-     cat:{vi:'Đào năm 1818 · Hoàng hôn tuyệt đẹp',en:'Built 1818 · Stunning sunset views'},
-     badge:{vi:'Tự do',en:'Free'},
-     desc:{vi:'Công trình thủy lợi vĩ đại thời Nguyễn, điểm ngắm hoàng hôn',en:'Magnificent hydraulic feat, perfect sunset watching spot'},
-     info:{
-       vi:[{icon:'history',text:'Đào năm 1818 dưới thời Thoại Ngọc Hầu'},{icon:'ticket',text:'Tham quan tự do'},{icon:'sunset',text:'Hoàng hôn đẹp 17h–18h30'},{icon:'mappin',text:'Chạy dọc thị trấn Óc Eo'}],
-       en:[{icon:'history',text:'Dug in 1818 by Thoai Ngoc Hau'},{icon:'ticket',text:'Free to visit'},{icon:'sunset',text:'Stunning sunsets 5–6:30pm'},{icon:'mappin',text:'Runs along Óc Eo Town'}]
-     },
-     text:{vi:'Kênh Thoại Hà được đào năm 1818 dưới sự chỉ huy của Thoại Ngọc Hầu — công trình thủy lợi vĩ đại thời Nguyễn. Ngày nay, ngoài là huyết mạch giao thông, kênh còn là điểm ngắm hoàng hôn tuyệt đẹp nhất vùng Thoại Sơn.',
-          en:'Thoai Ha Canal was dug in 1818 — a remarkable hydraulic feat of the Nguyen Dynasty. Today it remains a vital waterway and the most stunning sunset-watching spot in Thoai Son district.'},
-     audio:{vi:'',en:''},geo:''},
-    {photo:PHOTOS[3],
-     name:{vi:'Chợ Óc Eo',en:'Óc Eo Market'},
-     eyebrow:{vi:'Văn hóa · Ẩm thực',en:'Culture · Food'},
-     cat:{vi:'Họp từ 4h30 sáng · Đặc sản địa phương',en:'Opens 4:30am · Local specialties'},
-     badge:{vi:'Tự vào',en:'Free entry'},
-     desc:{vi:'Mua đặc sản khô cá sặc, mắm đồng, bánh dân gian',en:'Dried fish, fermented paste & traditional local cakes'},
-     info:{
-       vi:[{icon:'clock',text:'Họp từ 4h30 sáng — đông nhất 5h–8h'},{icon:'ticket',text:'Tự do vào chợ'},{icon:'fish',text:'Khô cá sặc, mắm đồng, bánh dân gian'},{icon:'mappin',text:'Trung tâm thị trấn Óc Eo'}],
-       en:[{icon:'clock',text:'Opens 4:30am — busiest 5–8am'},{icon:'ticket',text:'Free entry'},{icon:'fish',text:'Dried fish, fermented paste, local cakes'},{icon:'mappin',text:'Town center of Óc Eo'}]
-     },
-     text:{vi:'Chợ Óc Eo họp từ tờ mờ sáng, bán đặc sản địa phương như khô cá sặc, mắm đồng, tôm khô và bánh dân gian. Đây là nơi tuyệt vời để cảm nhận nhịp sống bình dị và chân thật nhất của người dân Thoại Sơn.',
-          en:"Óc Eo Market opens before dawn, selling local specialties like dried fish, fermented paste, dried shrimp, and traditional cakes. The most authentic way to experience everyday Thoai Son life."},
-     audio:{vi:'',en:''},geo:''},
-    {photo:PHOTOS[4],
-     name:{vi:'Chùa Linh Sơn',en:'Linh Son Pagoda'},
-     eyebrow:{vi:'Phật giáo · Khmer',en:'Buddhism · Khmer'},
-     cat:{vi:'Phật giáo Nam Tông · Cộng đồng Khmer',en:'Theravada Buddhism · Khmer community'},
-     badge:{vi:'Miễn phí',en:'Free'},
-     desc:{vi:'Kiến trúc Khmer rực rỡ giữa vùng đồng bằng yên bình',en:'Vibrant Khmer architecture in a serene delta landscape'},
-     info:{
-       vi:[{icon:'clock',text:'Mở cửa 6h–18h'},{icon:'ticket',text:'Miễn phí — ăn mặc kín đáo'},{icon:'users',text:'Cộng đồng Khmer sinh sống tại đây'},{icon:'mappin',text:'Xã Vọng Thê, Thoại Sơn'}],
-       en:[{icon:'clock',text:'Open 6am–6pm'},{icon:'ticket',text:'Free — dress modestly'},{icon:'users',text:'Active Khmer community on-site'},{icon:'mappin',text:'Vong The Commune, Thoai Son'}]
-     },
-     text:{vi:'Chùa Linh Sơn là ngôi chùa Phật giáo Nam Tông lâu đời, nơi sinh hoạt văn hóa tâm linh của bà con người Khmer tại Thoại Sơn. Kiến trúc Khmer rực rỡ cùng không gian yên tĩnh tạo nên nét đặc sắc hiếm có.',
-          en:'Linh Son Pagoda is an ancient Theravada Buddhist temple and spiritual anchor of the Khmer community in Thoai Son. Its vibrant Khmer architecture and rare tranquility make it a serene escape in the flat delta.'},
-     audio:{vi:'',en:''},geo:''}
-  ],
-  foods:[
-    {photo:FOOD_PHOTOS[0],name:{vi:'Bún cá Óc Eo',en:'Óc Eo Fish Noodle'},tags:{vi:['15k–25k','Đặc sản'],en:['15–25k VND','Local']},
-      price:{vi:'15.000₫ – 25.000₫',en:'15,000 – 25,000 VND'},
-      desc:{vi:'Nước lèo cá lóc đồng nấu nghệ tươi, ăn kèm bông điên điển và rau đắng — món ăn sáng quen thuộc của người Óc Eo.',en:'Fish broth simmered with fresh turmeric, served with local wildflowers and bitter herbs — a classic Óc Eo breakfast.'},
-      addr:{vi:'Chợ Óc Eo, TT Óc Eo, Thoại Sơn, An Giang',en:'Óc Eo Market, Óc Eo Town, Thoai Son, An Giang'},geo:''},
-    {photo:FOOD_PHOTOS[1],name:{vi:'Lẩu mắm',en:'Mam Hotpot'},tags:{vi:['60k+','Miền Tây'],en:['60k+','Mekong']},
-      price:{vi:'Từ 60.000₫/phần',en:'From 60,000 VND/serving'},
-      desc:{vi:'Lẩu mắm đậm vị miền Tây với đủ loại rau đồng và cá tươi, thường dùng chung cho 2–4 người.',en:'A bold Mekong-style hotpot with local wild vegetables and fresh fish, typically shared by 2–4 people.'},
-      addr:{vi:'Quốc lộ 943, gần chợ Óc Eo, Thoại Sơn, An Giang',en:'National Road 943, near Óc Eo Market, Thoai Son, An Giang'},geo:''},
-    {photo:FOOD_PHOTOS[2],name:{vi:'Cơm tấm sườn',en:'Broken Rice & Pork'},tags:{vi:['20k–35k'],en:['20–35k VND']},
-      price:{vi:'20.000₫ – 35.000₫',en:'20,000 – 35,000 VND'},
-      desc:{vi:'Cơm tấm sườn nướng thơm lừng, ăn kèm bì, chả trứng và nước mắm chua ngọt đặc trưng.',en:'Grilled pork over broken rice, served with shredded pork skin, egg cake, and sweet fish sauce.'},
-      addr:{vi:'Đường Lê Lợi, TT Óc Eo, Thoại Sơn, An Giang',en:'Le Loi Street, Óc Eo Town, Thoai Son, An Giang'},geo:''},
-    {photo:FOOD_PHOTOS[3],name:{vi:'Khô cá sặc',en:'Dried Fish'},tags:{vi:['Mua về'],en:['Take home']},
-      price:{vi:'80.000₫ – 150.000₫/kg',en:'80,000 – 150,000 VND/kg'},
-      desc:{vi:'Khô cá sặc rằn phơi nắng tự nhiên, đặc sản mang về nổi tiếng của vùng Óc Eo – Thoại Sơn.',en:'Sun-dried snakeskin gourami, a famous take-home specialty from the Óc Eo – Thoai Son region.'},
-      addr:{vi:'Chợ Óc Eo, TT Óc Eo, Thoại Sơn, An Giang',en:'Óc Eo Market, Óc Eo Town, Thoai Son, An Giang'},geo:''},
-    {photo:FOOD_PHOTOS[4],name:{vi:'Gỏi cuốn tôm',en:'Spring Rolls'},tags:{vi:['15k–20k'],en:['15–20k VND']},
-      price:{vi:'15.000₫ – 20.000₫',en:'15,000 – 20,000 VND'},
-      desc:{vi:'Gỏi cuốn tươi mát với tôm, bún và rau sống, chấm cùng nước mắm chua ngọt hoặc tương đậu phộng.',en:'Fresh rolls with shrimp, rice noodles and herbs, served with sweet fish sauce or peanut dipping sauce.'},
-      addr:{vi:'Đường Lê Lợi, TT Óc Eo, Thoại Sơn, An Giang',en:'Le Loi Street, Óc Eo Town, Thoai Son, An Giang'},geo:''},
-    {photo:FOOD_PHOTOS[5],name:{vi:'Bánh ít lá gai',en:'Gai Leaf Cake'},tags:{vi:['5k–10k','Truyền thống'],en:['5–10k','Traditional']},
-      price:{vi:'5.000₫ – 10.000₫/cái',en:'5,000 – 10,000 VND/piece'},
-      desc:{vi:'Bánh nếp lá gai nhân đậu xanh dừa, vị dẻo thơm truyền thống, thường xuất hiện trong dịp lễ.',en:'Sticky rice cake with gai leaf, mung bean and coconut filling — a traditional treat often served at festivals.'},
-      addr:{vi:'Chợ Óc Eo, TT Óc Eo, Thoại Sơn, An Giang',en:'Óc Eo Market, Óc Eo Town, Thoai Son, An Giang'},geo:''},
-  ],
-  hotels:[
-    {photos:HOTEL_PHOTOS[0],name:{vi:'Khách sạn Óc Eo Inn',en:'Óc Eo Inn Hotel'},type:{vi:'Khách sạn',en:'Hotel'},price:{vi:'250k–400k/đêm',en:'250–400k VND/night'},addr:{vi:'12 Đường Lê Lợi, TT Óc Eo',en:'12 Le Loi St, Óc Eo Town'},phone:'0296 123 456',amenities:{vi:'Wifi · Điều hoà · Bãi xe',en:'Wifi · AC · Parking'},geo:''},
-    {photos:HOTEL_PHOTOS[1],name:{vi:'Nhà nghỉ Thanh Bình',en:'Thanh Binh Guesthouse'},type:{vi:'Nhà nghỉ',en:'Guesthouse'},price:{vi:'120k–180k/đêm',en:'120–180k VND/night'},addr:{vi:'45 Trần Hưng Đạo, Óc Eo',en:'45 Tran Hung Dao, Óc Eo'},phone:'0909 234 567',amenities:{vi:'Gần chợ, sạch sẽ, bình dân',en:'Near market, clean, budget-friendly'},geo:''}
-  ],
-  cafes:[
-    {photos:CAFE_PHOTOS[0],name:{vi:'Cafe Đồng Quê',en:'Dong Que Cafe'},hours:{vi:'7h–21h',en:'7am–9pm'},note:{vi:'View đồng lúa',en:'Rice field view'},price:{vi:'Cà phê 15k · Sinh tố 25k',en:'Coffee 15k · Smoothie 25k'},addr:{vi:'Đường ra Núi Ba Thê, Óc Eo',en:'Road to Ba The Mountain, Óc Eo'},phone:'0913 456 789',geo:''},
-    {photos:CAFE_PHOTOS[1],name:{vi:'Trà sữa Thảo',en:"Thao's Milk Tea"},hours:{vi:'9h–22h',en:'9am–10pm'},note:{vi:'Trung tâm thị trấn',en:'Town center'},price:{vi:'Trà sữa 25k–40k',en:'Milk tea 25–40k VND'},addr:{vi:'Đường Lê Lợi, TT Óc Eo',en:'Le Loi Street, Óc Eo Town'},phone:'0908 567 890',geo:''},
-    {photos:CAFE_PHOTOS[2],name:{vi:'Quán nước Bà Năm',en:"Ba Nam's Drinks"},hours:{vi:'5h–11h',en:'5am–11am'},note:{vi:'Gần chợ',en:'Near market'},price:{vi:'Trà đá 5k',en:'Iced tea 5k VND'},addr:{vi:'Gần chợ Óc Eo, Thoại Sơn',en:'Near Óc Eo Market, Thoai Son'},phone:'0977 345 678',geo:''}
-  ],
-  itinerary:{
-    title:{vi:'Lịch trình 1 ngày — Óc Eo cơ bản',en:'1-Day Itinerary — Óc Eo Highlights'},
-    sub:{vi:'Phù hợp khách trong ngày, xe máy hoặc ô tô',en:'Ideal for day-trippers by motorbike or car'},
-    steps:[
-      {time:'7:00',title:{vi:'Ăn sáng bún cá',en:'Breakfast — fish noodles'},note:{vi:'Chợ Óc Eo, cảm nhận buổi sáng miền Tây',en:'Óc Eo Market — soak in the Mekong morning vibe'},dur:{vi:'~45 phút',en:'~45 min'}},
-      {time:'8:00',title:{vi:'Di tích Óc Eo',en:'Óc Eo Heritage Site'},note:{vi:'Khu khảo cổ cổ đại, nghe voice guide tại chỗ',en:'Ancient site — use audio guide in-app'},dur:{vi:'~90 phút',en:'~90 min'}},
-      {time:'10:00',title:{vi:'Cafe Đồng Quê',en:'Dong Que Cafe'},note:{vi:'Nghỉ chân, cà phê nhìn ra cánh đồng lúa',en:'Rest stop, coffee overlooking rice fields'},dur:{vi:'~30 phút',en:'~30 min'}},
-      {time:'11:00',title:{vi:'Núi Ba Thê',en:'Ba The Mountain'},note:{vi:'Leo núi, thăm chùa, ngắm toàn cảnh Thoại Sơn',en:'Hike, visit pagodas, panoramic view'},dur:{vi:'~2 giờ',en:'~2 hrs'}},
-      {time:'13:30',title:{vi:'Ăn trưa lẩu mắm',en:'Lunch — Mam hotpot'},note:{vi:'Đặc sản không thể bỏ qua của miền Tây',en:'A must-try Mekong Delta specialty'},dur:{vi:'~60 phút',en:'~60 min'}},
-      {time:'15:00',title:{vi:'Kênh Thoại Hà & mua quà',en:'Thoai Ha Canal & souvenirs'},note:{vi:'Dạo bờ kênh, mua khô cá sặc về làm quà',en:'Stroll the canal, buy dried fish as gifts'},dur:{vi:'~60 phút',en:'~60 min'}}
-    ]
-  },
-  ui:{
-    seal:{vi:'Chứng nhận Local Óc Eo — nơi người địa phương thực sự hay lui tới',en:'Local Óc Eo Certified — places locals actually go'},
-    voiceListen:{vi:'Nghe giới thiệu',en:'Listen to audio guide'},
-    voicePlaying:{vi:'Đang phát...',en:'Playing...'},
-    stayLbl:{vi:'Lưu trú',en:'Lodging'},cafeLbl:{vi:'Dừng chân',en:'Pit stops'},
-    tabs:{vi:['Tham quan','Ăn uống','Dừng chân','Lịch trình'],en:['Attractions','Food','Stops','Itinerary']}
-  }
-};
-
-let D=DEFAULT_DATA,lang='vi',stackIdx=0;
-let dragX=0,isDrag=false,dragDelta=0;
-let voicePlaying=false,curDetailIdx=0,detailLangCur='vi';
-
-function buildAll(){
-  buildStack();buildFood();buildHotels();buildCafes();buildItinerary();renderMapChips();updateLangUI();
-  requestAnimationFrame(moveBtmIndicator);
-}
-
-/* ── STACK ── */
-function buildStack(){
-  const w=document.getElementById('stackWrap');w.innerHTML='';
-  D.places.forEach((p,i)=>{
-    const c=document.createElement('div');c.className='pcard';c.id='pc'+i;
-    c.innerHTML=`
-      <div class="pcard-photo" style="${p.photo?`--pimg:url('${p.photo}')`:''}"></div>
-      <div class="pcard-grad"></div>
-      <div class="pcard-badge">${p.badge?.[lang]||''}</div>
-      <div class="pcard-fav" onclick="event.stopPropagation()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(244,236,216,.8)" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </div>
-      <div class="pcard-foot">
-        <div class="pcard-eyebrow">${p.eyebrow?.[lang]||''}</div>
-        <div class="pcard-name">${p.name[lang]}</div>
-        <div class="pcard-desc">${p.desc?.[lang]||''}</div>
-        <div class="pcard-meta">
-          <span class="pcard-pill">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Óc Eo
-          </span>
-          <span class="pcard-pill">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            ${lang==='vi'?'Bấm để xem':'Tap to view'}
-          </span>
+    </header>
+    <main id="main" class="app-main">
+      <section
+        id="view-explore"
+        class="app-view"
+        data-view="explore"
+        aria-labelledby="explore-heading"
+      >
+        <div
+          id="connection-state"
+          class="connection-state"
+          role="status"
+          hidden
+        >
+          Đang ngoại tuyến · tư liệu đã tải vẫn xem được, bản đồ nền và đồng bộ
+          cần mạng.
         </div>
-      </div>`;
-    c.onclick=()=>{if(Math.abs(dragDelta)<8)openDetail(stackIdx)};
-    w.appendChild(c);
-  });
-  buildDots();renderStack();
-}
+        <div class="today-line">
+          <span>✳ ĐI CHƠI CÙNG DI SẢN</span
+          ><span class="guest-pill">Không cần đăng nhập</span>
+        </div>
+        <label class="search-field"
+          ><span data-icon="compass"></span
+          ><input
+            id="place-search"
+            type="search"
+            placeholder="Tìm Gò Sáu Thuận, Gò Út Trạch…"
+            aria-label="Tìm địa điểm"
+        /></label>
+        <div class="pocket-hero">
+          <div class="pocket-hero-copy">
+            <span class="eyebrow">ĐI MỘT VÒNG ÓC EO</span>
+            <h1 id="explore-heading" tabindex="-1">
+              Ngàn năm tuổi.<br /><span class="serif">Vẫn rất cuốn.</span>
+            </h1>
+            <p>Đi chậm. Chạm di sản.<br />Khám phá Óc Eo theo cách của bạn.</p>
+            <a href="#map" data-route="map" class="button dark"
+              >Đi thôi! <span data-icon="arrowup"></span
+            ></a>
+          </div>
+          <img
+            src="/assets/photos/ba-the.jpg"
+            alt="Núi Ba Thê nhìn từ đường Gò Cây Thị; ảnh Bùi Thụy Đào Nguyên, CC BY-SA 3.0"
+            width="900"
+            height="560"
+          /><span class="hero-sticker">ÓC EO<br /><b>is calling ↗</b></span
+          ><span class="hero-photo-credit"
+            >Ảnh: Bùi Thụy Đào Nguyên · CC BY-SA 3.0</span
+          >
+        </div>
+        <div class="pocket-shortcuts">
+          <a href="#day" data-route="day" class="pocket-widget lavender"
+            ><span data-icon="clock"></span><strong>Một ngày Óc Eo</strong
+            ><small>Đi sao cho trọn? ↗</small></a
+          ><a href="#pass" data-route="pass" class="pocket-widget butter"
+            ><span data-icon="passport"></span><strong>Óc Eo Pass</strong
+            ><small>Gom tem. Khoe Óc Eo. ↗</small></a
+          >
+        </div>
+        <details class="culture-quick">
+          <summary>
+            Óc Eo là gì mà đáng đi? <span>Đọc trong 30 giây ↗</span>
+          </summary>
+          <p>
+            Văn hóa khảo cổ phát triển ở Nam Bộ trong những thế kỷ đầu Công
+            nguyên, thường được giới thiệu với giai đoạn thế kỷ I–VII. Ở Óc Eo –
+            Ba Thê, nền móng, hạt chuỗi, đồ kim hoàn và dấu kênh cổ giúp tìm
+            hiểu cư trú, tín ngưỡng và mạng lưới giao thương xưa.
+          </p>
+          <p>
+            Hồ sơ đang được đề cử UNESCO; không gọi là Di sản thế giới đã được
+            ghi danh.
+          </p>
+          <button class="text-button" data-action="sources">
+            Xem nguồn tư liệu ↗
+          </button>
+        </details>
+        <div class="browse-heading">
+          <div>
+            <span class="eyebrow">CHỌN MỘT ĐIỂM BẮT ĐẦU</span>
+            <h2>Hôm nay <span class="serif">đi đâu?</span></h2>
+          </div>
+          <a
+            href="#map"
+            data-route="map"
+            class="circle-button"
+            aria-label="Xem trên bản đồ"
+            ><span data-icon="map"></span
+          ></a>
+        </div>
 
-function buildDots(){
-  const d=document.getElementById('dots');d.innerHTML='';
-  D.places.forEach((_,i)=>{const dot=document.createElement('div');
-    dot.className='sdot'+(i===stackIdx?' on':'');
-    dot.onclick=()=>{stackIdx=i;renderStack()};d.appendChild(dot)});
-}
-
-function renderStack(offset=0){
-  const n=D.places.length;
-  for(let i=0;i<n;i++){
-    const c=document.getElementById('pc'+i);if(!c)continue;
-    const d=i-stackIdx;let tx=0,ty=0,sc=1,rot=0,op=1,zi=n-Math.abs(d);
-    if(d===0){zi=n+1;tx=offset;rot=offset/22}
-    else if(d===-1){tx=-110+offset*.3;ty=12;sc=.86;rot=-6;op=.5;zi=n-1}
-    else if(d===1){tx=110+offset*.3;ty=12;sc=.86;rot=6;op=.5;zi=n-1}
-    else if(d<-1){tx=-160;ty=22;sc=.74;rot=-10;op=.15;zi=0}
-    else{tx=160;ty=22;sc=.74;rot=10;op=.15;zi=0}
-    c.style.cssText=`transform:translateX(${tx}px) translateY(${ty}px) scale(${sc}) rotate(${rot}deg);opacity:${op};z-index:${zi}`;
-  }
-  document.querySelectorAll('.sdot').forEach((d,i)=>d.classList.toggle('on',i===stackIdx));
-}
-
-const sw=document.getElementById('stackWrap');
-function pcardsSetTransition(on){
-  document.querySelectorAll('.pcard').forEach(c=>{c.style.transition=on?'':'none'});
-}
-function startDrag(x){isDrag=true;dragDelta=0;dragX=x;pcardsSetTransition(false)}
-function moveDrag(x){
-  if(!isDrag)return;
-  dragDelta=x-dragX;
-  const n=D.places.length;
-  let offset=dragDelta;
-  /* lực cản khi kéo quá đầu/cuối danh sách (rubber-band) */
-  if(offset>0&&stackIdx===0)offset*=.35;
-  if(offset<0&&stackIdx===n-1)offset*=.35;
-  renderStack(offset);
-}
-function endDrag(){
-  if(!isDrag)return;isDrag=false;
-  pcardsSetTransition(true);
-  if(dragDelta<-44&&stackIdx<D.places.length-1){stackIdx++}
-  else if(dragDelta>44&&stackIdx>0){stackIdx--}
-  dragDelta=0;
-  renderStack();
-}
-sw.addEventListener('mousedown',e=>startDrag(e.clientX));
-sw.addEventListener('touchstart',e=>startDrag(e.touches[0].clientX),{passive:true});
-sw.addEventListener('mousemove',e=>moveDrag(e.clientX));
-sw.addEventListener('touchmove',e=>moveDrag(e.touches[0].clientX),{passive:true});
-sw.addEventListener('mouseup',endDrag);sw.addEventListener('touchend',endDrag);sw.addEventListener('mouseleave',endDrag);
-
-/* ── FOOD ── */
-function buildFood(){
-  document.getElementById('foodGrid').innerHTML=D.foods.map((f,i)=>`
-    <div class="food-photo-card" onclick="openFoodDetail(${i})">
-      <div class="fp-photo" style="${f.photo?`--pimg:url('${f.photo}')`:''}"></div>
-      <div class="fp-grad"></div>
-      <div class="fp-local">LOCAL</div>
-      <div class="fp-body">
-        <div class="fp-name">${f.name[lang]}</div>
-        <div class="fp-tags">${f.tags[lang].map(t=>`<span class="fp-tag">${t}</span>`).join('')}</div>
+        <div class="filter-row" role="group" aria-label="Loại địa điểm">
+          <button class="chip active" data-filter="heritage">
+            Di sản <span data-icon="temple"></span></button
+          ><button class="chip" data-filter="food">
+            Ăn gì ngon? <span data-icon="food"></span></button
+          ><button class="chip" data-filter="rest">
+            Nghỉ chân <span data-icon="coffee"></span>
+          </button>
+        </div>
+        <details class="content-status">
+          <summary>Nguồn bài viết, vị trí và phạm vi danh mục</summary>
+          <p class="data-note" id="data-note"></p>
+        </details>
+        <div
+          id="heritage-groups"
+          class="heritage-groups"
+          aria-label="Nhóm di tích"
+        >
+          <button data-group="all" aria-pressed="true">Tất cả</button
+          ><button data-group="A" aria-pressed="false">Núi Ba Thê</button
+          ><button data-group="B" aria-pressed="false">Đô thị Óc Eo</button>
+        </div>
+        <p id="catalog-summary" class="catalog-summary"></p>
+        <div id="places-grid" class="places-grid"></div>
+        <div class="app-links">
+          <button data-action="privacy">Quyền riêng tư</button><span>✳</span
+          ><button data-action="sources">Nguồn & bản quyền</button>
+        </div>
+      </section>
+      <section
+        id="view-map"
+        class="app-view map-view"
+        data-view="map"
+        aria-labelledby="map-heading"
+        hidden
+      >
+        <div class="app-view-heading">
+          <div class="eyebrow">ÓC EO TRONG TÚI BẠN</div>
+          <h1 id="map-heading" tabindex="-1">
+            Bản đồ <span class="serif">Óc Eo.</span>
+          </h1>
+          <p>Nền địa lý thật. Chỉ đặt pin khi có nguồn tọa độ.</p>
+        </div>
+        <div class="map-mode-row">
+          <span class="pill"><span data-icon="map"></span> OpenStreetMap</span
+          ><button class="text-button" id="reload-map">
+            Tải lại <span data-icon="compass"></span>
+          </button>
+        </div>
+        <div class="map-category-row" role="group" aria-label="Lọc địa điểm trên bản đồ">
+          <button class="chip active" data-map-category="all" aria-pressed="true">Tất cả</button>
+          <button class="chip" data-map-category="heritage" aria-pressed="false">Di sản</button>
+          <button class="chip" data-map-category="food" aria-pressed="false">Ăn uống</button>
+          <button class="chip" data-map-category="rest" aria-pressed="false">Cà phê</button>
+          <button class="chip" data-map-category="stay" aria-pressed="false">Lưu trú</button>
+        </div>
+        <div class="map-layout">
+          <div class="map-board">
+            <div
+              id="osm-map"
+              aria-label="Bản đồ địa lý OpenStreetMap, chỉ các pin đã xác minh"
+            ></div>
+            <div
+              class="map-network-state"
+              id="map-network-state"
+              role="status"
+              hidden
+            >
+              <span data-icon="map"></span><strong>Chưa tải được bản đồ</strong>
+              <p>
+                Cần kết nối đến OpenStreetMap. Không hiển thị sơ đồ hay pin
+                phỏng đoán thay thế.
+              </p>
+              <button class="text-button" id="show-map-list">
+                Xem danh sách điểm đến ↓</button
+              ><button class="button outline" id="retry-map">
+                Thử kết nối lại
+              </button>
+            </div>
+            <div class="map-disclaimer" id="map-disclaimer"></div>
+          </div>
+          <aside class="map-aside">
+            <div class="map-sheet-handle" aria-hidden="true"></div>
+            <div class="eyebrow">DANH MỤC ĐANG RÀ SOÁT · CHƯA ĐẦY ĐỦ</div>
+            <label class="search-field"
+              ><span data-icon="compass"></span
+              ><input
+                id="map-search"
+                type="search"
+                placeholder="Tìm di tích, quán, món, chỗ nghỉ…"
+                aria-label="Tìm điểm đến trong danh sách bản đồ"
+            /></label>
+            <p class="map-inventory-count" id="map-inventory-count"></p>
+            <div id="map-list"></div>
+            <div class="map-tip">
+              <span data-icon="leaf"></span>
+              <p>
+                Chỉ để lại dấu chân. Không lấy hiện vật hoặc vào khu khai quật.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </section>
+      <section
+        id="view-day"
+        class="app-view day-view"
+        data-view="day"
+        aria-labelledby="day-heading"
+        hidden
+      >
+        <div class="app-view-heading">
+          <div class="eyebrow">MỘT NGÀY. NHIỀU ĐIỀU KHÁM PHÁ.</div>
+          <h1 id="day-heading" tabindex="-1">
+            Một ngày <span class="serif">Óc Eo.</span>
+          </h1>
+          <p>Không chạy deadline. Chỉ theo những điều thú vị.</p>
+        </div>
+        <details class="trip-practical">
+          <summary>Trước khi đi: đón khách, di chuyển, ăn nghỉ</summary>
+          <div>
+            <h3>Hỏi Ban Quản lý trước</h3>
+            <p>
+              Địa chỉ công bố: đường Nguyễn Thị Hạnh, khóm Tân Hiệp A, xã Óc Eo,
+              An Giang. Hỏi lịch thuyết minh, điểm đang tiếp cận được và phí nếu
+              có.
+            </p>
+            <a href="tel:02963878156">0296 3878 156</a>
+            <h3>Đến Óc Eo</h3>
+            <p>
+              OSM có ghi nhận tuyến xe buýt Long Xuyên – Óc Eo và bến xe Óc Eo.
+              Lịch chạy, giá vé cần xác nhận với đơn vị vận tải; đừng dùng dữ
+              liệu cộng đồng như lịch xuất bến thời gian thực.
+            </p>
+            <a
+              href="https://www.openstreetmap.org/node/12103763889"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Bến xe Óc Eo trên OSM ↗</a
+            >
+            <h3>Ăn uống và nghỉ</h3>
+            <p>
+              Mục Ăn gì ngon và Nghỉ chân có danh bạ tham khảo tại Óc Eo từ nguồn công khai. Mở nguồn gốc hoặc gọi xác nhận hoạt động và giá trước khi đến. Cơ sở lưu trú theo OSM cũng cần liên hệ lại.
+            </p>
+            <h3>Mang gì?</h3>
+            <p>
+              Nước, mũ, chống nắng, giày bám tốt, sạc dự phòng. Một ngày chỉ nên
+              chọn vài cụm; không tự đi vào ruộng, hố khai quật hoặc khu bảo vệ.
+            </p>
+            <a
+              href="https://vanhoaoceo.angiang.gov.vn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Thông tin liên hệ Ban Quản lý ↗</a
+            >
+          </div>
+        </details>
+        <div class="day-trip-card">
+          <span class="day-trip-sun" aria-hidden="true">☀</span>
+          <div>
+            <span class="eyebrow">YOUR DAY, YOUR PACE</span>
+            <h2>07:30 <span>→</span> 16:00</h2>
+            <small>Lịch khung · chưa xác minh tuyến và giờ đón khách</small>
+          </div>
+          <button
+            class="circle-button"
+            id="save-itinerary"
+            aria-label="Lưu lịch trình"
+          >
+            <span data-icon="download"></span>
+          </button>
+        </div>
+        <details class="content-status">
+          <summary>Trước khi lên đường</summary>
+          <p class="data-note">
+            Kiểm tra giờ mở cửa và khả năng tiếp cận trước khi đi. Lịch hiện tại
+            là khung trải nghiệm, chưa tính quãng đường giữa các điểm.
+          </p>
+        </details>
+        <div id="saved-trip"></div>
+        <div class="timeline" id="timeline"></div>
+        <aside class="mountain-detour" aria-labelledby="mountain-detour-title">
+          <div class="eyebrow">HIDDEN GEM · NGOÀI LỊCH CHÍNH</div>
+          <h3 id="mountain-detour-title">Một góc khác trên Ba Thê.</h3>
+          <p>Nhà trưng bày cũ trên đỉnh núi là điểm tùy chọn, khác với nhà trưng bày hiện vật buổi sáng. Đường núi khó đi; tránh ngày mưa hoặc đường trơn, nên thuê xe ôm địa phương quen đường và đội mũ bảo hiểm. Chỉ ghé khu vực được phép tiếp cận, không vào công trình bỏ hoang.</p>
+          <button class="text-button" data-place="nha-trung-bay-cu-ba-the">Đọc lưu ý trước khi quyết định <span data-icon="arrow"></span></button>
+        </aside>
+        <a class="button dark full-width" href="#map" data-route="map"
+          >Mở bản đồ cho chuyến đi <span data-icon="arrowup"></span
+        ></a>
+      </section>
+      <section
+        id="view-pass"
+        class="app-view pass-view"
+        data-view="pass"
+        aria-label="Óc Eo Pass"
+        hidden
+      >
+        <div id="pass-content"></div>
+      </section>
+      <section
+        id="view-community"
+        class="app-view community-view"
+        data-view="community"
+        aria-labelledby="community-heading"
+        hidden
+      >
+        <div class="app-view-heading">
+          <div class="eyebrow">ÓC EO QUA GÓC NHÌN CỦA BẠN</div>
+          <h1 id="community-heading" tabindex="-1">
+            Óc Eo <span class="serif">có gì vui?</span>
+          </h1>
+          <p>Ảnh thật. Trải nghiệm thật. Góc nhìn của riêng bạn.</p>
+        </div>
+        <button class="write-review-card" id="write-review">
+          <span class="write-review-camera" data-icon="camera"></span
+          ><span
+            ><strong>Kể chuyến đi Óc Eo của bạn</strong
+            ><small>Thêm một ảnh, gửi một cảm nhận.</small></span
+          ><span data-icon="plus"></span>
+        </button>
+        <div id="review-summary" class="review-summary"></div>
+        <div id="reviews-grid" class="reviews-grid"></div>
+        <button id="more-reviews" class="text-button" hidden>
+          Xem thêm câu chuyện <span data-icon="arrow"></span>
+        </button>
+      </section>
+    </main>
+    <nav class="mobile-nav app-tabbar" aria-label="Chức năng chính">
+      <a href="#explore" data-route="explore" aria-current="page"
+        ><span data-icon="compass"></span><span>Khám phá</span></a
+      ><a href="#map" data-route="map"
+        ><span data-icon="map"></span><span>Bản đồ</span></a
+      ><a href="#day" data-route="day"
+        ><span data-icon="clock"></span><span>Lịch trình</span></a
+      ><a href="#pass" data-route="pass"
+        ><span data-icon="passport"></span><span>Bộ tem</span></a
+      ><a href="#community" data-route="community"
+        ><span data-icon="camera"></span><span>Góc kể</span></a
+      >
+    </nav>
+    <dialog id="modal">
+      <div class="modal-header">
+        <span id="modal-kicker">ÓC EO TOWNWALK</span
+        ><button
+          id="close-modal"
+          class="circle-button"
+          aria-label="Đóng hộp thoại"
+        >
+          <span data-icon="close"></span>
+        </button>
       </div>
-    </div>`).join('');
-}
-
-/* ── FOOD DETAIL MODAL (expanded card, not full screen) ── */
-let curFoodIdx=0;
-function openFoodDetail(i){
-  curFoodIdx=i;
-  const f=D.foods[i];
-  const photo=document.getElementById('fmPhoto');
-  photo.style.setProperty('--pimg',f.photo?`url('${f.photo}')`:'none');
-  document.getElementById('fmName').textContent=f.name[lang];
-  document.getElementById('fmPrice').textContent=(f.price&&f.price[lang])||(f.tags[lang]&&f.tags[lang][0])||'';
-  document.getElementById('fmDesc').textContent=(f.desc&&f.desc[lang])||'';
-  document.getElementById('fmAddr').textContent=(f.addr&&f.addr[lang])||'';
-  document.getElementById('fmDirLbl').textContent=lang==='vi'?'Chỉ đường':'Directions';
-  document.getElementById('foodModal').classList.add('open');
-}
-function closeFoodDetail(){
-  document.getElementById('foodModal').classList.remove('open');
-}
-function openFoodDirections(){
-  const f=D.foods[curFoodIdx];
-  const q=(f.geo&&f.geo.trim())||(f.addr&&f.addr[lang])||(f.name[lang]+', Óc Eo, An Giang');
-  window.open('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q),'_blank');
-}
-
-/* ── HOTELS ── */
-function buildHotels(){
-  document.getElementById('stayHotel').innerHTML=D.hotels.map((h,i)=>`
-    <div class="lcard glass" onclick="openPlaceDetail('hotel',${i})">
-      <div class="lcard-hd">
-        <div class="lcard-ico">${IC.hotel}</div>
-        <div class="lcard-name">${h.name[lang]}</div>
-        <span class="lcard-tag">${h.price[lang]}</span>
-      </div>
-      <div class="info-row"><span class="ic" style="color:var(--brx)">${IC.mappin}</span>${h.type[lang]} · ${h.addr[lang]}</div>
-      <div class="info-row"><span class="ic">${IC.phone}</span>${h.phone}</div>
-      <div class="info-row"><span class="ic">${IC.wifi}</span>${h.amenities[lang]}</div>
-    </div>`).join('');
-}
-
-/* ── CAFES ── */
-function buildCafes(){
-  document.getElementById('stayCafe').innerHTML=D.cafes.map((cf,i)=>`
-    <div class="cafe-row glass" onclick="openPlaceDetail('cafe',${i})">
-      <div class="cafe-ico">${IC.coffee}</div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:700;color:var(--txt);margin-bottom:2px">${cf.name[lang]}</div>
-        <div style="font-size:11px;color:var(--txt2)">${cf.note[lang]} · ${cf.hours[lang]}</div>
-        <div style="font-size:11px;color:var(--brx);margin-top:3px;font-weight:700">${cf.price[lang]}</div>
-      </div>
-      <div style="font-size:11px;color:var(--txt3);display:flex;align-items:center;gap:4px">
-        <span style="color:var(--brx)">${IC.phone}</span>${cf.phone}
-      </div>
-    </div>`).join('');
-}
-
-/* ── PLACE DETAIL MODAL (hotel/cafe, swipeable photos) ── */
-let curPlaceKind='hotel',curPlaceIdx=0;
-function openPlaceDetail(kind,i){
-  curPlaceKind=kind;curPlaceIdx=i;
-  const p=kind==='hotel'?D.hotels[i]:D.cafes[i];
-  const photosWrap=document.getElementById('pmPhotos');
-  const dotsWrap=document.getElementById('pmDots');
-  const photos=p.photos&&p.photos.length?p.photos:[null];
-  photosWrap.innerHTML=photos.map(url=>
-    `<div class="pm-photo" style="${url?`--pimg:url('${url}')`:''}"><div class="pm-photo-grad"></div></div>`
-  ).join('');
-  dotsWrap.innerHTML=photos.map((_,di)=>`<div class="pm-dot${di===0?' on':''}"></div>`).join('');
-  photosWrap.scrollLeft=0;
-  photosWrap.onscroll=()=>{
-    const idx=Math.round(photosWrap.scrollLeft/photosWrap.clientWidth);
-    dotsWrap.querySelectorAll('.pm-dot').forEach((d,di)=>d.classList.toggle('on',di===idx));
-  };
-  document.getElementById('pmName').textContent=p.name[lang];
-  document.getElementById('pmTag').textContent=p.price[lang];
-  document.getElementById('pmAddr').textContent=(p.addr&&p.addr[lang])||'';
-  document.getElementById('pmNote').textContent=kind==='hotel'
-    ?((p.type&&p.type[lang])+(p.amenities?' · '+p.amenities[lang]:''))
-    :((p.note&&p.note[lang])+(p.hours?' · '+p.hours[lang]:''));
-  document.getElementById('pmPhone').textContent=p.phone||'';
-  document.getElementById('pmDirLbl').textContent=lang==='vi'?'Chỉ đường':'Directions';
-  document.getElementById('pmContactLbl').textContent=lang==='vi'?'Liên hệ':'Contact';
-  document.getElementById('placeModal').classList.add('open');
-}
-function closePlaceDetail(){
-  document.getElementById('placeModal').classList.remove('open');
-}
-function openPlaceDirections(){
-  const p=curPlaceKind==='hotel'?D.hotels[curPlaceIdx]:D.cafes[curPlaceIdx];
-  const q=(p.geo&&p.geo.trim())||(p.addr&&p.addr[lang])||(p.name[lang]+', Óc Eo, An Giang');
-  window.open('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q),'_blank');
-}
-function openPlaceContact(){
-  const p=curPlaceKind==='hotel'?D.hotels[curPlaceIdx]:D.cafes[curPlaceIdx];
-  if(p.phone)window.open('tel:'+p.phone.replace(/\s+/g,''),'_self');
-}
-
-/* ── ITINERARY ── */
-function buildItinerary(){
-  const it=D.itinerary;
-  document.getElementById('itinTitle').textContent=it.title[lang];
-  document.getElementById('itinSub').textContent=it.sub[lang];
-  document.getElementById('itinList').innerHTML=it.steps.map((s,i)=>`
-    <div class="itin-step">
-      <div class="itime">${s.time}</div>
-      <div class="iline"><div class="idot"></div>${i<it.steps.length-1?'<div class="iconn"></div>':''}</div>
-      <div style="flex:1">
-        <div class="ititle">${s.title[lang]}</div>
-        <div class="inote">${s.note[lang]}</div>
-        <span class="idur">${s.dur[lang]}</span>
-      </div>
-    </div>`).join('');
-}
-
-/* ── LANG ── */
-function updateLangUI(){
-  const u=D.ui;
-  document.getElementById('sealTxt').textContent=u.seal[lang];
-  document.getElementById('stayLbl').textContent=u.stayLbl[lang];
-  u.tabs[lang].forEach((t,i)=>{const el=document.getElementById('bl'+i);if(el)el.textContent=t});
-  document.getElementById('lvi').classList.toggle('on',lang==='vi');
-  document.getElementById('len').classList.toggle('on',lang==='en');
-  document.querySelectorAll('.pcard').forEach((c,i)=>{
-    const p=D.places[i];
-    const b=c.querySelector('.pcard-badge');if(b)b.textContent=p.badge?.[lang]||'';
-    const ey=c.querySelector('.pcard-eyebrow');if(ey)ey.textContent=p.eyebrow?.[lang]||'';
-    const n=c.querySelector('.pcard-name');if(n)n.textContent=p.name[lang];
-    const de=c.querySelector('.pcard-desc');if(de)de.textContent=p.desc?.[lang]||'';
-  });
-  buildFood();buildHotels();buildCafes();buildItinerary();renderMapChips();
-  if(document.getElementById('foodModal').classList.contains('open'))openFoodDetail(curFoodIdx);
-  if(document.getElementById('placeModal').classList.contains('open'))openPlaceDetail(curPlaceKind,curPlaceIdx);
-  requestAnimationFrame(moveBtmIndicator);
-}
-function setLang(l){lang=l;updateLangUI()}
-
-/* ── NAV ── */
-function switchMain(sec,idx){
-  ['places','food','stay','itin'].forEach(s=>document.getElementById('sec-'+s).classList.toggle('on',s===sec));
-  for(let i=0;i<4;i++)document.getElementById('bt'+i).classList.toggle('on',i===idx);
-  document.getElementById('scrl').scrollTop=0;
-  curMainIdx=idx;moveBtmIndicator();
-}
-let curMainIdx=0;
-function moveBtmIndicator(){
-  const bar=document.getElementById('btmBar');
-  const btn=document.getElementById('bt'+curMainIdx);
-  const ind=document.getElementById('btmIndicator');
-  if(!bar||!btn||!ind)return;
-  ind.style.width=btn.offsetWidth+'px';
-  ind.style.transform=`translateX(${btn.offsetLeft}px)`;
-}
-window.addEventListener('resize',moveBtmIndicator);
-function switchStay(t,btn){
-  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
-  document.getElementById('stayHotel').style.display=t==='h'?'block':'none';
-  document.getElementById('stayCafe').style.display=t==='c'?'block':'none';
-}
-
-/* ── DETAIL — full screen photo ── */
-function openDetail(idx){
-  curDetailIdx=idx;detailLangCur=lang;
-  const p=D.places[idx];
-  const ov=document.getElementById('detailOv');
-  const bg=document.getElementById('dPhotoBg');
-  if(p.photo){bg.style.backgroundImage=`url('${p.photo}')`}
-  else{bg.style.backgroundImage='radial-gradient(140% 140% at 25% 15%,#211d18 0%,#15120e 45%,#0a0908 100%)'}
-  bg.style.transform='scale(1.06)';
-  document.getElementById('dEyebrow').textContent=p.eyebrow?.[lang]||'';
-  document.getElementById('dTitle').textContent=p.name[lang];
-  fillDetail(p,lang);
-  stopVoice();
-  requestAnimationFrame(()=>ov.classList.add('open'));
-}
-function fillDetail(p,l){
-  document.getElementById('dEyebrow').textContent=p.eyebrow?.[l]||'';
-  document.getElementById('dTitle').textContent=p.name[l];
-  document.getElementById('dCat').textContent=p.cat?.[l]||'';
-  document.getElementById('dInfo').innerHTML=(p.info[l]||[]).map(it=>
-    `<div class="d-row"><span class="d-ic" style="color:var(--brx)">${IC[it.icon]||IC.mappin}</span><span>${it.text}</span></div>`).join('');
-  document.getElementById('dVtxt').textContent=p.text[l];
-  document.getElementById('dl_vi').classList.toggle('on',l==='vi');
-  document.getElementById('dl_en').classList.toggle('on',l==='en');
-  document.getElementById('vLbl').textContent=D.ui.voiceListen[l];
-  document.getElementById('vIcon').innerHTML='<polygon points="5 3 19 12 5 21 5 3"/>';
-  document.getElementById('dDirLbl').textContent=l==='vi'?'Chỉ đường':'Directions';
-  const vb=document.getElementById('voiceBtn');
-  if(vb)vb.style.display=(p.audio&&p.audio[l])?'flex':'none';
-}
-function openMainPlaceDirections(){
-  const p=D.places[curDetailIdx];
-  const q=(p.geo&&p.geo.trim())||(p.name[lang]+', Óc Eo, An Giang');
-  window.open('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q),'_blank');
-}
-
-/* ── Bản đồ Óc Eo: nhúng Google Maps thật, chọn địa điểm qua dải chip ── */
-let mapChipIdx=0;
-function mapQueryFor(p){
-  return (p.geo&&p.geo.trim())||(p.name[lang]+', Óc Eo, An Giang');
-}
-function renderMapChips(){
-  const wrap=document.getElementById('mapChips');
-  if(!wrap||!D.places||!D.places.length)return;
-  if(mapChipIdx>=D.places.length)mapChipIdx=0;
-  wrap.innerHTML=D.places.map((p,i)=>
-    `<div class="map-chip ${i===mapChipIdx?'on':''}" onclick="selectMapChip(${i})">${p.name[lang]||''}</div>`
-  ).join('');
-  updateMapFrame();
-}
-function selectMapChip(i){
-  mapChipIdx=i;
-  document.querySelectorAll('.map-chip').forEach((c,ci)=>c.classList.toggle('on',ci===i));
-  updateMapFrame();
-}
-function updateMapFrame(){
-  const p=D.places[mapChipIdx];
-  if(!p)return;
-  const frame=document.getElementById('mapFrame');
-  if(frame)frame.src='https://maps.google.com/maps?q='+encodeURIComponent(mapQueryFor(p))+'&z=16&output=embed';
-  const lbl=document.getElementById('mapOpenLbl');
-  if(lbl)lbl.textContent=(lang==='vi'?'Mở "':'Open "')+(p.name[lang]||'')+(lang==='vi'?'" trong Google Maps':'" in Google Maps');
-}
-function openMapChipDirections(){
-  const p=D.places[mapChipIdx];
-  if(!p)return;
-  window.open('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(mapQueryFor(p)),'_blank');
-}
-
-function detailLang(l){detailLangCur=l;fillDetail(D.places[curDetailIdx],l);stopVoice()}
-function closeDetail(){document.getElementById('detailOv').classList.remove('open');stopVoice()}
-function toggleVoice(){
-  const p=D.places[curDetailIdx];
-  const url=p.audio&&p.audio[detailLangCur];
-  if(!url)return;
-  const audio=document.getElementById('voicePlayer');
-  const key=curDetailIdx+'_'+detailLangCur;
-  if(voicePlaying){
-    audio.pause();
-    voicePlaying=false;
-    updateVoiceUI(false);
-    return;
-  }
-  if(audio.dataset.key!==key){
-    audio.src=url;
-    audio.dataset.key=key;
-  }
-  audio.play().catch(()=>{});
-  voicePlaying=true;
-  updateVoiceUI(true);
-}
-function updateVoiceUI(playing){
-  const vi=document.getElementById('vIcon');
-  if(vi)vi.innerHTML=playing
-    ?'<line x1="6" y1="4" x2="6" y2="20"/><line x1="18" y1="4" x2="18" y2="20"/>'
-    :'<polygon points="5 3 19 12 5 21 5 3"/>';
-  const vl=document.getElementById('vLbl');
-  if(vl)vl.textContent=playing?D.ui.voicePlaying[detailLangCur]:D.ui.voiceListen[detailLangCur];
-  const vw=document.getElementById('vWave');
-  if(vw)vw.style.display=playing?'flex':'none';
-}
-function stopVoice(){
-  const audio=document.getElementById('voicePlayer');
-  if(audio){audio.pause();audio.currentTime=0;audio.removeAttribute('src');audio.dataset.key=''}
-  voicePlaying=false;
-  updateVoiceUI(false);
-}
-(function(){
-  const audio=document.getElementById('voicePlayer');
-  if(audio)audio.addEventListener('ended',()=>{voicePlaying=false;updateVoiceUI(false)});
-})();
-
-try{ buildAll(); }catch(err){ console.error('Lỗi khi khởi tạo trang:',err); }
-
-/* ── LIVE DATA FROM FIREBASE FIRESTORE ──
-   Trang này đọc dữ liệu công khai (read-only) từ Firestore, cập nhật
-   real-time mỗi khi admin lưu thay đổi — không cần tải lại trang. */
-window.applyRemoteData=function(remote){
-  try{
-    D=remote;
-    buildAll();
-    requestAnimationFrame(moveBtmIndicator);
-  }catch(err){
-    console.error('Lỗi khi áp dụng dữ liệu từ Firestore:',err);
-  }
-};
-</script>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, doc, onSnapshot }
-  from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD367iejwFyLn89MdyIWEd0WRzt8RfQGRw",
-  authDomain: "chitieucanhan-33.firebaseapp.com",
-  projectId: "chitieucanhan-33",
-  storageBucket: "chitieucanhan-33.firebasestorage.app",
-  messagingSenderId: "139103955870",
-  appId: "1:139103955870:web:b4532a7b467abccfa7448f",
-  measurementId: "G-1ZV4YL6563"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const siteRef = doc(db, "sites", "oceotownwalk");
-
-onSnapshot(siteRef, (snap) => {
-  if (snap.exists() && window.applyRemoteData) {
-    window.applyRemoteData(snap.data());
-  }
-}, (err) => {
-  console.warn('Không thể tải dữ liệu real-time từ Firestore, dùng dữ liệu mặc định:', err);
-});
-</script>
-</body>
+      <div id="modal-body"></div>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+  </body>
 </html>

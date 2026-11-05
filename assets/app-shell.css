@@ -1,0 +1,1700 @@
+/* Phone-first app shell. Each route owns one screen; the pill bar stays reachable. */
+.townwalk-app {
+  background: var(--paper);
+  min-height: 100dvh;
+  scroll-behavior: auto;
+}
+.townwalk-app .app-main {
+  max-width: 560px;
+  margin: 0 auto;
+  min-height: calc(100dvh - 80px);
+  padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px));
+  background: var(--paper);
+}
+.townwalk-app .app-header {
+  position: sticky;
+  top: 0;
+  z-index: 650;
+  max-width: 560px;
+  padding: 18px 21px 14px;
+  gap: 10px;
+  background: #f7f5edf2;
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid #e8e8dc;
+}
+.townwalk-app .brand {
+  font-size: 25px;
+  gap: 8px;
+}
+.townwalk-app .brand-mark {
+  width: 33px;
+  height: 33px;
+}
+.townwalk-app .brand-sub {
+  font-size: 7px;
+  letter-spacing: 2.5px;
+}
+.header-location {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-left: auto;
+  font-size: 9px;
+  line-height: 1.7;
+}
+.header-location > .icon {
+  width: 15px;
+  height: 15px;
+  color: var(--olive);
+}
+.header-location small {
+  display: block;
+  font-size: 6px;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+.townwalk-app #account-button {
+  width: 36px;
+  height: 36px;
+  margin-left: 8px;
+  background: #efefe3;
+}
+.townwalk-app #account-button .icon {
+  width: 18px;
+  height: 18px;
+}
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.app-view {
+  padding: 22px 20px 0;
+  animation: screen-in 0.24s ease both;
+}
+.app-view[hidden] {
+  display: none !important;
+}
+.app-view h1 {
+  font-size: 34px;
+  line-height: 1.22;
+  letter-spacing: -1.8px;
+  outline: none;
+}
+.app-view h1:focus-visible {
+  outline: none;
+}
+.app-view h2 {
+  font-size: 25px;
+  letter-spacing: -1px;
+}
+.app-view .serif {
+  letter-spacing: -1.3px;
+}
+.app-view .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1.3px;
+  margin-bottom: 9px;
+}
+.app-view p {
+  font-size: 11px;
+  line-height: 1.9;
+}
+.today-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: var(--olive);
+  gap: 8px;
+  margin: 0 1px 16px;
+}
+.guest-pill {
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  font-size: 7px;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.pocket-hero {
+  background: var(--pink);
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+  padding: 22px;
+}
+.pocket-hero:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #efe0d6 10%, #efe0d6dd 44%, #efe0d600 75%);
+  pointer-events: none;
+}
+.pocket-hero > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 56% center;
+  opacity: 0.85;
+}
+.pocket-hero-copy {
+  position: relative;
+  z-index: 1;
+}
+.pocket-hero-copy .eyebrow {
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+.pocket-hero h1 {
+  font-size: 35px;
+  line-height: 1.17;
+  margin: 14px 0 16px;
+  letter-spacing: -1.8px;
+}
+.pocket-hero p {
+  font-size: 10px;
+  color: #646850;
+}
+.pocket-hero .button {
+  min-height: 39px;
+  padding: 9px 17px;
+  font-size: 10px;
+  margin-top: 20px;
+  gap: 17px;
+}
+.pocket-hero .button .icon {
+  width: 16px;
+  height: 16px;
+}
+.hero-sticker {
+  position: absolute;
+  right: 14px;
+  bottom: 20px;
+  z-index: 2;
+  background: #f8f4e7;
+  border: 1px dashed #85905f;
+  outline: 4px solid #f8f4e7;
+  padding: 10px 13px;
+  transform: rotate(10deg);
+  font-size: 8px;
+  line-height: 1.7;
+  box-shadow: 1px 5px 10px #38492b11;
+}
+.hero-sticker b {
+  font-family: Lora, serif;
+  font-style: italic;
+  font-size: 13px;
+  font-weight: 500;
+}
+.pocket-shortcuts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 14px 0 28px;
+}
+.pocket-widget {
+  border-radius: 18px;
+  padding: 17px 16px;
+  position: relative;
+  min-height: 115px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 4px;
+}
+.pocket-widget > .icon {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 6px;
+  stroke-width: 1.4;
+}
+.pocket-widget strong {
+  font-size: 12px;
+  letter-spacing: -0.4px;
+  font-weight: 600;
+}
+.pocket-widget small {
+  font-size: 8px;
+  color: #62664e;
+}
+.pocket-widget:after {
+  content: "✳";
+  font-size: 50px;
+  color: #606b4917;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  line-height: 1;
+  transform: rotate(15deg);
+}
+.browse-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 17px;
+}
+.browse-heading .eyebrow {
+  font-size: 7px;
+  display: block;
+  margin-bottom: 5px;
+}
+.browse-heading .circle-button {
+  width: 34px;
+  height: 34px;
+}
+.browse-heading .circle-button > .icon {
+  width: 17px;
+  height: 17px;
+}
+.townwalk-app .filter-row {
+  gap: 7px;
+  flex-wrap: nowrap;
+  margin: 0 0 13px;
+}
+.townwalk-app .chip {
+  font-size: 9px;
+  padding: 9px 13px;
+  gap: 7px;
+  min-height: 37px;
+  flex: 1;
+  justify-content: center;
+}
+.townwalk-app .chip .icon {
+  width: 14px;
+  height: 14px;
+}
+.content-status {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.content-status summary {
+  padding: 6px 0;
+  cursor: pointer;
+  line-height: 1.7;
+}
+.content-status .data-note {
+  margin: 8px 0 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 9px;
+  max-width: none;
+}
+.townwalk-app .places-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 17px;
+}
+.townwalk-app .place-card {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 14px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 17px;
+}
+.townwalk-app .place-art {
+  height: 136px;
+  border-radius: 17px;
+}
+.townwalk-app .place-art > .icon {
+  width: 52px;
+  height: 52px;
+}
+.townwalk-app .place-art:before {
+  width: 86px;
+  height: 86px;
+  left: 8px;
+  top: 24px;
+}
+.townwalk-app .place-number {
+  left: 9px;
+  top: 9px;
+  width: 21px;
+  height: 21px;
+  font-size: 7px;
+}
+.townwalk-app .place-badge {
+  left: 7px;
+  bottom: 9px;
+  font-size: 6px;
+  padding: 3px 6px;
+  gap: 3px;
+}
+.townwalk-app .place-badge > .icon {
+  width: 10px;
+  height: 10px;
+}
+.townwalk-app .place-card-body {
+  padding: 2px 0;
+}
+.townwalk-app .place-card-body h3 {
+  font-size: 17px;
+  letter-spacing: -0.7px;
+  line-height: 1.5;
+}
+.townwalk-app .place-card-body h3 > .icon {
+  width: 16px;
+}
+.townwalk-app .place-card-body .eyebrow {
+  font-size: 6px;
+  letter-spacing: 0.8px;
+  line-height: 1.6;
+  margin-bottom: 5px;
+}
+.townwalk-app .place-card-body p {
+  font-size: 9px;
+  line-height: 1.85;
+  margin: 6px 0 3px;
+}
+.townwalk-app .place-card-body .text-button {
+  font-size: 8px;
+  padding: 4px 0;
+  min-height: 28px;
+}
+.townwalk-app .place-card-body .text-button .icon {
+  width: 15px;
+  height: 15px;
+}
+.app-links {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  padding: 25px 0 6px;
+  font-size: 8px;
+  color: var(--muted);
+}
+.app-links button {
+  font-size: 8px;
+  padding: 6px 0;
+}
+.app-view-heading {
+  margin: 1px 0 22px;
+}
+.app-view-heading .eyebrow {
+  font-size: 7px;
+}
+.app-view-heading h1 {
+  margin-bottom: 11px;
+}
+.app-view-heading > p {
+  font-size: 10px;
+  color: var(--muted);
+}
+.townwalk-app .map-mode-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 14px;
+  gap: 15px;
+}
+.townwalk-app .segmented {
+  padding: 3px;
+  gap: 3px;
+  font-size: 9px;
+}
+.townwalk-app .segmented button {
+  padding: 7px 15px;
+  min-height: 33px;
+}
+.townwalk-app .pill {
+  font-size: 9px;
+  padding: 7px 11px;
+}
+.townwalk-app .pill > .icon {
+  height: 14px;
+  width: 14px;
+}
+.townwalk-app .map-layout {
+  display: block;
+  border-radius: 23px;
+  min-height: 0;
+  overflow: hidden;
+}
+.townwalk-app .map-board,
+.townwalk-app #schematic {
+  height: clamp(280px, 44dvh, 440px);
+  min-height: 0;
+}
+.townwalk-app #osm-map {
+  height: clamp(280px, 44dvh, 440px);
+}
+.townwalk-app .map-label {
+  left: 17px;
+  top: 17px;
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+.townwalk-app .map-label small {
+  font-size: 5px;
+  letter-spacing: 0.6px;
+}
+.townwalk-app .north {
+  right: 17px;
+  top: 18px;
+  font-size: 10px;
+}
+.townwalk-app .map-pin-bubble {
+  height: 36px;
+  width: 36px;
+}
+.townwalk-app .map-pin-bubble .icon {
+  height: 19px;
+  width: 19px;
+}
+.townwalk-app .map-pin-label {
+  font-size: 7px;
+  padding: 3px 8px;
+}
+.townwalk-app .map-disclaimer {
+  font-size: 7px;
+  padding: 7px 10px;
+  left: 9px;
+  right: 9px;
+  bottom: 9px;
+  line-height: 1.8;
+}
+.townwalk-app .map-aside {
+  padding: 10px 17px 15px;
+}
+.map-sheet-handle {
+  width: 30px;
+  height: 3px;
+  border-radius: 4px;
+  background: #c9ceba;
+  margin: 0 auto 14px;
+}
+.townwalk-app .map-aside > .eyebrow {
+  font-size: 6px;
+  letter-spacing: 0.9px;
+  margin-bottom: 6px;
+}
+.townwalk-app #map-list {
+  gap: 0;
+  grid-template-columns: 1fr;
+}
+.townwalk-app .map-list-item {
+  padding: 10px 0;
+  gap: 10px;
+  min-height: 49px;
+}
+.townwalk-app .map-list-item > span {
+  font-size: 10px;
+}
+.townwalk-app .map-list-item small {
+  font-size: 7px;
+}
+.townwalk-app .map-tip {
+  padding-top: 7px;
+  margin-top: 7px;
+}
+.townwalk-app .map-tip p {
+  font-size: 8px;
+  line-height: 1.8;
+}
+.townwalk-app .map-tip .icon {
+  width: 16px;
+  height: 16px;
+}
+.day-trip-card {
+  background: var(--lavender);
+  padding: 21px 17px;
+  border-radius: 21px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.day-trip-sun {
+  font-size: 36px;
+  color: #767750;
+  line-height: 1;
+}
+.day-trip-card h2 {
+  font-size: 26px;
+  margin: 5px 0 3px;
+  font-weight: 500;
+}
+.day-trip-card h2 > span {
+  font-size: 21px;
+  margin: 0 5px;
+  color: #8f8b9d;
+}
+.day-trip-card .eyebrow {
+  font-size: 6px;
+  letter-spacing: 1px;
+  margin: 0;
+}
+.day-trip-card small {
+  font-size: 8px;
+  color: var(--muted);
+}
+.day-trip-card .circle-button {
+  width: 34px;
+  height: 34px;
+  margin-left: auto;
+  border-color: #a7a0ba;
+}
+.day-trip-card .icon {
+  width: 16px;
+  height: 16px;
+}
+.townwalk-app .timeline {
+  padding: 6px 0 24px;
+}
+.townwalk-app .timeline:before {
+  left: 46px;
+}
+.townwalk-app .timeline-row {
+  grid-template-columns: 36px 1fr;
+  gap: 28px;
+  padding-bottom: 27px;
+}
+.townwalk-app .timeline-row:before {
+  left: 42px;
+  top: 6px;
+}
+.townwalk-app .timeline-row time {
+  font-size: 9px;
+  padding-top: 2px;
+}
+.townwalk-app .timeline-row h3 {
+  font-size: 13px;
+  letter-spacing: -0.4px;
+}
+.townwalk-app .timeline-row p {
+  font-size: 10px;
+  margin-top: 6px;
+  line-height: 1.9;
+}
+.townwalk-app .day-view > .button {
+  font-size: 11px;
+  min-height: 46px;
+}
+.townwalk-app .passport-book {
+  margin: 17px 0 15px;
+  perspective: 1100px;
+}
+.townwalk-app .passport-spread {
+  grid-template-columns: 1fr;
+  overflow: hidden;
+  border: 1px solid #dedbc7;
+  box-shadow: 0 7px 15px #565d3710;
+}
+.townwalk-app .passport-page {
+  min-height: 0;
+  padding: 25px 22px;
+}
+.townwalk-app .passport-page:first-child {
+  background: linear-gradient(155deg, #f2e9ce, #fbf7e9);
+  border-right: 0;
+  border-bottom: 1px dashed #bebf9f;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 15px;
+}
+.townwalk-app .passport-page:first-child > .eyebrow {
+  grid-column: 1/-1;
+  font-size: 6px;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.townwalk-app .passport-page:first-child h3 {
+  grid-row: 2/5;
+  grid-column: 1;
+  font-size: 33px;
+  line-height: 1.2;
+  margin: 0;
+  letter-spacing: -1.7px;
+}
+.townwalk-app .passport-page:first-child > p:first-of-type {
+  font-size: 7px;
+  align-self: end;
+}
+.townwalk-app .passport-page .owner-name {
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 5px 0 6px;
+  align-self: start;
+}
+.townwalk-app .passport-page:first-child > small {
+  font-size: 7px;
+}
+.townwalk-app .passport-progress {
+  grid-column: 1/-1;
+  margin: 22px 0 8px;
+}
+.townwalk-app .passport-page:first-child > p:last-of-type {
+  font-size: 9px;
+}
+.townwalk-app .passport-page:first-child > small:last-child {
+  grid-column: 1/-1;
+  font-size: 7px;
+  margin-top: 5px;
+}
+.townwalk-app .passport-page:last-child {
+  background: #faf5e6;
+  padding: 22px;
+}
+.townwalk-app .passport-page:last-child > .eyebrow {
+  font-size: 7px;
+  text-align: center;
+  margin: 0 0 20px;
+}
+.townwalk-app .stamp-grid {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px;
+  margin: 0;
+  min-height: 115px;
+}
+.townwalk-app .stamp-grid .stamp {
+  padding: 11px 5px;
+  min-height: 103px;
+  border-width: 5px;
+}
+.townwalk-app .stamp-grid .stamp b {
+  font-size: 6px;
+  letter-spacing: 0;
+  max-width: 75px;
+}
+.townwalk-app .stamp-grid .stamp small {
+  font-size: 5px;
+  margin-top: 5px;
+}
+.townwalk-app .stamp-grid .stamp .icon {
+  width: 27px;
+  height: 27px;
+}
+.townwalk-app .stamp.locked {
+  opacity: 0.5;
+}
+.townwalk-app .passport-controls {
+  font-size: 9px;
+  gap: 10px;
+}
+.townwalk-app .passport-controls .text-button {
+  font-size: 9px;
+  padding: 8px 0;
+}
+.townwalk-app .book-toggle {
+  font-size: 9px;
+  display: flex;
+  padding: 0 0 7px;
+}
+.townwalk-app .book-toggle .icon {
+  width: 15px;
+  height: 15px;
+}
+.townwalk-app .passport-cover {
+  min-height: 340px;
+}
+.townwalk-app .passport-cover h3 {
+  font-size: 41px;
+  line-height: 1.1;
+  text-align: center;
+}
+.townwalk-app .passport-cover small {
+  font-size: 8px;
+}
+.townwalk-app .passport-book.closed {
+  max-width: 290px;
+}
+.townwalk-app .pass-view .field {
+  font-size: 10px;
+  margin: 16px 0 3px;
+}
+.townwalk-app .pass-view .field input {
+  font-size: 12px;
+  padding: 11px 13px;
+}
+.townwalk-app #save-name {
+  font-size: 10px;
+}
+.townwalk-app .pass-view .notice {
+  font-size: 9px;
+  padding: 12px 14px;
+  line-height: 1.9;
+  margin: 14px 0;
+}
+.townwalk-app .passport-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+.townwalk-app .passport-actions .button {
+  width: 100%;
+  font-size: 11px;
+  min-height: 44px;
+  padding: 10px 15px;
+}
+.townwalk-app .passport-actions .text-button {
+  font-size: 9px;
+}
+.townwalk-app #pass-content > small {
+  display: block;
+  font-size: 8px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-top: 15px;
+}
+.write-review-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: 1px dashed #aaa1bd;
+  background: var(--lavender);
+  border-radius: 16px;
+  padding: 17px 14px;
+  text-align: left;
+  margin-bottom: 23px;
+}
+.write-review-card strong {
+  font-size: 11px;
+  font-weight: 500;
+  display: block;
+}
+.write-review-card small {
+  font-size: 8px;
+  color: var(--muted);
+  display: block;
+  margin-top: 4px;
+}
+.write-review-card > .icon {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 17px;
+}
+.write-review-camera {
+  padding: 9px;
+  background: #f7f5ed90;
+  border-radius: 12px;
+  display: flex;
+}
+.write-review-camera .icon {
+  width: 21px;
+  height: 21px;
+}
+.townwalk-app .review-summary {
+  font-size: 9px;
+  line-height: 1.8;
+}
+.townwalk-app .reviews-grid {
+  columns: 1;
+  column-gap: 0;
+}
+.townwalk-app .review-zero {
+  grid-template-columns: 1fr;
+  gap: 17px;
+}
+.townwalk-app .review-zero .memory {
+  min-height: 280px;
+  padding: 28px 23px;
+}
+.townwalk-app .review-zero .memory h3 {
+  font-size: 29px;
+}
+.townwalk-app .review-note {
+  min-height: 0;
+  transform: none;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 8px 14px;
+}
+.townwalk-app .review-note > .icon {
+  width: 27px;
+  height: 27px;
+  grid-row: 1/3;
+}
+.townwalk-app .review-note h3 {
+  font-size: 20px;
+  margin: 0;
+}
+.townwalk-app .review-note h3 br {
+  display: none;
+}
+.townwalk-app .review-note p {
+  font-size: 9px;
+  grid-column: 2;
+  margin: 0;
+}
+.townwalk-app .memory-footer button {
+  min-height: 34px;
+}
+.townwalk-app .memory p {
+  font-size: 12px;
+}
+.townwalk-app .app-tabbar {
+  position: fixed;
+  left: 50%;
+  right: auto;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 520px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+  justify-content: space-between;
+  gap: 1px;
+  background: #eeeedeed;
+  backdrop-filter: blur(18px);
+  color: #727762;
+  border: 1px solid #d2d7c1;
+  padding: 5px;
+  border-radius: 40px;
+  z-index: 700;
+  box-shadow: 0 6px 25px #323c2326;
+}
+.townwalk-app .app-tabbar a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  min-height: 56px;
+  padding: 9px 3px;
+  border-radius: 30px;
+  font-size: 7px;
+  line-height: 1;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.townwalk-app .app-tabbar .icon {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.6;
+}
+.townwalk-app .app-tabbar a[aria-current="page"] {
+  background: var(--olive);
+  color: var(--paper);
+  box-shadow: 0 2px 6px #36492315;
+}
+.townwalk-app .app-tabbar a:hover:not([aria-current]) {
+  background: #e0e4cc;
+}
+.townwalk-app #toast {
+  bottom: calc(99px + env(safe-area-inset-bottom, 0px));
+  font-size: 11px;
+}
+.townwalk-app dialog {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90dvh;
+  border-radius: 24px 24px 0 0;
+  margin: auto auto 0;
+  padding: 22px;
+  box-sizing: border-box;
+}
+.townwalk-app #modal-body h2 {
+  font-size: 30px;
+}
+.townwalk-app .detail-actions .button {
+  font-size: 10px;
+  padding: 11px 15px;
+  min-height: 44px;
+}
+@keyframes screen-in {
+  from {
+    opacity: 0.5;
+    translate: 0 5px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@media (min-width: 600px) {
+  .townwalk-app {
+    background: #e7e8df;
+  }
+  .townwalk-app .app-main,
+  .townwalk-app .app-header {
+    border-left: 1px solid #d5d8c6;
+    border-right: 1px solid #d5d8c6;
+  }
+  .townwalk-app .app-header {
+    padding: 21px 25px 18px;
+  }
+  .townwalk-app .app-view {
+    padding: 25px 25px 0;
+  }
+  .townwalk-app .pocket-hero {
+    min-height: 330px;
+    padding: 25px;
+  }
+  .townwalk-app .pocket-hero h1 {
+    font-size: 42px;
+  }
+  .townwalk-app .pocket-hero-copy > p {
+    font-size: 12px;
+  }
+  .townwalk-app .pocket-widget {
+    padding: 19px;
+  }
+  .townwalk-app .pocket-widget strong {
+    font-size: 14px;
+  }
+  .townwalk-app .place-card {
+    grid-template-columns: 120px 1fr;
+  }
+  .townwalk-app .place-card-body h3 {
+    font-size: 20px;
+  }
+  .townwalk-app .place-card-body p {
+    font-size: 10px;
+  }
+  .townwalk-app dialog {
+    margin: auto;
+    border-radius: 24px;
+  }
+  .townwalk-app .app-tabbar a {
+    font-size: 9px;
+    min-height: 60px;
+  }
+}
+@media (max-width: 359px) {
+  .townwalk-app .app-header {
+    padding-inline: 15px;
+  }
+  .header-location {
+    font-size: 8px;
+  }
+  .header-location small {
+    font-size: 5px;
+  }
+  .app-view {
+    padding-inline: 15px;
+  }
+  .pocket-hero {
+    padding: 18px;
+    min-height: 285px;
+  }
+  .pocket-hero h1 {
+    font-size: 31px;
+  }
+  .pocket-shortcuts {
+    gap: 10px;
+  }
+  .pocket-widget {
+    padding: 15px 12px;
+  }
+  .pocket-widget strong {
+    font-size: 11px;
+  }
+  .townwalk-app .place-card {
+    grid-template-columns: 90px 1fr;
+    gap: 12px;
+  }
+  .townwalk-app .place-card-body h3 {
+    font-size: 16px;
+  }
+  .townwalk-app .place-art {
+    height: 132px;
+  }
+  .townwalk-app .place-art:before {
+    left: 2px;
+  }
+  .townwalk-app .chip {
+    font-size: 8px;
+    padding-inline: 9px;
+  }
+  .townwalk-app .passport-page {
+    padding: 21px 16px;
+  }
+  .townwalk-app .passport-page:first-child h3 {
+    font-size: 28px;
+  }
+  .townwalk-app .passport-page .owner-name {
+    font-size: 16px;
+  }
+  .townwalk-app .passport-page:last-child {
+    padding: 20px 15px;
+  }
+  .townwalk-app .stamp-grid {
+    gap: 9px;
+  }
+  .townwalk-app .stamp-grid .stamp {
+    min-height: 96px;
+  }
+  .townwalk-app .app-tabbar {
+    width: calc(100% - 18px);
+  }
+  .townwalk-app .app-tabbar a {
+    font-size: 6px;
+  }
+  .app-view-heading h1 {
+    font-size: 31px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-view {
+    animation: none;
+  }
+  .townwalk-app .app-tabbar a {
+    transition: none;
+  }
+}
+@media print {
+  .townwalk-app .app-header,
+  .townwalk-app .app-tabbar,
+  .townwalk-app .content-status {
+    display: none !important;
+  }
+  .townwalk-app .app-main {
+    padding: 0 !important;
+    min-height: 0;
+  }
+  .townwalk-app .app-view:not([hidden]) {
+    padding: 0;
+  }
+  .townwalk-app .app-view[hidden] {
+    display: none !important;
+  }
+  .townwalk-app .timeline-row {
+    break-inside: avoid;
+  }
+}
+
+.townwalk-app .passport-page:first-child h3 .serif {
+  font-size: 26px;
+  letter-spacing: -1.2px;
+  white-space: nowrap;
+}
+@media (max-width: 359px) {
+  .townwalk-app .passport-page:first-child h3 .serif {
+    font-size: 23px;
+  }
+}
+
+/* Readable navigation: a single floating capsule, large labels and icon highlights. */
+.townwalk-app .app-tabbar {
+  width: calc(100% - 20px);
+  max-width: 540px;
+  gap: 0;
+  background: #fffef8f5;
+  border: 1px solid #d8ddc9;
+  border-radius: 29px;
+  padding: 7px 5px 8px;
+  box-shadow: 0 8px 30px #39462b20;
+  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+}
+.townwalk-app .app-tabbar a {
+  min-height: 59px;
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  color: #5c6353;
+  padding: 3px 0 2px;
+  gap: 4px;
+  border-radius: 20px;
+  white-space: nowrap;
+  background: none;
+  box-shadow: none;
+}
+.townwalk-app .app-tabbar a > [data-icon] {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 32px;
+  border-radius: 18px;
+  transition:
+    background 0.2s,
+    translate 0.2s;
+}
+.townwalk-app .app-tabbar .icon {
+  width: 23px;
+  height: 23px;
+  stroke-width: 1.7;
+}
+.townwalk-app .app-tabbar a[aria-current="page"] {
+  background: none;
+  box-shadow: none;
+  color: #344322;
+  font-weight: 700;
+}
+.townwalk-app .app-tabbar a[aria-current="page"] > [data-icon] {
+  background: #dce7ad;
+}
+.townwalk-app .app-tabbar a:hover:not([aria-current]) {
+  background: none;
+  color: #273f1c;
+}
+.townwalk-app .app-tabbar a:hover > [data-icon] {
+  background: #e9eddc;
+}
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  margin: 0 0 16px;
+  background: #fffdf7;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.search-field > .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--olive);
+}
+.search-field input {
+  min-width: 0;
+  width: 100%;
+  background: none;
+  border: 0;
+  outline: none;
+  padding: 2px 0;
+  font-size: 12px;
+  color: var(--ink);
+}
+.search-field:focus-within {
+  outline: 2px solid var(--olive);
+  outline-offset: 2px;
+}
+.search-field input:focus-visible {
+  outline: 0;
+}
+.townwalk-app .map-aside .search-field {
+  margin: 12px 0 10px;
+}
+.map-inventory-count {
+  font-size: 10px !important;
+  color: var(--muted);
+  margin: 0 0 8px !important;
+}
+.map-search-empty {
+  font-size: 11px;
+  padding: 15px 0;
+}
+.townwalk-app .map-list-item {
+  min-height: 60px;
+  padding: 12px 0;
+}
+.townwalk-app .map-list-item > span {
+  font-size: 13px;
+}
+.townwalk-app .map-list-item small {
+  font-size: 10px;
+  margin-top: 3px;
+}
+.townwalk-app .map-board {
+  background: #e6e8df;
+  position: relative;
+}
+.townwalk-app .map-network-state {
+  position: absolute;
+  inset: 0 0 45px;
+  z-index: 600;
+  background: #f0f1e8ed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  text-align: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+.map-network-state > .icon {
+  width: 35px;
+  height: 35px;
+  color: var(--olive);
+}
+.map-network-state strong {
+  font-size: 17px;
+  letter-spacing: -0.5px;
+}
+.map-network-state p {
+  font-size: 12px;
+  max-width: 280px;
+}
+.map-network-state .button {
+  font-size: 12px;
+  min-height: 44px;
+  padding: 9px 19px;
+}
+.townwalk-app .map-mode-row > .text-button {
+  font-size: 12px;
+  min-height: 44px;
+}
+.townwalk-app .map-disclaimer {
+  font-size: 9px;
+  padding: 9px 11px;
+  line-height: 1.7;
+  bottom: 8px;
+  background: #fffef5f5;
+}
+@media (max-width: 359px) {
+  .townwalk-app .app-tabbar a {
+    font-size: 11.5px;
+    letter-spacing: -0.6px;
+  }
+  .townwalk-app .app-tabbar {
+    width: calc(100% - 16px);
+    padding-inline: 3px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .townwalk-app .app-tabbar a > [data-icon] {
+    transition: none;
+  }
+}
+
+/* Changes from the delayed mobile user-perspective walkthrough. */
+.townwalk-app.is-searching {
+  scroll-behavior: auto;
+}
+.townwalk-app #view-explore > .search-field {
+  margin-bottom: 17px;
+}
+.townwalk-app.is-searching #view-explore .pocket-hero,
+.townwalk-app.is-searching #view-explore .pocket-shortcuts {
+  display: none;
+}
+.townwalk-app .pocket-hero {
+  min-height: 245px;
+  padding: 20px;
+}
+.townwalk-app .pocket-hero h1 {
+  font-size: 32px;
+  margin: 10px 0 12px;
+}
+.townwalk-app .pocket-hero-copy > p {
+  font-size: 12px;
+  line-height: 1.8;
+}
+.townwalk-app .pocket-hero .button {
+  margin-top: 15px;
+}
+.townwalk-app .pocket-shortcuts {
+  margin-bottom: 23px;
+}
+.townwalk-app .place-card-body p {
+  font-size: 12px;
+  line-height: 1.85;
+}
+.townwalk-app .place-card-body .eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.3px;
+}
+.townwalk-app .place-card-body .text-button {
+  font-size: 11px;
+  min-height: 34px;
+}
+.townwalk-app .place-art {
+  align-self: start;
+  min-height: 145px;
+}
+.townwalk-app .place-badge {
+  font-size: 8px;
+}
+.townwalk-app .place-number {
+  font-size: 9px;
+}
+.townwalk-app .content-status {
+  font-size: 11px;
+}
+.townwalk-app .content-status .data-note {
+  font-size: 11px;
+}
+.townwalk-app .day-trip-card small {
+  font-size: 10px;
+  line-height: 1.7;
+  display: block;
+  max-width: 230px;
+}
+.townwalk-app .timeline-row p {
+  font-size: 12px;
+}
+.townwalk-app .timeline-row h3 {
+  font-size: 15px;
+}
+.townwalk-app .timeline-row time {
+  font-size: 11px;
+}
+.townwalk-app .passport-page:first-child > p:last-of-type {
+  font-size: 11px;
+  line-height: 1.7;
+}
+.townwalk-app .pass-view .notice {
+  font-size: 11px;
+}
+.townwalk-app .source-pending {
+  display: block;
+  font-size: 10px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: 15px;
+}
+.townwalk-app .heritage-reference {
+  font-size: 12px;
+}
+.townwalk-app #show-map-list {
+  font-size: 12px;
+  min-height: 44px;
+}
+.townwalk-app .map-network-state {
+  gap: 7px;
+}
+/* Source-led exploration and a practical trip notebook. */
+.culture-quick {
+  margin: 20px 0 24px;
+  padding: 15px 17px;
+  background: #e8ecd7;
+  border-radius: 17px;
+}
+.culture-quick summary {
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.culture-quick summary span {
+  font-size: 9px;
+  font-weight: 400;
+  color: #6c7658;
+}
+.culture-quick p {
+  font-size: 12px;
+  margin-top: 13px;
+  line-height: 1.9;
+}
+.culture-quick .text-button {
+  font-size: 11px;
+}
+.heritage-groups {
+  display: flex;
+  gap: 7px;
+  margin: 13px 0;
+  flex-wrap: wrap;
+}
+.heritage-groups button {
+  font-size: 11px;
+  border: 1px solid #d6dbc4;
+  padding: 7px 12px;
+  min-height: 36px;
+  border-radius: 20px;
+}
+.heritage-groups button[aria-pressed="true"] {
+  background: #e4e9d3;
+  border-color: #a1ad83;
+  font-weight: 600;
+}
+.catalog-summary {
+  font-size: 11px !important;
+  margin: 0 0 15px;
+  color: var(--muted);
+}
+.townwalk-app .place-art img {
+  position: relative;
+  z-index: 1;
+}
+.townwalk-app .place-number,
+.townwalk-app .place-badge {
+  z-index: 2;
+}
+.hero-photo-credit {
+  position: absolute;
+  left: 12px;
+  bottom: 6px;
+  z-index: 3;
+  font-size: 6px;
+  background: #f8f6e9d9;
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: #515a40;
+}
+.detail-alias {
+  font-size: 11px;
+  color: var(--muted);
+}
+.photo-credit {
+  font-size: 9px !important;
+  line-height: 1.8 !important;
+  color: var(--muted);
+  margin: 8px 0 20px !important;
+}
+.photo-credit a {
+  text-decoration: underline;
+}
+.detail-hook {
+  font-size: 23px;
+  letter-spacing: -0.7px;
+  margin: 20px 0 13px;
+  line-height: 1.4;
+}
+.look-for {
+  display: flex;
+  gap: 12px;
+  padding: 17px;
+  background: #e8ecd7;
+  border-radius: 16px;
+  margin: 20px 0;
+}
+.look-for > .icon {
+  margin-top: 3px;
+  width: 23px;
+  height: 23px;
+}
+.look-for strong {
+  font-size: 12px;
+}
+.look-for p {
+  font-size: 12px;
+  line-height: 1.9;
+  margin: 7px 0 0;
+}
+.visit-facts {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  margin: 20px 0;
+  color: #66714e;
+}
+.visit-facts span {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.visit-facts .icon {
+  width: 17px;
+  height: 17px;
+}
+.source-links {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 7px;
+  margin: 15px 0;
+}
+.source-links a {
+  font-size: 12px;
+  min-height: 36px;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.source-links .icon {
+  width: 17px;
+  height: 17px;
+}
+.detail-privacy {
+  display: block;
+  margin-top: 15px;
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.trip-practical {
+  border: 1px solid #d5dac5;
+  border-radius: 17px;
+  margin-bottom: 20px;
+  background: #f0f1e6;
+}
+.trip-practical summary {
+  padding: 15px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.trip-practical > div {
+  padding: 0 17px 17px;
+}
+.trip-practical h3 {
+  font-size: 15px;
+  letter-spacing: -0.4px;
+  margin: 20px 0 8px;
+}
+.trip-practical p {
+  font-size: 12px;
+  line-height: 1.9;
+}
+.trip-practical a {
+  font-size: 12px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  text-decoration: underline;
+  color: #566441;
+}
+.saved-trip {
+  padding: 18px;
+  margin: 20px 0 25px;
+  border: 1px dashed #b5bfa0;
+  background: #eef0df;
+  border-radius: 18px;
+}
+.saved-trip h3 {
+  font-size: 18px;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+.saved-trip h3 span {
+  font-size: 12px;
+  color: #68794b;
+  margin-left: 5px;
+}
+.saved-trip button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  font-size: 12px;
+  text-align: left;
+  border-bottom: 1px solid #d5dcc4;
+  min-height: 45px;
+}
+.saved-trip button > .icon:last-child {
+  margin-left: auto;
+  width: 16px;
+}
+.saved-trip small {
+  font-size: 10px;
+  color: var(--muted);
+  display: block;
+  margin-top: 13px;
+}
+@media (max-width: 359px) {
+  .culture-quick summary {
+    font-size: 12px;
+  }
+  .culture-quick summary span {
+    font-size: 8px;
+  }
+  .heritage-groups button {
+    font-size: 10px;
+    padding: 7px 10px;
+  }
+}
+
+.connection-state {
+  font-size: 11px;
+  line-height: 1.8;
+  padding: 12px 14px;
+  background: #eee2c5;
+  border-radius: 12px;
+  margin-bottom: 17px;
+  color: #695d3f;
+}
+.townwalk-app #save-place,
+.townwalk-app #share-place {
+  margin-top: 10px;
+  min-height: 44px;
+  font-size: 12px;
+}
+
+.townwalk-app .detail-description {
+  font-size: 14px !important;
+  line-height: 1.95;
+}
+.townwalk-app .look-for p {
+  font-size: 13px;
+  line-height: 1.9;
+}
+.townwalk-app .policy p,
+.townwalk-app .policy li {
+  font-size: 12px;
+  line-height: 1.95;
+}
+
+.townwalk-app .source-links a{min-height:44px;font-size:13px}.townwalk-app #more-reviews{min-height:44px;font-size:12px}
+
+.townwalk-app .place-access-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #f4e4d6;
+  border-radius: 10px;
+  padding: 10px;
+  color: #70452e;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.place-access-warning .icon { flex-shrink: 0; width: 18px; }
+.access-warning,
+.mountain-detour {
+  background: #f4e4d6;
+  border: 1px solid #d9bda6;
+  color: #624432;
+  border-radius: 18px;
+  padding: 18px;
+  margin: 18px 0;
+}
+.access-warning strong { display: flex; align-items: center; gap: 8px; }
+.townwalk-app .access-warning p,
+.townwalk-app .mountain-detour p { font-size: 13px; line-height: 1.9; margin: 12px 0; }
+.access-warning small { font-size: 12px; line-height: 1.7; display: block; }
+.mountain-detour h3 { font-size: 20px; letter-spacing: -.5px; margin-top: 8px; }
+.mountain-detour .text-button { min-height: 44px; text-align: left; font-size: 13px; }
+
+.map-category-row { display: flex; gap: 8px; overflow-x: auto; padding: 0 0 14px; }
+.map-category-row .chip { flex-shrink: 0; min-height: 44px; font-size: 12px; }
+.leaflet-marker-icon.pin-rest { background: #ded7f0; }
+.leaflet-marker-icon.pin-food { background: #dae7b1; }
+.leaflet-marker-icon.pin-stay { background: #efd3c1; }
+.booking-notice { background: #e9e3f4; border: 1px solid #c7bbdb; border-radius: 18px; padding: 18px; margin: 18px 0; }
+.booking-notice strong { display: flex; align-items: center; gap: 8px; }
+.townwalk-app .booking-notice p { font-size: 13px; line-height: 1.9; margin: 12px 0; }
+.booking-notice .button { min-height: 46px; font-size: 13px; }
+.stop-facts { background: #eef0df; border-radius: 14px; padding: 12px 16px; margin: 14px 0; }
+.townwalk-app .stop-facts p { display: flex; gap: 9px; font-size: 13px; line-height: 1.8; margin: 6px 0; }
+.stop-facts .icon { flex-shrink: 0; width: 19px; }
+.local-source-note { font-size: 12px; line-height: 1.8; color: #626c47; }
+.townwalk-app .passport-actions .button { min-height: 48px; font-size: 13px; }
+.townwalk-app .pass-export-hint { font-size: 12px; line-height: 1.8; color: #626c47; margin: 14px 0; }
+.pass-toolbar { display: flex; align-items: center; gap: 10px; margin: 14px 0 8px; }
+.pass-toolbar .button { flex: 1; min-width: 0; min-height: 46px; font-size: 13px; }
+.townwalk-app .pass-toolbar .book-toggle { flex: 1; margin: 0; min-height: 46px; font-size: 11px; }
+.townwalk-app .pass-save-caption { font-size: 12px; color: #626c47; margin: 0 0 18px; }
+
+.leaflet-tooltip.townwalk-map-label { background: #fbf8ed; border: 1px solid #aaa895; color: #303528; font-size: 11px; font-weight: 600; border-radius: 9px; padding: 5px 8px; box-shadow: 0 2px 8px #30352812; }
+
+.townwalk-app .map-category-row .chip { flex: 0 0 auto; white-space: nowrap; padding: 10px 12px; min-height: 44px; }
+
+.townwalk-app .stamp-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 19px; }
+.townwalk-app .stamp-grid .stamp { min-height: 155px; padding: 17px 9px; }
+.townwalk-app .stamp-grid .stamp b { font-size: 11px; line-height: 1.5; max-width: 100%; }
+.townwalk-app .stamp-grid .stamp small { font-size: 9px; margin-top: 10px; }
+.townwalk-app .stamp-grid .stamp .icon { width: 42px; height: 42px; }
+.townwalk-app .passport-page:first-child > p:last-of-type { grid-column: 1/-1; font-size: 14px; font-weight: 600; line-height: 1.6; }
+.pass-empty { background: #e4edbd; border-radius: 18px; padding: 24px 18px; text-align: center; }
+.pass-empty > .icon { width: 40px; height: 40px; margin: 0 auto 15px; }
+.townwalk-app .pass-empty h3 { font-size: 23px; line-height: 1.3; margin-bottom: 12px; }
+.townwalk-app .pass-empty p { font-size: 13px; line-height: 1.9; margin-bottom: 16px; }
+.pass-empty .button { font-size: 12px; min-height: 44px; }
+.pass-destinations { margin: 22px 0; border-top: 1px solid #d7dacb; }
+.pass-destinations summary { min-height: 48px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 14px; font-weight: 600; }
+.townwalk-app .pass-destinations > p { font-size: 12px; line-height: 1.8; margin: 12px 0; color: #626c47; }
+.pass-destinations > button { width: 100%; padding: 12px 0; min-height: 48px; display: flex; justify-content: space-between; align-items: center; gap: 12px; text-align: left; border-bottom: 1px solid #e2e4d8; font-size: 13px; }
+.pass-destinations small { display: block; font-size: 11px; color: #626c47; margin-top: 6px; }
+.townwalk-app .pass-view .notice { font-size: 12px; }
+
+.townwalk-app .gps-zone { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; line-height: 1.8; margin: 14px 0; color: #52623e; }
+.gps-zone .icon { flex-shrink: 0; width: 19px; }
+
+/* Paper cutouts define the edge; no printed dotted border or inset rectangle. */
+.townwalk-app .stamp-grid .stamp { border: 0; outline: 0; box-shadow: none; }
+.townwalk-app .stamp-grid .stamp::after { display: none; }
+.townwalk-app .stamp-grid .stamp:focus-visible { box-shadow: inset 0 0 0 3px #173f36; }

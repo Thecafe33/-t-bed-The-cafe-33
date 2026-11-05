@@ -1,0 +1,1118 @@
+import {
+  HERITAGE_REFERENCE_URL,
+  SOURCE_CATALOG,
+  contentSourced,
+  visibleStop,
+  cloneDefault,
+  validateSite,
+  escapeHTML as e,
+  safeURL,
+  eligible,
+  canCollectStamp,
+  passProgress,
+  distanceMeters,
+  POLICY_VERSION,
+} from "./model.js";
+import { icon, mark } from "./icons.js";
+import { passArtwork, stampColor } from "./pass-art.js";
+import { stampOutline } from "./stamp-shape.js";
+import * as cloud from "./cloud.js";
+import { privacyHTML } from "./policy.js";
+let site = cloneDefault(),
+  filter = "heritage",
+  profile = { name: "", badges: [], policyVersion: POLICY_VERSION },
+  reviews = [],
+  map,
+  markerLayer,
+  mapTiles,
+  reviewLoading = false,
+  bookPage = 0,
+  heritageGroup = "all";
+let mapCategory = "all";
+let activeTab = null,
+  reviewsRequested = false,
+  passNeedsRender = true;
+history.scrollRestoration = "manual";
+const tabScroll = {};
+const tabTitles = {
+  explore: "Khám phá",
+  map: "Bản đồ",
+  day: "Lịch trình",
+  pass: "Óc Eo Pass",
+  community: "Cộng đồng",
+};
+const $ = (s) => document.querySelector(s),
+  modal = $("#modal"),
+  body = $("#modal-body");
+function normalizedTab(hash = location.hash) {
+  const value = hash.replace(/^#/, "");
+  const aliases = { home: "explore", memories: "community", passport: "pass" };
+  return Object.hasOwn(tabTitles, value) ? value : aliases[value] || "explore";
+}
+function activateTab(tab, { focus = false } = {}) {
+  if (activeTab === tab) return;
+  if (activeTab) tabScroll[activeTab] = window.scrollY;
+  if (modal.open) modal.close();
+  activeTab = tab;
+  document
+    .querySelectorAll(".app-view[data-view]")
+    .forEach((view) => (view.hidden = view.dataset.view !== tab));
+  document.querySelectorAll(".app-tabbar [data-route]").forEach((link) => {
+    if (link.dataset.route === tab) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  });
+  document.body.dataset.tab = tab;
+  document.title = `${tabTitles[tab]} — Óc Eo townwalk`;
+  if (
+    tab === "pass" &&
+    (passNeedsRender || !$("#pass-content").hasChildNodes())
+  )
+    showPassport();
+  if (tab === "map") showOSM();
+  if (tab === "community" && !reviewsRequested) {
+    reviewsRequested = true;
+    loadReviews(true);
+  }
+  window.scrollTo({ top: tabScroll[tab] || 0, behavior: "instant" });
+  if (focus)
+    document
+      .querySelector(`[data-view="${tab}"] h1`)
+      ?.focus({ preventScroll: true });
+}
+function navigate(tab) {
+  if (activeTab === tab) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+  history.pushState(null, "", `#${tab}`);
+  activateTab(tab, { focus: true });
+}
+window.addEventListener("popstate", () => activateTab(normalizedTab()));
+window.addEventListener("hashchange", () => activateTab(normalizedTab()));
+function hydrate(root = document) {
+  root
+    .querySelectorAll("[data-icon]")
+    .forEach((el) => (el.innerHTML = icon(el.dataset.icon)));
+  root.querySelectorAll("[data-mark]").forEach((el) => (el.innerHTML = mark));
+}
+function toast(s) {
+  $("#toast").textContent = s;
+  $("#toast").classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => $("#toast").classList.remove("show"), 5500);
+}
+function localRead(k, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(k)) || fallback;
+  } catch {
+    return fallback;
+  }
+}
+function store(k, v) {
+  try {
+    localStorage.setItem(k, JSON.stringify(v));
+    return true;
+  } catch {
+    toast(
+      "Trình duyệt không cho lưu dữ liệu. Óc Eo Pass có thể mất khi đóng trang.",
+    );
+    return false;
+  }
+}
+const profileKey = () => `oceo-passport-${cloud.state.user?.uid || "guest"}`;
+function readProfile() {
+  passNeedsRender = true;
+  const v = localRead(profileKey(), {});
+  profile = {
+    name: typeof v.name === "string" ? v.name.slice(0, 60) : "",
+    badges: Array.isArray(v.badges)
+      ? v.badges.filter((x) => typeof x === "string")
+      : [],
+    policyVersion: POLICY_VERSION,
+  };
+}
+async function saveProfile() {
+  store(profileKey(), profile);
+  if (cloud.state.user) {
+    try {
+      await cloud.saveProfile(profile);
+    } catch (err) {
+      toast("Đã giữ trên máy, chưa đồng bộ: " + cloud.friendlyError(err));
+    }
+  }
+}
+function openModal(kicker, html, view = "generic") {
+  modal.dataset.view = view;
+  $("#modal-kicker").textContent = kicker;
+  body.innerHTML = html;
+  modal.classList.toggle("passport-dialog", view === "passport");
+  hydrate(body);
+  if (!modal.open) modal.showModal();
+  modal.scrollTop = 0;
+}
+$("#close-modal").onclick = () => modal.close();
+modal.addEventListener("click", (ev) => {
+  if (ev.target === modal) {
+    const r = modal.getBoundingClientRect();
+    if (
+      ev.clientX < r.left ||
+      ev.clientX > r.right ||
+      ev.clientY < r.top ||
+      ev.clientY > r.bottom
+    )
+      modal.close();
+  }
+});
+modal.addEventListener("close", () => {
+  if (photoURL) {
+    URL.revokeObjectURL(photoURL);
+    photoURL = "";
+  }
+  photoBlob = null;
+  photoGeneration++;
+});
+function empty(title, text) {
+  return `<div class="empty-state"><h3>${title}</h3><p>${text}</p></div>`;
+}
+function renderPlaces() {
+  document.body.classList.toggle(
+    "is-searching",
+    !!$("#place-search").value.trim(),
+  );
+  document.querySelectorAll("[data-filter]").forEach((b) => {
+    b.classList.toggle("active", b.dataset.filter === filter);
+    b.setAttribute("aria-pressed", String(b.dataset.filter === filter));
+  });
+  const source =
+    filter === "heritage"
+      ? site.places
+      : site.stops
+          .filter((p) =>
+            filter === "food"
+              ? p.category === "food"
+              : ["rest", "stay"].includes(p.category),
+          )
+          .filter(visibleStop)
+          .sort((a,b) => Number(b.featured === true) - Number(a.featured === true));
+  const data = source.filter(
+    (p) =>
+      matchesSearch(p, $("#place-search").value) &&
+      (filter !== "heritage" ||
+        heritageGroup === "all" ||
+        p.group === heritageGroup),
+  );
+  $("#data-note").textContent =
+    filter === "heritage"
+      ? `${site.places.length} hồ sơ: di tích khu A/B, nhà trưng bày và điểm khám phá tùy chọn. Không phải toàn bộ mọi di chỉ khảo cổ. Đọc nguồn riêng và lưu ý tiếp cận từng điểm; vị trí OSM là tham khảo.`
+      : "Địa điểm có nguồn bản đồ và gợi ý địa phương tại Óc Eo. Dịch vụ, món và giá cần xác nhận với cơ sở; các món định vị theo mốc chỉ có mô tả, chưa gắn pin phỏng đoán.";
+  $("#catalog-summary").textContent =
+    `${data.length} địa điểm${filter === "heritage" ? " · " + site.places.filter(eligible).length + " có vị trí tham khảo" : ""}`;
+  $("#heritage-groups").hidden = filter !== "heritage";
+  document
+    .querySelectorAll("[data-group]")
+    .forEach((b) =>
+      b.setAttribute("aria-pressed", String(b.dataset.group === heritageGroup)),
+    );
+  $("#places-grid").innerHTML = data.length
+    ? data
+        .map(
+          (p, i) =>
+            `<article class="place-card"><button class="place-art ${["butter", "lavender", "peach", "lime"].includes(p.color) ? p.color : "butter"}" data-place="${e(p.id)}" aria-label="Tìm hiểu ${e(p.name)}">${safeURL(p.image, { image: true }) ? `<img src="${e(safeURL(p.image, { image: true }))}" alt="${e(p.name)}" loading="lazy">` : icon(p.symbol)}<span class="place-number">0${i + 1}</span><span class="place-badge">${icon(eligible(p) ? "check" : "clock")} ${eligible(p) ? "Có pin" : contentSourced(p) ? "Có tư liệu" : p.localRecommendation ? "Gợi ý địa phương" : "Chờ xác minh"}</span></button><div class="place-card-body"><div class="eyebrow">${e(p.label || "MỘT MẢNH GHÉP ÓC EO")}</div><h3><button data-place="${e(p.id)}" style="text-align:left;padding:0">${e(p.name)}</button>${icon("arrowup")}</h3><p>${e(p.hook || p.description.slice(0, 110))}${!p.hook && p.description.length > 110 ? "…" : ""}</p>${p.accessWarningShort ? `<p class="place-access-warning">${icon("compass")} ${e(p.accessWarningShort)}</p>` : ""}<button class="text-button" data-place="${e(p.id)}">Mở câu chuyện ${icon("arrow")}</button></div></article>`,
+        )
+        .join("")
+    : $("#place-search").value.trim()
+      ? empty(
+          "Chưa tìm thấy trong danh sách.",
+          "Thử tên khác. Danh mục di tích vẫn đang được bổ sung, không phải toàn bộ các di tích tại xã Óc Eo.",
+        )
+      : empty(
+          filter === "food"
+            ? "Ăn ngon, nhưng phải đúng chỗ."
+            : "Một chỗ nghỉ, đang chờ xác minh.",
+          "Chưa có cơ sở được xác minh trong xã Óc Eo sau sáp nhập. Chúng mình sẽ cập nhật tên, địa chỉ và nguồn thực tế; không gợi ý quán hay nơi lưu trú giả.",
+        );
+}
+function normalizedSearch(value) {
+  return String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[đĐ]/g, "d")
+    .toLowerCase();
+}
+function matchesSearch(place, query) {
+  const text = normalizedSearch(
+    [place.name, ...(Array.isArray(place.aliases) ? place.aliases : [])].join(
+      " ",
+    ),
+  );
+  const q=normalizedSearch(query).trim();
+  return q.split(/\s+/).every(word=>text.includes(word)) || text.replace(/\s+/g,"").includes(q.replace(/\s+/g,""));
+}
+function mapPlaces() {
+  return [...site.places, ...site.stops.filter(visibleStop)].filter((p) =>
+    (mapCategory === "all" || p.category === mapCategory) &&
+    matchesSearch(p, $("#map-search").value));
+}
+function coordinateLabel(p) {
+  const url = safeURL(p.coordinateSource);
+  return url.includes("openstreetmap.org/") ? "OSM" :
+    url.includes("google.com/maps") ? "Google Maps · Plus Code" : "nguồn tọa độ";
+}
+function renderMap() {
+  const visible = mapPlaces();
+  const located = visible.filter(eligible).length;
+  document.querySelectorAll("[data-map-category]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.mapCategory === mapCategory);
+    button.setAttribute("aria-pressed", String(button.dataset.mapCategory === mapCategory));
+  });
+  $("#map-inventory-count").textContent =
+    `${visible.length} địa điểm / gợi ý · ${located} có pin. Nguồn từng vị trí ghi trong chi tiết.`;
+  $("#map-list").innerHTML = visible.length
+    ? visible
+        .map(
+          (p) =>
+            `<button class="map-list-item" data-place="${e(p.id)}">${icon(p.symbol)}<span>${e(p.name)}<small>${p.collectible === false ? "Hidden gem tùy chọn · đọc lưu ý đường núi" : eligible(p) ? "Có pin · " + coordinateLabel(p) : p.localRecommendation ? p.address || "Gợi ý địa phương · chưa có pin" : "Có tư liệu · đang bổ sung vị trí"}</small></span>${icon("arrowup")}</button>`,
+        )
+        .join("")
+    : '<p class="map-search-empty">Chưa tìm thấy tên này trong danh sách đang biên tập.</p>';
+  if (map) renderMarkers();
+}
+function renderTimeline() {
+  $("#timeline").innerHTML = site.itinerary
+    .map(
+      (s) =>
+        `<article class="timeline-row"><time>${e(s.time)}</time><div><h3>${e(s.title)}</h3><p>${e(s.description)}</p>${s.placeId ? `<button class="text-button" data-place="${e(s.placeId)}">Xem điểm dừng ${icon("arrow")}</button>` : ""}</div></article>`,
+    )
+    .join("");
+}
+function renderSite() {
+  passNeedsRender = true;
+  renderPlaces();
+  renderMap();
+  renderTimeline();
+  renderSavedTrip();
+  if (activeTab === "pass") showPassport();
+}
+function findPlace(id) {
+  return [...site.places, ...site.stops].find((p) => p.id === id);
+}
+function placeDetail(id) {
+  const p = findPlace(id);
+  if (!p) return;
+  const valid = eligible(p),
+    sourced = contentSourced(p);
+  const saved = savedSiteIds().includes(p.id);
+  openModal(
+    p.group
+      ? `ÓC EO / ${p.group === "A" ? "NÚI BA THÊ" : "ĐÔ THỊ ÓC EO"}`
+      : "ÓC EO / ĐIỂM DỪNG",
+    `
+ <div class="eyebrow">${e(p.label)}</div><h2>${e(p.name)}</h2>
+ ${p.accessWarning ? `<aside class="access-warning" aria-label="Lưu ý đường đi"><strong>${icon("compass")} Lưu ý đường đi</strong><p>${e(p.accessWarning)}</p>${p.collectible === false ? "<small>Điểm tùy chọn · không cần ghé để hoàn thành Óc Eo Pass.</small>" : ""}</aside>` : ""}
+ ${p.bookingNotice ? `<aside class="booking-notice"><strong>${icon("coffee")} Nghỉ đúng lúc. Đặt trước nhé.</strong><p>${e(p.bookingNotice)}</p>${safeURL(p.bookingUrl) ? `<a class="button dark" id="book-stop" href="${e(safeURL(p.bookingUrl))}" target="_blank" rel="noopener noreferrer">${e(p.bookingLabel || "Đặt lịch trước")} ${icon("arrowup")}</a>` : ""}</aside>` : ""}
+ ${!p.recordType && p.aliases?.length ? `<p class="detail-alias">Còn tìm thấy bằng: ${e(p.aliases.join(" · "))}</p>` : ""}
+ <div class="detail-illustration ${["butter", "lavender", "peach", "lime"].includes(p.color) ? p.color : "butter"}">${safeURL(p.image, { image: true }) ? `<img src="${e(safeURL(p.image, { image: true }))}" alt="${e(p.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:16px">` : icon(p.symbol)}</div>
+ ${p.imageCredit ? `<p class="photo-credit">Ảnh: ${e(p.imageCredit)} ${safeURL(p.imageSource) ? `<a href="${e(safeURL(p.imageSource))}" target="_blank" rel="noopener noreferrer">Nguồn ảnh ↗</a>` : ""}</p>` : ""}
+ ${p.hook ? `<h3 class="detail-hook">${e(p.hook)}</h3>` : ""}<p class="detail-description">${e(p.description)}</p>
+ ${p.lookFor ? `<div class="look-for">${icon("compass")}<div><strong>Thử nhìn kỹ hơn</strong><p>${e(p.lookFor)}</p></div></div>` : ""}
+ <div class="visit-facts"><span>${icon("clock")} ${e(p.duration)} phút gợi ý</span><span>${icon("sun")} ${e(p.hours || "Hỏi giờ đón khách")}</span></div>
+ ${p.category !== "heritage" ? `<div class="stop-facts">${p.address ? `<p>${icon("pin")} ${e(p.address)}</p>` : ""}${p.price ? `<p>${icon("coffee")} ${e(p.price)}</p>` : ""}</div>` : ""}
+ ${canCollectStamp(p) ? `<p class="gps-zone">${icon("pin")} Nhận tem trong bán kính ${Math.min(site.radius,p.checkInRadius || site.radius)} m quanh vị trí tham khảo, sau khi GPS xác định thành công.</p>` : ""}
+ <p class="detail-description">${e(p.note || "")}</p>
+ <div class="notice ${valid ? "" : "warning"}">${p.collectible === false ? "Điểm tùy chọn, không phát tem và không tính vào tiến độ Óc Eo Pass. Chưa xác nhận quyền tiếp cận hoặc tọa độ công trình." : valid ? e(p.coordinateNote || "Vị trí có nguồn; xác nhận lối tiếp cận và giờ đón khách tại điểm.") : sourced ? (p.category==="heritage"?"Nội dung đã đối chiếu tư liệu. Chưa có tọa độ đủ căn cứ; chưa mở chỉ đường và nhận tem tại điểm này.":"Danh bạ tham khảo, chưa xác nhận hoạt động. Mở nguồn gốc hoặc gọi kiểm tra trước khi đến.") : p.localRecommendation && p.category !== "heritage" ? "Gợi ý theo mốc địa phương; chưa đủ tọa độ gắn pin. Hỏi đúng điểm bán, giờ phục vụ và giá trước khi ghé." : "Thông tin đang được đối chiếu; chưa mở chỉ đường hoặc nhận tem."}</div>
+ <div class="source-links">${safeURL(p.sourceUrl) ? `<a href="${e(safeURL(p.sourceUrl))}" target="_blank" rel="noopener noreferrer">${icon("leaf")} Đọc nguồn ${e(p.sourceLabel || (p.category === "heritage" ? "Ban Quản lý" : "OpenStreetMap"))} ↗</a>` : p.category === "heritage" ? `<a class="heritage-reference" href="${HERITAGE_REFERENCE_URL}" target="_blank" rel="noopener noreferrer">Tra cứu tư liệu Óc Eo ↗</a>` : `<span class="local-source-note">Gợi ý địa phương · cập nhật ${e(p.contentReviewedAt || "")}</span>`}${safeURL(p.coordinateSource) ? `<a href="${e(safeURL(p.coordinateSource))}" target="_blank" rel="noopener noreferrer">Nguồn vị trí · ${e(coordinateLabel(p))} ↗</a>` : ""}</div>
+ <div class="detail-actions">${p.phone && /^\+?[0-9]{9,15}$/.test(p.phone) ? `<a class="button outline" href="tel:${e(p.phone)}">${e(p.phoneLabel || "Gọi cơ sở · số công khai")}</a>` : ""}${valid ? `<a class="button outline" href="https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lng}#map=18/${p.lat}/${p.lng}" target="_blank" rel="noopener noreferrer">Mở vị trí ${icon("map")}</a><button class="button outline" id="focus-on-map">Xem trong app ${icon("pin")}</button>` : ""}${p.category === "heritage" && p.collectible !== false ? `<button class="button dark" id="checkin" ${!canCollectStamp(p) ? "disabled" : ""}>${profile.badges.includes(p.id) ? "Đã có tem · xem Pass" : "Mình đang ở đây"} ${icon("pin")}</button>` : ""}</div>
+ <button class="button outline full-width" id="share-place">${icon("arrowup")} Gửi điểm này cho bạn bè</button><button class="button outline full-width" id="save-place">${icon(saved ? "check" : "heart")} ${saved ? "Đã lưu vào chuyến đi" : "Lưu vào chuyến đi"}</button>
+ <small class="detail-privacy">GPS chỉ dùng khi nhận tem, không lưu tọa độ. Đặt tên di tích vào danh sách lưu không xác nhận địa điểm đang mở cửa.</small>`,
+    "place",
+  );
+  $("#share-place").onclick = async () => {
+    const url = new URL(location.origin + location.pathname);
+    url.searchParams.set("place", p.id);
+    url.hash = "explore";
+    try {
+      if (navigator.share)
+        await navigator.share({
+          title: `${p.name} · Óc Eo Townwalk`,
+          text: p.hook || p.name,
+          url: url.href,
+        });
+      else {
+        await navigator.clipboard.writeText(url.href);
+        toast("Đã sao chép liên kết điểm đến.");
+      }
+    } catch (err) {
+      if (err.name !== "AbortError")
+        prompt("Sao chép liên kết điểm đến:", url.href);
+    }
+  };
+  if ($("#checkin")) $("#checkin").onclick = () => checkIn(p);
+  $("#save-place").onclick = () => {
+    let list = savedSiteIds();
+    list = list.includes(p.id)
+      ? list.filter((x) => x !== p.id)
+      : [...list, p.id];
+    store("oceo-saved-sites", list);
+    placeDetail(p.id);
+    renderSavedTrip();
+  };
+  $("#focus-on-map")?.addEventListener("click", () => {
+    mapCategory = "all";
+    $("#map-search").value = "";
+    renderMap();
+    navigate("map");
+    requestAnimationFrame(() => map?.setView([p.lat, p.lng], 17));
+  });
+}
+function savedSiteIds() {
+  const value = localRead("oceo-saved-sites", []);
+  return Array.isArray(value)
+    ? value.filter((id) => typeof id === "string")
+    : [];
+}
+function renderSavedTrip() {
+  const ids = savedSiteIds(),
+    places = [...site.places, ...site.stops].filter((p) => ids.includes(p.id));
+  $("#saved-trip").innerHTML = places.length
+    ? `<div class="saved-trip"><h3>Chuyến đi bạn đã lưu <span>${places.length}</span></h3>${places.map((p) => `<button data-place="${e(p.id)}">${icon(p.symbol)} ${e(p.name)} ${icon("arrowup")}</button>`).join("")}<small>Đây là danh sách cá nhân, chưa tối ưu đường đi.</small></div>`
+    : "";
+}
+async function checkIn(p) {
+  if (!canCollectStamp(p)) return;
+  if (profile.badges.includes(p.id)) {
+    showPassport();
+    return;
+  }
+  if (!navigator.geolocation) {
+    toast("Thiết bị không hỗ trợ định vị.");
+    return;
+  }
+  const btn = $("#checkin");
+  const radius = Math.min(site.radius, p.checkInRadius || site.radius);
+  btn.disabled = true;
+  btn.textContent = "Đang xác định vị trí…";
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const distance = distanceMeters(
+        { lat: pos.coords.latitude, lng: pos.coords.longitude },
+        p,
+      );
+      if (pos.coords.accuracy > Math.min(100, radius)) {
+        toast("GPS chưa đủ chính xác. Ra nơi thoáng và thử lại.");
+        if (modal.dataset.view === "place") placeDetail(p.id);
+        return;
+      }
+      if (distance > radius) {
+        toast(
+          `Bạn còn cách điểm khoảng ${Math.round(distance)} m. Cần ở trong bán kính ${radius} m để nhận tem.`,
+        );
+        if (modal.dataset.view === "place") placeDetail(p.id);
+        return;
+      }
+      if (!profile.badges.includes(p.id)) profile.badges.push(p.id);
+      await saveProfile();
+      toast("Một nơi đã đến. Một con tem mới!");
+      bookPage = 0;
+      showPassport();
+    },
+    (err) => {
+      toast(
+        err.code === 1
+          ? "Bạn chưa cho phép định vị. Có thể tiếp tục khám phá mà không check-in."
+          : "Chưa lấy được vị trí. Thử lại ngoài trời hoặc kiểm tra GPS.",
+      );
+      if (modal.dataset.view === "place") placeDetail(p.id);
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+  );
+}
+function renderMarkers() {
+  markerLayer.clearLayers();
+  const verified = mapPlaces().filter(eligible);
+  for (const p of verified) {
+    const marker = L.marker([p.lat, p.lng], {
+      icon: L.divIcon({
+        className: `osm-pin pin-${p.category}`,
+        html: icon(p.symbol),
+        iconSize: [38, 38],
+      }),
+      title: p.name,
+      alt: p.name,
+    }).addTo(markerLayer);
+    marker.bindTooltip(e(p.name), {permanent: p.featured === true, direction: p.featured === true ? "auto" : "top", offset: p.featured === true ? [0,0] : [0,-18], className: "townwalk-map-label"});
+    marker.on("click", () => placeDetail(p.id));
+  }
+  if (verified.length)
+    map.fitBounds(
+      verified.map((p) => [p.lat, p.lng]),
+      { padding: [40, 40], maxZoom: 15, animate: false },
+    );
+  $("#map-disclaimer").textContent = verified.length
+    ? `${verified.length} pin có nguồn · OSM và Plus Code công khai. Xem nguồn từng điểm; hỏi lối vào trước khi đến. Nét đứt là ranh giới OSM tham khảo.`
+    : "Không có pin phù hợp bộ lọc này. Một số gợi ý mới chỉ có mốc tương đối; xem mô tả trong danh sách.";
+}
+function showOSM() {
+  if (!window.L) {
+    $("#map-network-state").hidden = false;
+    return;
+  }
+  if (!map) {
+    // Instant zoom keeps tiles sharp when switching views and under reduced-motion CSS.
+    map = L.map("osm-map", { scrollWheelZoom: false, zoomAnimation: false,
+      fadeAnimation: false, markerZoomAnimation: false }).setView(
+      [10.2557721, 105.1534925],
+      13,
+    );
+    markerLayer = L.layerGroup().addTo(map);
+    mapTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    });
+    let failures = 0;
+    mapTiles.on("tileerror", () => {
+      if (++failures >= 3) $("#map-network-state").hidden = false;
+    });
+    mapTiles.on("tileload", () => {
+      $("#map-network-state").hidden = true;
+      failures = 0;
+    });
+    mapTiles.addTo(map);
+    fetch("/assets/data/oceo-boundary.geojson")
+      .then((r) => r.json())
+      .then((data) => {
+        L.geoJSON(data, {
+          style: {
+            color: "#798557",
+            weight: 2,
+            dashArray: "5 7",
+            fillOpacity: 0.025,
+          },
+          interactive: false,
+        }).addTo(map);
+      })
+      .catch(() => {});
+  }
+  requestAnimationFrame(() => {
+    map.invalidateSize();
+    renderMarkers();
+  });
+}
+function retryMap() {
+  showOSM();
+  if (mapTiles) {
+    $("#map-network-state").hidden = true;
+    mapTiles.redraw();
+  }
+}
+$("#reload-map").onclick = retryMap;
+$("#retry-map").onclick = retryMap;
+$("#show-map-list").onclick = () => {
+  $("#map-search").scrollIntoView({ block: "center", behavior: "smooth" });
+  $("#map-search").focus({ preventScroll: true });
+};
+$("#map-search").addEventListener("input", renderMap);
+$("#place-search").addEventListener("input", renderPlaces);
+let stampBorderObserver;
+function updateStampBorders() {
+  stampBorderObserver?.disconnect();
+  const apply = (element, width, height) => {
+    if (width > 0 && height > 0) element.style.clipPath = `path("${stampOutline(width,height)}")`;
+  };
+  if (typeof ResizeObserver !== "undefined") stampBorderObserver = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      const size = entry.borderBoxSize?.[0];
+      apply(entry.target, size?.inlineSize || entry.target.offsetWidth, size?.blockSize || entry.target.offsetHeight);
+    }
+  });
+  for (const element of document.querySelectorAll('#pass-content .stamp')) {
+    apply(element, element.offsetWidth, element.offsetHeight);
+    stampBorderObserver?.observe(element);
+  }
+}
+function showPassport() {
+  if (modal.open) modal.close();
+  if (activeTab !== "pass") {
+    navigate("pass");
+    return;
+  }
+  const {collection, earned, ready, total, count, complete} = passProgress(site.places, profile.badges);
+  const all = earned;
+  const pages = Math.max(1, Math.ceil(all.length / 4));
+  bookPage = Math.max(0, Math.min(pages - 1, bookPage));
+  passNeedsRender = false;
+  $("#pass-content").innerHTML =
+    `<div class="app-view-heading"><div class="eyebrow">GOM TEM DI SẢN. LAN TỎA ÓC EO.</div><h1 id="pass-heading" tabindex="-1">Óc Eo <span class="serif">Pass.</span></h1><p>Mỗi con tem là một lần chạm Óc Eo.</p></div><div class="pass-toolbar"><button class="button dark" id="save-pass-image">Lưu ảnh về máy ${icon("download")}</button><button class="text-button book-toggle" id="toggle-book">Đóng bìa Óc Eo Pass ${icon("passport")}</button></div><p class="pass-save-caption">Lưu ảnh tiến độ bất cứ lúc nào.</p><div class="passport-book"><button class="passport-cover" id="open-book">${mark}<small>ÓC EO TOWNWALK</small><h3>Óc Eo<br><span class="serif">Pass.</span></h3><span>Chạm để mở một chuyến đi ↗</span></button><div class="passport-spread"><div class="passport-page"><div class="eyebrow">ÓC EO TOWNWALK / YOUR PASS</div><h3>Óc Eo.<br><span class="serif">I was here.</span></h3><p>Óc Eo Pass này thuộc về</p><div class="owner-name">${e(profile.name || "Một tâm hồn tò mò")}</div><small>Xã Óc Eo · An Giang</small><div class="passport-progress"><span style="width:${total ? (count / total) * 100 : 0}%"></span></div><p>${total ? `Bạn đã đạt ${count} / ${total} tem` : "Bộ sưu tập đang được bổ sung"}</p><small>${cloud.state.user ? "Đồng bộ với tài khoản khi có mạng" : "Chế độ khách · lưu trên thiết bị này"}</small></div><div class="passport-page passport-flip"><div class="eyebrow">NHỮNG NƠI MÌNH ĐÃ CHẠM</div>${all.length ? `<div class="stamp-grid">${all
+      .slice(bookPage * 4, bookPage * 4 + 4)
+      .map(
+        (p) =>
+          `<button class="stamp earned ${["butter", "lavender", "peach", "lime"].includes(p.color) ? p.color : "butter"}" style="background:${stampColor(p)}" data-place="${e(p.id)}" aria-label="${e(p.name)}: đã check-in">${icon(p.symbol)}<b>${e(p.name.toUpperCase())}</b><small>ĐÃ CHECK-IN</small></button>`,
+      )
+      .join(
+        "",
+      )}</div>` : `<div class="pass-empty">${icon("compass")}<h3>Tem đầu tiên đang chờ bạn.</h3><p>Đến điểm, check-in bằng GPS rồi tem mới xuất hiện ở đây.</p><button class="button outline" data-route="map">Chọn điểm check-in ${icon("arrow")}</button></div>`}</div></div></div><div class="passport-controls"><button class="text-button" id="prev-page" ${bookPage === 0 ? "disabled" : ""}>← Trang trước</button><span>${bookPage + 1} / ${pages}</span><button class="text-button" id="next-page" ${bookPage === pages - 1 ? "disabled" : ""}>Trang sau →</button></div><label class="field">Tên trên Óc Eo Pass<input id="passport-name" maxlength="60" autocomplete="off" value="${e(profile.name)}" placeholder="Bạn muốn được gọi là gì?"></label><button class="text-button" id="save-name">Lưu tên ${icon("check")}</button><div class="notice">${complete ? "Bạn đã gom trọn bộ tem Óc Eo. Khoe chuyến đi của bạn thôi!" : `Bộ sưu tập có ${total} điểm, hiện ${ready.length} điểm có vị trí mở check-in. Tem chỉ xuất hiện sau khi bạn check-in thành công. Điểm chờ tọa độ vẫn nằm trong tổng bộ sưu tập, chưa phát tem.`}</div><div class="passport-actions"><button class="button outline" id="certificate" ${!count ? "disabled" : ""}>Chia sẻ Óc Eo Pass ${icon("arrowup")}</button>${!cloud.state.user ? '<button class="button outline" id="passport-login">Đăng nhập để đồng bộ</button>' : ""}<button class="text-button danger" id="clear-passport">Xóa Óc Eo Pass này</button></div><details class="pass-destinations"><summary>${total} điểm trong bộ sưu tập ${icon("plus")}</summary><p>Đây là danh sách điểm đến, không phải tem đã nhận.</p>${collection.map(p=>`<button data-place="${e(p.id)}"><span>${e(p.name)}<small>${earned.some(s=>s.id===p.id)?"Đã check-in":canCollectStamp(p)?"Đến điểm để check-in":"Chờ xác nhận vị trí"}</small></span>${icon(earned.some(s=>s.id===p.id)?"check":"arrow")}</button>`).join("")}</details><p class="pass-export-hint">Lưu được cả khi đang gom tem. Ảnh ghi đúng tiến độ hiện tại; trên iPhone, nếu ảnh mở ra, nhấn giữ ảnh hoặc chọn Chia sẻ → Lưu hình ảnh.</p><small>Kỷ niệm tự ghi nhận, không phải giấy chứng nhận chính thức hoặc bằng chứng chống gian lận vị trí.</small>`;
+  hydrate($("#pass-content"));
+  updateStampBorders();
+  $("#toggle-book").onclick = () => {
+    const book = $(".passport-book");
+    book.classList.toggle("closed");
+    $("#toggle-book").innerHTML =
+      (book.classList.contains("closed")
+        ? "Mở Óc Eo Pass "
+        : "Đóng bìa Óc Eo Pass ") + icon("passport");
+  };
+  $("#open-book").onclick = () => {
+    $(".passport-book").classList.remove("closed");
+    $("#toggle-book").innerHTML = "Đóng bìa Óc Eo Pass " + icon("passport");
+  };
+  $("#save-name").onclick = async () => {
+    profile.name = $("#passport-name").value.trim();
+    await saveProfile();
+    showPassport();
+    toast("Đã lưu tên trên Óc Eo Pass.");
+  };
+  $("#prev-page").onclick = () => {
+    bookPage--;
+    showPassport();
+  };
+  $("#next-page").onclick = () => {
+    bookPage++;
+    showPassport();
+  };
+  $("#clear-passport").onclick = async () => {
+    if (!confirm("Xóa tên và tất cả tem trong Óc Eo Pass này?")) return;
+    profile = { name: "", badges: [], policyVersion: POLICY_VERSION };
+    await saveProfile();
+    showPassport();
+  };
+  $("#save-pass-image").onclick = async () => {
+    const button = $("#save-pass-image");
+    button.disabled = true;
+    button.textContent = "Đang tạo ảnh PNG…";
+    try {
+      await showCertificate({progress: true, download: true,
+        name: $("#passport-name").value.trim().slice(0,60)});
+    } finally {
+      if (button.isConnected) {
+        button.disabled = false;
+        button.innerHTML = "Lưu ảnh về máy " + icon("download");
+      }
+    }
+  };
+  $("#certificate").onclick = async () => {
+    const button = $("#certificate");
+    button.disabled = true;
+    try { await showCertificate({progress:true,name:$("#passport-name").value.trim().slice(0,60)}); }
+    finally { if(button.isConnected) button.disabled = count === 0; }
+  };
+  $("#passport-login")?.addEventListener("click", showLogin);
+}
+async function showCertificate({progress = false, download = false, name = ""} = {}) {
+  const {collection, earned, complete} = passProgress(site.places, profile.badges);
+  if (!progress && !complete) return;
+  const exportName = (name || profile.name || "Một tâm hồn tò mò").trim().slice(0,60);
+  const date = new Intl.DateTimeFormat("vi-VN", {timeZone:"Asia/Ho_Chi_Minh"}).format(new Date());
+  const {svg,width,height} = await passArtwork({collection,earned,name:exportName,date});
+  const url = URL.createObjectURL(
+    new Blob([svg], { type: "image/svg+xml;charset=utf-8" }),
+  );
+  try {
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+    const c = document.createElement("canvas");
+    c.width = width;
+    c.height = height;
+    c.getContext("2d").drawImage(img, 0, 0);
+    const blob = await new Promise((r) => c.toBlob(r, "image/png"));
+    if (!blob) throw Error("Không xuất được ảnh.");
+    if (download) {
+      downloadBlob(blob, "oc-eo-pass.png");
+      toast("Ảnh PNG đã sẵn sàng. Nếu máy mở ảnh, nhấn giữ để lưu.");
+      return;
+    }
+    const preview = URL.createObjectURL(blob);
+    openModal(
+      "ĐI ÓC EO. KỂ ÓC EO.",
+      `<h2>Chuyến này,<br><span class="serif">khoe Óc Eo.</span></h2><img class="certificate-preview" src="${preview}" alt="Óc Eo Pass mang tên ${e(exportName)}"><button class="button dark" id="download-certificate">Tải ảnh PNG ${icon("download")}</button> <button class="button outline" id="share-certificate">Chia sẻ ${icon("arrowup")}</button><p>Tải ảnh để đăng story của bạn. #OcEoTownwalk #ChamNganNam</p>`,
+      "certificate",
+    );
+    $("#download-certificate").onclick = () =>
+      downloadBlob(blob, "oc-eo-townwalk.png");
+    $("#share-certificate").onclick = async () => {
+      const f = new File([blob], "oc-eo-townwalk.png", { type: "image/png" });
+      try {
+        if (navigator.canShare?.({ files: [f] })) {
+          await navigator.share({
+            files: [f],
+            title: "Óc Eo Pass · Óc Eo townwalk",
+            text: "#OcEoTownwalk #ChamNganNam",
+          });
+        } else {
+          downloadBlob(blob, "oc-eo-townwalk.png");
+          toast("Đã tải ảnh để bạn đăng lên mạng xã hội.");
+        }
+      } catch (err) {
+        if (err.name !== "AbortError")
+          toast("Chưa chia sẻ được. Bạn có thể tải ảnh PNG.");
+      }
+    };
+    modal.addEventListener("close", () => URL.revokeObjectURL(preview), {
+      once: true,
+    });
+  } catch (err) {
+    toast("Không tạo được ảnh kỷ niệm: " + err.message);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+function downloadBlob(blob, name) {
+  const url = URL.createObjectURL(blob),
+    a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
+function showLogin() {
+  if (cloud.state.user) {
+    showAccount();
+    return;
+  }
+  const configured = !!site.operator && !!site.contactEmail;
+  openModal(
+    "ĐI THEO CÁCH BẠN MUỐN",
+    `<h2>Xin chào,<br><span class="serif">người bạn tò mò.</span></h2><p>Không cần tài khoản để xem bản đồ và lên lịch đi chơi. Óc Eo Pass khách được lưu trên thiết bị này.</p>${!configured ? '<div class="notice warning">Trang đang chờ đơn vị vận hành hoàn thiện thông tin bảo mật. Chế độ khách vẫn hoạt động; đăng nhập cho khách sẽ mở sau khi cấu hình xong.</div>' : ""}<label class="check-field"><input type="checkbox" id="login-consent"><span>Tôi từ đủ 16 tuổi, đã đọc <button class="text-button" id="login-policy" style="padding:0;text-decoration:underline">chính sách bảo mật</button> và đồng ý dùng Google để xác thực, lưu Óc Eo Pass trên Firebase. Tôi hiểu có thể xóa dữ liệu và tài khoản.</span></label><button class="button dark full-width" id="google-login" disabled>Đăng nhập bằng Google ${icon("arrowup")}</button><button class="text-button full-width" id="continue-guest">Tiếp tục không đăng nhập ${icon("arrow")}</button><p class="error-text" id="login-error" role="alert"></p>`,
+    "login",
+  );
+  $("#login-consent").onchange = (ev) =>
+    ($("#google-login").disabled = !configured || !ev.target.checked);
+  $("#login-policy").onclick = () => showPrivacy(true);
+  $("#continue-guest").onclick = () => modal.close();
+  $("#google-login").onclick = async () => {
+    const btn = $("#google-login");
+    btn.disabled = true;
+    try {
+      await cloud.login();
+      if (modal.dataset.view === "login") showAccount();
+    } catch (err) {
+      if ($("#login-error"))
+        $("#login-error").textContent = cloud.friendlyError(err);
+    } finally {
+      if ($("#google-login")) $("#google-login").disabled = false;
+    }
+  };
+}
+function showPrivacy(back = false) {
+  openModal(
+    "BẠN LUÔN CÓ QUYỀN LỰA CHỌN",
+    privacyHTML(site) +
+      (back
+        ? '<button class="button outline" id="back-login">Quay lại đăng nhập</button>'
+        : ""),
+    "privacy",
+  );
+  $("#back-login")?.addEventListener("click", showLogin);
+}
+async function showAccount() {
+  if (!cloud.state.user) {
+    showLogin();
+    return;
+  }
+  openModal(
+    "TÀI KHOẢN CỦA BẠN",
+    `<h2>Một góc <span class="serif">của mình.</span></h2><p>Đã đăng nhập Google. Tên công khai do bạn tự chọn, email không được hiển thị trong bài đánh giá.</p><div class="account-menu"><button class="button outline" id="account-passport">Óc Eo Pass của mình ${icon("passport")}</button><button class="button outline" id="import-guest">Nhập tem từ Óc Eo Pass khách trên máy này</button><button class="button outline" id="export-data">Xuất dữ liệu của mình ${icon("download")}</button><button class="button outline" id="my-reviews">Các đánh giá của mình</button><button class="button outline" id="logout">Đăng xuất ${icon("logout")}</button><button class="text-button danger" id="delete-account">Xóa tài khoản và dữ liệu</button></div><p class="error-text" id="account-error" role="alert"></p>`,
+    "account",
+  );
+  $("#account-passport").onclick = showPassport;
+  $("#import-guest").onclick = async () => {
+    const guest = localRead("oceo-passport-guest", {});
+    profile.badges = [
+      ...new Set([
+        ...profile.badges,
+        ...(Array.isArray(guest.badges) ? guest.badges : []),
+      ]),
+    ];
+    if (!profile.name && typeof guest.name === "string")
+      profile.name = guest.name.slice(0, 60);
+    await saveProfile();
+    toast("Đã nhập Óc Eo Pass khách.");
+  };
+  $("#export-data").onclick = async () => {
+    try {
+      const data = {
+        profile,
+        reviews: await cloud.myReviews(),
+        reports: await cloud.myReports(),
+        exportedAt: new Date().toISOString(),
+      };
+      downloadBlob(
+        new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }),
+        "oc-eo-du-lieu-cua-toi.json",
+      );
+    } catch (err) {
+      toast(cloud.friendlyError(err));
+    }
+  };
+  $("#my-reviews").onclick = showMyReviews;
+  $("#logout").onclick = async () => {
+    try {
+      await cloud.logout();
+      modal.close();
+      toast("Đã đăng xuất. Bạn đang ở chế độ khách.");
+    } catch (err) {
+      toast(cloud.friendlyError(err));
+    }
+  };
+  $("#delete-account").onclick = async () => {
+    if (
+      !confirm(
+        "Xóa tài khoản, Óc Eo Pass trên mây, mọi đánh giá, ảnh và báo cáo của bạn? Thao tác này không thể hoàn tác.",
+      )
+    )
+      return;
+    const btn = $("#delete-account");
+    btn.disabled = true;
+    const key = profileKey();
+    try {
+      await cloud.deleteAccount();
+      localStorage.removeItem(key);
+      modal.close();
+      toast("Đã xóa tài khoản và dữ liệu trên Firebase.");
+      loadReviews(true);
+    } catch (err) {
+      if ($("#account-error"))
+        $("#account-error").textContent =
+          "Chưa xóa hoàn tất. Dữ liệu đã xóa có thể không khôi phục được; bạn có thể thử lại. " +
+          cloud.friendlyError(err);
+      if (btn.isConnected) btn.disabled = false;
+    }
+  };
+}
+async function showMyReviews() {
+  openModal(
+    "NHỮNG CÂU CHUYỆN BẠN ĐÃ ĐỂ LẠI",
+    '<h2>Bài viết <span class="serif">của mình.</span></h2><p>Đang tải…</p>',
+    "my-reviews",
+  );
+  try {
+    const data = await cloud.myReviews();
+    if (modal.dataset.view !== "my-reviews") return;
+    body.innerHTML =
+      `<h2>Bài viết <span class="serif">của mình.</span></h2>` +
+      (data.length
+        ? data
+            .map(
+              (r) =>
+                `<article class="admin-card"><p>${e(r.text)}</p><small>${r.status === "hidden" ? "Đã được quản trị viên ẩn" : "Đang công khai"}</small><div><button class="text-button danger" data-delete-review="${e(r.id)}">Xóa bài và ảnh</button></div></article>`,
+            )
+            .join("")
+        : "<p>Bạn chưa có bài đánh giá nào.</p>");
+    body.querySelectorAll("[data-delete-review]").forEach(
+      (b) =>
+        (b.onclick = async () => {
+          if (!confirm("Xóa đánh giá và ảnh đính kèm?")) return;
+          b.disabled = true;
+          try {
+            await cloud.deleteReview(
+              data.find((r) => r.id === b.dataset.deleteReview),
+            );
+            showMyReviews();
+            loadReviews(true);
+          } catch (err) {
+            toast(cloud.friendlyError(err));
+            b.disabled = false;
+          }
+        }),
+    );
+  } catch (err) {
+    if (modal.dataset.view === "my-reviews")
+      body.innerHTML = `<h2>Chưa tải được bài viết.</h2><p>${e(cloud.friendlyError(err))}</p>`;
+  }
+}
+function renderReviews() {
+  $("#reviews-grid").innerHTML = reviews.length
+    ? reviews
+        .map(
+          (r) =>
+            `<article class="memory">${safeURL(r.photoURL) ? `<img src="${e(safeURL(r.photoURL))}" alt="Ảnh trải nghiệm do ${e(r.name)} chia sẻ" loading="lazy">` : ""}<div class="stars" aria-label="${Number(r.rating)} trên 5 sao">${"★".repeat(Math.max(0, Math.min(5, Number(r.rating) || 0)))}${"☆".repeat(5 - Math.max(0, Math.min(5, Number(r.rating) || 0)))}</div><p>${e(r.text)}</p><div class="memory-footer"><span>${e(r.name)}<small>${r.createdAt?.toDate ? new Intl.DateTimeFormat("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" }).format(r.createdAt.toDate()) : "Vừa chia sẻ"}</small></span><button data-report="${e(r.id)}" aria-label="Báo cáo đánh giá của ${e(r.name)}">${icon("flag")} Báo cáo</button></div></article>`,
+        )
+        .join("")
+    : `<div class="review-zero"><article class="memory"><div class="eyebrow">YOUR ÓC EO STORY</div><div class="blank-photo">${icon("camera")} Một bức ảnh của bạn</div><h3>Góc này chờ<br><span class="serif">Óc Eo của bạn.</span></h3><p>Chưa có bài đánh giá được tải. Câu chuyện đầu tiên ở đây có thể là của bạn.</p><button class="text-button" data-action="review">Viết một chút thương ${icon("arrow")}</button></article><div class="review-note">${icon("camera")}<h3>Có ảnh mới<br>có chuyện kể.</h3><p>Mỗi đánh giá cần ít nhất một ảnh tự chụp. Giữ một khoảnh khắc thật, đừng mượn chuyến đi Óc Eo của ai.</p></div><div class="review-note">${icon("heart")}<h3>Thật lòng.<br>Và tử tế.</h3><p>Bài được công khai ngay sau khi gửi. Có thể báo cáo nội dung không phù hợp để quản trị viên xem xét.</p></div></div>`;
+  $("#review-summary").textContent = reviews.length
+    ? `${reviews.length} câu chuyện đã tải · ${(reviews.reduce((s, r) => s + Number(r.rating), 0) / reviews.length).toFixed(1)}/5 sao trong các bài đang xem`
+    : "Không có số sao hay đánh giá giả. Chỉ có trải nghiệm thật.";
+}
+async function loadReviews(reset = false) {
+  if (reviewLoading) return;
+  reviewLoading = true;
+  $("#review-summary").textContent = "Đang tải những câu chuyện từ Óc Eo…";
+  try {
+    const result = await Promise.race([
+      cloud.loadReviews({ reset }),
+      new Promise((_, reject) =>
+        setTimeout(
+          () =>
+            reject(
+              new Error("Chưa tải được đánh giá. Hãy thử lại khi có kết nối."),
+            ),
+          10000,
+        ),
+      ),
+    ]);
+    reviews = reset ? result.items : [...reviews, ...result.items];
+    renderReviews();
+    $("#more-reviews").hidden = !result.more;
+    $("#more-reviews").dataset.retry="";
+    $("#more-reviews").textContent="Xem thêm câu chuyện →";
+  } catch (err) {
+    if (!reviews.length) {
+      renderReviews();
+      $("#review-summary").textContent =
+        "Mục cộng đồng chưa kết nối được lúc này. Bạn vẫn xem được tư liệu và lịch trình không cần đăng nhập.";
+    }
+    $("#more-reviews").hidden=false;
+    $("#more-reviews").dataset.retry="true";
+    $("#more-reviews").textContent="Thử tải lại câu chuyện ↻";
+  } finally {
+    reviewLoading = false;
+  }
+}
+let photoBlob = null,
+  photoURL = "",
+  photoGeneration = 0;
+function showReviewForm() {
+  if (!cloud.state.user) {
+    showLogin();
+    return;
+  }
+  if (!site.operator || !site.contactEmail) {
+    toast("Trang chưa hoàn thiện thông tin đơn vị vận hành và bảo mật.");
+    return;
+  }
+  photoBlob = null;
+  openModal(
+    "ADD A MEMORY / THÊM MỘT KỶ NIỆM",
+    `<h2>Một chút <span class="serif">thương nhớ.</span></h2><p>Một ảnh tự chụp. Một cảm nhận thật. Bài sẽ hiển thị ngay khi gửi thành công.</p><form id="review-form"><label class="field">Tên công khai<input name="name" required maxlength="60" value="${e(profile.name)}" placeholder="Tên bạn muốn xuất hiện"></label><fieldset style="border:0;padding:0;margin:20px 0"><legend style="font-size:11px;margin-bottom:9px">Chuyến đi của bạn thế nào?</legend><div class="stars-input">${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="rating" value="${n}" ${n === 5 ? "checked" : ""}>${n} ★</label>`).join("")}</div></fieldset><div class="review-paper"><label class="field">Óc Eo qua góc nhìn của bạn<textarea name="text" required maxlength="1200" placeholder="Điều gì ở Óc Eo làm bạn nhớ nhất?"></textarea></label><label class="field">${icon("camera")} Thêm ít nhất một ảnh của bạn<input id="review-photo" type="file" accept="image/jpeg,image/png,image/webp" required><small>JPG, PNG, WebP · tối đa 8 MB · tự xóa metadata vị trí trước khi tải</small></label><img id="photo-preview" class="photo-preview" alt="Xem trước ảnh đánh giá" hidden></div><label class="check-field"><input name="consent" type="checkbox" required><span>Tôi từ đủ 16 tuổi, có quyền sử dụng ảnh này, đồng ý công khai tên, ảnh và nội dung theo <a href="#" id="review-policy">chính sách bảo mật</a>. Tôi không đăng thông tin nhạy cảm hoặc hình ảnh người khác khi chưa được đồng ý.</span></label><p id="review-error" class="error-text" role="alert"></p><button type="submit" class="button dark full-width" id="submit-review">Gửi một chút thương ${icon("star")}</button></form>`,
+    "review",
+  );
+  $("#review-policy").onclick = (ev) => {
+    ev.preventDefault();
+    window.open("/privacy.html", "_blank", "noopener,noreferrer");
+  };
+  $("#review-photo").onchange = async (ev) => {
+    photoBlob = null;
+    const token = ++photoGeneration;
+    if (photoURL) URL.revokeObjectURL(photoURL);
+    $("#photo-preview").hidden = true;
+    const file = ev.target.files[0];
+    if (!file) return;
+    $("#submit-review").disabled = true;
+    try {
+      const blob = await cloud.preparePhoto(file);
+      if (token !== photoGeneration || modal.dataset.view !== "review") return;
+      photoBlob = blob;
+      photoURL = URL.createObjectURL(blob);
+      $("#photo-preview").src = photoURL;
+      $("#photo-preview").hidden = false;
+      $("#review-error").textContent = "";
+    } catch (err) {
+      if ($("#review-error"))
+        $("#review-error").textContent = cloud.friendlyError(err);
+      ev.target.value = "";
+    } finally {
+      if ($("#submit-review") && token === photoGeneration)
+        $("#submit-review").disabled = false;
+    }
+  };
+  $("#review-form").onsubmit = async (ev) => {
+    ev.preventDefault();
+    if (!photoBlob) {
+      $("#review-error").textContent = "Bạn cần thêm ít nhất một ảnh hợp lệ.";
+      return;
+    }
+    const f = new FormData(ev.target);
+    if (!f.get("consent")) return;
+    const btn = $("#submit-review");
+    btn.disabled = true;
+    btn.textContent = "Đang lưu kỷ niệm…";
+    try {
+      await cloud.postReview({
+        name: f.get("name"),
+        text: f.get("text"),
+        rating: Number(f.get("rating")),
+        photo: photoBlob,
+        policyVersion: POLICY_VERSION,
+      });
+      modal.close();
+      toast("Câu chuyện của bạn đã được công khai. Cảm ơn bạn!");
+      loadReviews(true);
+    } catch (err) {
+      if ($("#review-error"))
+        $("#review-error").textContent = cloud.friendlyError(err);
+    } finally {
+      if (btn.isConnected) {
+        btn.disabled = false;
+        btn.innerHTML = "Thử gửi lại " + icon("arrow");
+      }
+    }
+  };
+}
+function reportReview(id) {
+  if (!cloud.state.user) {
+    showLogin();
+    return;
+  }
+  openModal(
+    "GIỮ GÓC CHIA SẺ TỬ TẾ",
+    `<h2>Báo cáo <span class="serif">bài viết.</span></h2><p>Bài vẫn hiển thị trong khi quản trị viên xem xét báo cáo.</p><form id="report-form"><label class="field">Lý do<select name="reason"><option>Xâm phạm quyền riêng tư</option><option>Ảnh hoặc nội dung không phù hợp</option><option>Sai thông tin / quảng cáo</option><option>Quấy rối / xúc phạm</option></select></label><button class="button dark" type="submit">Gửi báo cáo ${icon("flag")}</button><p id="report-error" class="error-text" role="alert"></p></form>`,
+    "report",
+  );
+  $("#report-form").onsubmit = async (ev) => {
+    ev.preventDefault();
+    const btn = ev.target.querySelector("button");
+    btn.disabled = true;
+    try {
+      await cloud.reportReview(id, new FormData(ev.target).get("reason"));
+      modal.close();
+      toast("Đã gửi báo cáo tới quản trị viên.");
+    } catch (err) {
+      if ($("#report-error"))
+        $("#report-error").textContent = cloud.friendlyError(err);
+      btn.disabled = false;
+    }
+  };
+}
+function showSources() {
+  openModal(
+    "TƯ LIỆU CÓ NGUỒN / CẬP NHẬT 05.11.2026",
+    `<div class="policy"><h2>Đọc đúng. <span class="serif">Đi có hiểu.</span></h2><p>Nội dung được biên tập từ tư liệu Ban Quản lý Di tích Văn hóa Óc Eo và nguồn riêng ghi tại từng hồ sơ, đối chiếu ngày 04–05/11/2026. Không phải trang chính thức của Ban Quản lý.</p><h3>Phạm vi</h3><p>Danh mục đang có ${site.places.length} hồ sơ, gồm di tích khu A – Núi Ba Thê, khu B – Đô thị Óc Eo, Nhà trưng bày Văn hóa Óc Eo và nhà trưng bày cũ trên đỉnh Ba Thê. Điểm trên đỉnh núi là tùy chọn, không tính vào bộ tem; nguồn kiến trúc và lưu ý hiện trạng được tách rõ trong hồ sơ. Lung Lớn A/B gộp một hồ sơ; Gò Cây Thị A/B gộp một điểm. Đây không phải kiểm kê toàn bộ di chỉ. Không đưa Nền Chùa và Giồng Xoài vào tuyến trong xã Óc Eo vì thuộc phạm vi cần tách riêng.</p><h3>Bài gốc</h3>${Object.entries(
+      SOURCE_CATALOG,
+    )
+      .map(
+        ([k, url]) =>
+          `<p><a href="${e(url)}" target="_blank" rel="noopener noreferrer">${e({ inventory: "Danh mục khu vực và địa điểm di sản", overview: "Đô thị cổ và giao thương", baThe: "Núi Ba Thê", visits: "Hoạt động tham quan năm 2023", buddha: "Phù điêu Phật Linh Sơn Bắc", ring: "Nhẫn Nandin Giồng Cát", survey: "Khảo sát quốc tế", education: "Giáo dục qua di sản", canals: "Công nghệ khảo cổ và kênh cổ", jar: "Mộ vò Gò Cây Trâm", event: "Tuần lễ di sản năm 2026", summit: "Nhà trưng bày cũ trên núi Ba Thê · tư liệu Wikipedia" }[k] || k)} ↗</a></p>`,
+      )
+      .join(
+        "",
+      )}<h3>Tọa độ và bản đồ</h3><p>© OpenStreetMap contributors, ODbL; Leaflet 1.9.4, BSD-2-Clause. Các điểm có tọa độ OSM là vị trí tham khảo, không phải đo đạc cổng vào. Một số quán và chỗ nghỉ dùng tâm ô Plus Code công khai ghi trên trang địa điểm Google Maps; nguồn riêng được dẫn trong từng hồ sơ. Đường nét đứt là ranh giới theo OSM, không thay thế bản đồ hành chính pháp lý. Điểm chưa có tọa độ không được đặt pin.</p><h3>Ảnh và thiết kế</h3><p>Ảnh Gò Cây Thị, Linh Sơn Nam, chùa Linh Sơn và núi Ba Thê: Bùi Thụy Đào Nguyên, Wikimedia Commons, CC BY-SA 3.0; nguồn từng ảnh được ghi trong thẻ chi tiết. Ảnh có thể được thu nhỏ bởi Wikimedia và cắt khung bằng CSS; bản gốc giữ giấy phép ghi tại trang nguồn. Các hình vẽ và logo hoa là thiết kế của dự án, không phải biểu trưng chính thức của di sản.</p><p><a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener noreferrer">Giấy phép ảnh CC BY-SA 3.0 ↗</a> · Phông Be Vietnam Pro/Lora: SIL OFL.</p></div>`,
+    "sources",
+  );
+}
+$("#save-itinerary").onclick = () =>
+  downloadBlob(
+    new Blob(
+      [
+        `ÓC EO TOWNWALK — MỘT NGÀY GỢI Ý\nKhung trải nghiệm, chưa tính quãng đường. Xác minh điểm, giờ mở cửa và điều kiện đón khách trước khi đi.\n\n${site.itinerary.map((s) => `${s.time} — ${s.title}\n${s.description}`).join("\n\n")}`,
+      ],
+      { type: "text/plain;charset=utf-8" },
+    ),
+    "oc-eo-mot-ngay.txt",
+  );
+$("#account-button").onclick = () =>
+  cloud.state.user ? showAccount() : showLogin();
+$("#write-review").onclick = showReviewForm;
+$("#more-reviews").onclick = () => loadReviews($("#more-reviews").dataset.retry==="true");
+document.addEventListener("click", (ev) => {
+  const route = ev.target.closest("[data-route]");
+  if (route && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey && ev.button === 0) {
+    ev.preventDefault();
+    navigate(route.dataset.route);
+    return;
+  }
+  const place = ev.target.closest("[data-place]");
+  if (place) {
+    placeDetail(place.dataset.place);
+    return;
+  }
+  const mapFilter = ev.target.closest("[data-map-category]");
+  if (mapFilter) {
+    mapCategory = mapFilter.dataset.mapCategory;
+    renderMap();
+    return;
+  }
+  const group = ev.target.closest("[data-group]");
+  if (group) {
+    heritageGroup = group.dataset.group;
+    renderPlaces();
+    return;
+  }
+  const f = ev.target.closest("[data-filter]");
+  if (f) {
+    filter = f.dataset.filter;
+    renderPlaces();
+    return;
+  }
+  const r = ev.target.closest("[data-report]");
+  if (r) {
+    reportReview(r.dataset.report);
+    return;
+  }
+  const a = ev.target.closest("[data-action]")?.dataset.action;
+  if (a === "passport") showPassport();
+  if (a === "review") showReviewForm();
+  if (a === "privacy") showPrivacy();
+  if (a === "sources") showSources();
+});
+let currentUid;
+window.addEventListener("cloud-state", async () => {
+  const user = cloud.state.user;
+  $("#account-label").textContent = user ? "Tài khoản" : "Đăng nhập";
+  if (currentUid === user?.uid) return;
+  currentUid = user?.uid;
+  readProfile();
+  if (user) {
+    try {
+      const remote = await cloud.loadProfile();
+      if (remote && cloud.state.user?.uid === user.uid) {
+        profile = {
+          name: typeof remote.name === "string" ? remote.name : "",
+          badges: Array.isArray(remote.badges) ? remote.badges : [],
+          policyVersion: POLICY_VERSION,
+        };
+        store(profileKey(), profile);
+      }
+    } catch {
+      toast(
+        "Óc Eo Pass trên mây chưa tải được. Đang dùng bản lưu trên thiết bị.",
+      );
+    }
+  }
+  if (activeTab === "pass") showPassport();
+});
+hydrate();
+readProfile();
+renderSite();
+renderReviews();
+activateTab(normalizedTab());
+cloud
+  .watchSite(
+    (data) => {
+      if (data) {
+        try {
+          site = validateSite(data);
+          renderSite();
+        } catch (err) {
+          console.warn("Nội dung v2 chưa hợp lệ:", err.message);
+        }
+      }
+    },
+    () => {},
+  )
+  .catch(() => {});
+// Reviews load only on entering the Community tab. Hidden tabs stay mounted.
+
+function updateConnection() {
+  document.getElementById("connection-state").hidden = navigator.onLine;
+}
+window.addEventListener("online",()=>{updateConnection();if(activeTab==="community"&&$("#more-reviews").dataset.retry==="true")loadReviews(true);});
+window.addEventListener("offline", updateConnection);
+updateConnection();
+if ("serviceWorker" in navigator)
+  window.addEventListener("load", () =>
+    navigator.serviceWorker.register("/sw.js").catch(() => {}),
+  );
+const linkedPlace = new URLSearchParams(location.search).get("place");
+if (linkedPlace && findPlace(linkedPlace)) placeDetail(linkedPlace);
