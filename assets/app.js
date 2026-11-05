@@ -16,6 +16,7 @@ import {
 import { icon, mark } from "./icons.js";
 import { passArtwork, stampColor } from "./pass-art.js";
 import { stampOutline } from "./stamp-shape.js";
+import { appURL } from "./app-paths.js";
 import * as cloud from "./cloud.js";
 import { privacyHTML } from "./policy.js";
 let site = cloneDefault(),
@@ -478,7 +479,7 @@ function showOSM() {
       failures = 0;
     });
     mapTiles.addTo(map);
-    fetch("/assets/data/oceo-boundary.geojson")
+    fetch(appURL("assets/data/oceo-boundary.geojson"))
       .then((r) => r.json())
       .then((data) => {
         L.geoJSON(data, {
@@ -900,7 +901,7 @@ function showReviewForm() {
   );
   $("#review-policy").onclick = (ev) => {
     ev.preventDefault();
-    window.open("/privacy.html", "_blank", "noopener,noreferrer");
+    window.open(appURL("privacy.html"), "_blank", "noopener,noreferrer");
   };
   $("#review-photo").onchange = async (ev) => {
     photoBlob = null;
@@ -1112,7 +1113,7 @@ window.addEventListener("offline", updateConnection);
 updateConnection();
 if ("serviceWorker" in navigator)
   window.addEventListener("load", () =>
-    navigator.serviceWorker.register("/sw.js").catch(() => {}),
+    navigator.serviceWorker.register(appURL("sw.js")).catch(() => {}),
   );
 const linkedPlace = new URLSearchParams(location.search).get("place");
 if (linkedPlace && findPlace(linkedPlace)) placeDetail(linkedPlace);

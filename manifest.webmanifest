@@ -2,21 +2,21 @@
   "name": "Óc Eo Townwalk",
   "short_name": "Óc Eo",
   "lang": "vi",
-  "start_url": "/#explore",
-  "scope": "/",
+  "start_url": "./#explore",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#f7f5ed",
   "theme_color": "#f7f5ed",
   "description": "Bản đồ bỏ túi và Óc Eo Pass để tìm hiểu di sản.",
   "icons": [
     {
-      "src": "/assets/app-icon-192.png",
+      "src": "./assets/app-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/app-icon-512.png",
+      "src": "./assets/app-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"

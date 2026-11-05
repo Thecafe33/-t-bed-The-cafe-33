@@ -1,4 +1,5 @@
 import { CURATED } from "./content.js";
+import { appURL } from "./app-paths.js";
 export const HERITAGE_REFERENCE_URL = "https://vanhoaoceo.angiang.gov.vn/";
 export const ADMIN_EMAIL = "vulpoz.com@gmail.com";
 export const SITE_ID = "oceotownwalk-v2";
@@ -44,11 +45,13 @@ export function escapeHTML(s = "") {
 export function safeURL(value, { image = false } = {}) {
   if (typeof value !== "string" || !value.trim()) return "";
   try {
-    const u = new URL(value, location.origin);
+    const localImage = image && /^(?:\.\/|\/)?assets\//.test(value);
+    const u = new URL(localImage ? appURL(value) : value, location.origin);
+    const assets = new URL(appURL("assets/"));
     return u.protocol === "https:" ||
       (image &&
-        u.origin === location.origin &&
-        u.pathname.startsWith("/assets/"))
+        u.origin === assets.origin &&
+        u.pathname.startsWith(assets.pathname))
       ? u.href
       : "";
   } catch {

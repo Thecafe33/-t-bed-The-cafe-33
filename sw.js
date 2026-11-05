@@ -1,32 +1,37 @@
-// Cache only the public app shell and same-origin static assets, never accounts/API responses or OSM tiles.
-const CACHE = "oceo-townwalk-2026-11-05-v7";
+// Cache public resources within this app's own directory; never account/API responses or OSM tiles.
+const APP_ROOT = new URL('./', self.location.href);
+const INDEX_URL = new URL('index.html', APP_ROOT).href;
+const ASSETS_PATH = new URL('assets/', APP_ROOT).pathname;
+const CACHE_PREFIX = `oceo-townwalk:${encodeURIComponent(APP_ROOT.pathname)}:`;
+const CACHE = CACHE_PREFIX + '2026-11-05-v8';
 const CORE = [
-  "/index.html",
-  "/assets/style.css",
-  "/assets/app-shell.css",
-  "/assets/app.js",
-  "/assets/pass-art.js",
-  "/assets/stamp-shape.js",
-  "/assets/model.js",
-  "/assets/content.js",
-  "/assets/icons.js",
-  "/assets/cloud.js",
-  "/assets/policy.js",
-  "/assets/vendor/leaflet.js",
-  "/assets/vendor/leaflet.css",
-  "/assets/vendor/firebase.js",
-  "/assets/photos/ba-the.jpg",
-  "/assets/favicon.svg",
-  "/assets/fonts/be-vietnam-pro-latin-500-normal.woff2",
-  "/assets/fonts/be-vietnam-pro-latin-ext-500-normal.woff2",
-  "/assets/fonts/be-vietnam-pro-vietnamese-500-normal.woff2",
-  "/assets/fonts/be-vietnam-pro-latin-800-normal.woff2",
-  "/assets/fonts/be-vietnam-pro-latin-ext-800-normal.woff2",
-  "/assets/fonts/be-vietnam-pro-vietnamese-800-normal.woff2",
-  "/assets/fonts/lora-latin-500-italic.woff2",
-  "/assets/fonts/lora-latin-ext-500-italic.woff2",
-  "/assets/fonts/lora-vietnamese-500-italic.woff2",
-];
+  "index.html",
+  "assets/style.css",
+  "assets/app-shell.css",
+  "assets/app.js",
+  "assets/pass-art.js",
+  "assets/stamp-shape.js",
+  "assets/model.js",
+  "assets/app-paths.js",
+  "assets/content.js",
+  "assets/icons.js",
+  "assets/cloud.js",
+  "assets/policy.js",
+  "assets/vendor/leaflet.js",
+  "assets/vendor/leaflet.css",
+  "assets/vendor/firebase.js",
+  "assets/photos/ba-the.jpg",
+  "assets/favicon.svg",
+  "assets/fonts/be-vietnam-pro-latin-500-normal.woff2",
+  "assets/fonts/be-vietnam-pro-latin-ext-500-normal.woff2",
+  "assets/fonts/be-vietnam-pro-vietnamese-500-normal.woff2",
+  "assets/fonts/be-vietnam-pro-latin-800-normal.woff2",
+  "assets/fonts/be-vietnam-pro-latin-ext-800-normal.woff2",
+  "assets/fonts/be-vietnam-pro-vietnamese-800-normal.woff2",
+  "assets/fonts/lora-latin-500-italic.woff2",
+  "assets/fonts/lora-latin-ext-500-italic.woff2",
+  "assets/fonts/lora-vietnamese-500-italic.woff2",
+].map(path => new URL(path, APP_ROOT).href);
 self.addEventListener("install", (event) =>
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(CORE))),
 );
@@ -37,7 +42,8 @@ self.addEventListener("activate", (event) =>
       .then((keys) =>
         Promise.all(
           keys
-            .filter((k) => k.startsWith("oceo-townwalk-") && k !== CACHE)
+            .filter((k) => k !== CACHE && (k.startsWith(CACHE_PREFIX) ||
+              (APP_ROOT.pathname === '/' && k.startsWith('oceo-townwalk-'))))
             .map((k) => caches.delete(k)),
         ),
       )
@@ -50,7 +56,7 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET" || u.origin !== self.location.origin) return;
   if (
     request.mode === "navigate" &&
-    (u.pathname === "/" || u.pathname === "/index.html")
+    (u.pathname === APP_ROOT.pathname || u.pathname === new URL(INDEX_URL).pathname)
   ) {
     event.respondWith(
       (async () => {
@@ -58,17 +64,17 @@ self.addEventListener("fetch", (event) => {
           const response = await fetch(request);
           if (response.ok) {
             const cache = await caches.open(CACHE);
-            await cache.put("/index.html", response.clone());
+            await cache.put(INDEX_URL, response.clone());
           }
           return response;
         } catch {
-          return (await caches.match("/index.html")) || Response.error();
+          return (await caches.match(INDEX_URL)) || Response.error();
         }
       })(),
     );
     return;
   }
-  if (u.pathname.startsWith("/assets/"))
+  if (u.pathname.startsWith(ASSETS_PATH))
     event.respondWith(
       (async () => {
         const cache = await caches.open(CACHE),

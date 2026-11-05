@@ -1,6 +1,7 @@
 import { escapeHTML as e } from './model.js';
 import { icon } from './icons.js';
 import { stampOutline } from './stamp-shape.js';
+import { appURL } from './app-paths.js';
 
 const INK='#173f36', PAPER='#faf6e9';
 const COLORS=['#d6ed86','#c8bdf2','#ffae91','#93c8eb','#f3d474'];
@@ -14,12 +15,15 @@ let fontResources;
 const toDataURL=blob=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(blob);});
 async function embeddedFonts(){
   if(!fontResources)fontResources=(async()=>{
-    const css=await fetch('/assets/style.css').then(r=>{if(!r.ok)throw Error('font stylesheet');return r.text();});
+    const stylesheet=appURL('assets/style.css');
+    const css=await fetch(stylesheet).then(r=>{if(!r.ok)throw Error('font stylesheet');return r.text();});
     const faces=[...css.matchAll(/@font-face\s*\{[^}]+\}/g)].map(m=>m[0]).filter(f=>/font-family:\s*Lora/.test(f)||(/font-family:\s*Be Vietnam/.test(f)&&/font-weight:\s*(500|800);/.test(f)));
     return (await Promise.all(faces.map(async face=>{
       const path=face.match(/url\(([^)]+)\)/)?.[1];
-      if(!path?.startsWith('/assets/fonts/'))return '';
-      const response=await fetch(path);if(!response.ok)throw Error('font asset');
+      if(!path)return '';
+      const fontURL=new URL(path,stylesheet), fonts=new URL(appURL('assets/fonts/'));
+      if(fontURL.origin!==fonts.origin || !fontURL.pathname.startsWith(fonts.pathname))return '';
+      const response=await fetch(fontURL);if(!response.ok)throw Error('font asset');
       return face.replace(path,await toDataURL(await response.blob()));
     }))).join('\n');
   })().catch(()=>{fontResources=null;return '';});

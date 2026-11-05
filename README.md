@@ -21,6 +21,18 @@ npm run test:firebase
 
 `test:firebase` uses only the `demo-oceo-townwalk` local emulators (Auth, Firestore, Storage, Functions). Tests refuse to run without the local emulator variables. No production Firebase write or deployment is performed. See [Firebase deployment guide](docs/FIREBASE.md) before any deployment; shared project rules must be merged, not blindly replaced.
 
+## GitHub Pages / subdirectory preview
+
+The same files work at the domain root (Firebase) or under a project directory such as `https://thecafe33.github.io/-t-bed-The-cafe-33/index.html`. HTML assets are relative, local images are resolved from the app directory, and the manifest/Service Worker keep the project scope. Open `admin.html` and `privacy.html` on GitHub Pages; the extensionless aliases require Firebase or the development helper.
+
+To reproduce a project-prefix preview locally:
+
+```sh
+python3 tools/dev_server.py --port 8001 --base-path /-t-bed-The-cafe-33
+```
+
+Open `http://localhost:8001/-t-bed-The-cafe-33/index.html`. `python3 tests/subdirectory_preview.py` starts its own isolated prefixed server and checks styles, scripts, images, fonts, PNG export, secondary pages and offline reload. Do not open the HTML via `file://`; ES modules and service workers require HTTP(S).
+
 ## What is implemented
 
 - Separate Explore, Map, Day Plan, Pass and Community views; persistent readable pill navigation; browser history, deep links and retained search/map/draft state. Larger screens retain a narrow app layout.
