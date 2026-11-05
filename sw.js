@@ -3,13 +3,17 @@ const APP_ROOT = new URL('./', self.location.href);
 const INDEX_URL = new URL('index.html', APP_ROOT).href;
 const ASSETS_PATH = new URL('assets/', APP_ROOT).pathname;
 const CACHE_PREFIX = `oceo-townwalk:${encodeURIComponent(APP_ROOT.pathname)}:`;
-const CACHE = CACHE_PREFIX + '2026-11-05-v13';
+const CACHE = CACHE_PREFIX + '2026-11-05-v16';
 const CORE = [
   "index.html",
   "assets/style.css",
   "assets/app-shell.css",
   "assets/discover.css",
   "assets/town-map.css",
+  "assets/genz.css",
+  "assets/artifacts.js",
+  "assets/artifact-view.js",
+  "assets/artifacts.css",
   "assets/town-map.js",
   "assets/data/oceo-town-map.geojson",
   "assets/vendor/leaflet.markercluster.js",

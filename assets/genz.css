@@ -1,0 +1,431 @@
+/* ─────────────────────────────────────────────────────────────
+   Óc Eo Townwalk · soft Gen Z layer
+   "Soft pop": fresher colours, rounded sticker cards with gentle
+   tinted shadows, a slow ticker, small tilts, emoji accents and
+   readable (≥11px) type. Heritage stays calm: no heavy outlines.
+   The Óc Eo Pass keeps its original paper look. Loaded last.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --paper: #fbf8f0;
+  --deep: #173f36;
+  --zap: #d9f27a;
+  --zap-soft: #e9f7b4;
+  --rose: #f6b8d3;
+  --sky: #c9d4ff;
+  --blush: #f9dce9;
+  --lilac: #e0d8f7;
+  --soft-line: #2327201a;
+  --lift: 0 2px 0 #23272010, 0 10px 24px -12px #173f3640;
+  --lift-hover: 0 3px 0 #23272012, 0 16px 30px -12px #173f3655;
+  --bounce: cubic-bezier(.34, 1.4, .64, 1);
+}
+
+/* Paper with a faint colour wash; the tilted ticker never adds side scroll */
+.townwalk-app .app-main {
+  overflow-x: clip;
+  background-image:
+    radial-gradient(circle at 100% 0, #d9f27a2e 0, transparent 240px),
+    radial-gradient(circle at 0 560px, #f6b8d324 0, transparent 260px);
+}
+::selection { background: var(--zap); color: #23271f; }
+
+/* ── Readable type: retire the 6–9px microcopy ──────────── */
+.townwalk-app .app-view .eyebrow,
+.townwalk-app .browse-heading .eyebrow,
+.townwalk-app .curiosity-heading .eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  color: #4f5a3f;
+}
+.townwalk-app .curiosity-heading .eyebrow::before,
+.townwalk-app .browse-heading .eyebrow::before {
+  content: "✦ ";
+  color: #d36b9c;
+}
+.townwalk-app .app-view-heading p,
+.townwalk-app .culture-quick p,
+.townwalk-app .mountain-detour p { font-size: 12.5px; line-height: 1.75; }
+.townwalk-app .curiosity-heading h2,
+.townwalk-app .browse-heading h2 { font-size: 27px; font-weight: 700; letter-spacing: -1px; }
+.townwalk-app .app-view-heading h1 { font-size: 32px; letter-spacing: -1.4px; line-height: 1.15; }
+.townwalk-app .app-view .serif {
+  background: linear-gradient(transparent 64%, var(--zap-soft) 64%, var(--zap-soft) 94%, transparent 94%);
+  padding: 0 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.townwalk-app .townwalk-cover .serif,
+.townwalk-app .pass-view .serif,
+.townwalk-app .curiosity-card .serif { background: none; padding: 0; }
+.townwalk-app .emoji {
+  display: inline-block;
+  font-size: .78em;
+  transform: rotate(-8deg);
+  font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.townwalk-app .app-header { background: #fbf8f0eb; }
+
+/* ── Top line + search ──────────────────────────────────── */
+.townwalk-app .today-line { font-size: 10px; font-weight: 700; color: #4f5a3f; }
+.townwalk-app .guest-pill {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #33401f;
+  background: var(--zap-soft);
+  border-color: transparent;
+  padding: 4px 10px;
+}
+/* Search: a soft pill with a round "lens" badge */
+.townwalk-app #view-explore > .search-field {
+  min-height: 54px;
+  padding: 6px 18px 6px 6px;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--soft-line);
+  border-radius: 999px;
+  box-shadow: var(--lift);
+  transition: box-shadow .2s, border-color .2s;
+}
+.townwalk-app #view-explore > .search-field > [data-icon] {
+  width: 42px;
+  height: 42px;
+  padding: 11px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--deep);
+  color: var(--zap);
+  stroke-width: 2.2;
+  transition: transform .25s var(--bounce), background .2s;
+}
+.townwalk-app #view-explore > .search-field:hover > [data-icon] { transform: rotate(-12deg) scale(1.05); }
+.townwalk-app #view-explore > .search-field:focus-within {
+  outline: none;
+  border-color: #b9d65a;
+  box-shadow: 0 0 0 4px #d9f27a80, var(--lift);
+}
+.townwalk-app #view-explore > .search-field:focus-within > [data-icon] { background: var(--zap); color: var(--deep); }
+.townwalk-app #view-explore > .search-field input { font-size: 14px; font-weight: 500; color: var(--deep); }
+.townwalk-app #view-explore > .search-field input::placeholder { color: #7c8274; font-weight: 400; }
+.townwalk-app .search-field input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: #e9eadf url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23173f36' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7 7 17'/%3E%3C/svg%3E") center / 10px no-repeat;
+}
+
+/* ── Cover: same postcard, a little more glow ───────────── */
+.townwalk-app .townwalk-cover {
+  border-radius: 28px;
+  box-shadow: 0 18px 40px -20px #173f36aa;
+  background:
+    radial-gradient(circle at 92% 6%, #d9f27a33 0, transparent 150px),
+    radial-gradient(circle at 0 100%, #7f8cff33 0, transparent 230px),
+    var(--deep);
+}
+.townwalk-app .cover-edition { font-size: 9px; font-weight: 600; }
+.townwalk-app .cover-wordmark { text-shadow: 3px 3px 0 #d9f27a33; }
+.townwalk-app .townwalk-cover .pocket-hero-copy > p { font-size: 11px; line-height: 1.65; max-width: 128px; }
+.townwalk-app .cover-photo-caption { font-weight: 600; }
+.townwalk-app .hero-badge {
+  position: absolute;
+  z-index: 3;
+  top: 356px;
+  right: 34px;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 9.5px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #4a1f33;
+  background: var(--rose);
+  clip-path: polygon(50% 0, 61% 14%, 79% 7%, 81% 25%, 98% 30%, 88% 46%, 100% 61%, 82% 69%, 83% 88%, 64% 85%, 50% 100%, 37% 85%, 17% 89%, 18% 70%, 0 61%, 12% 46%, 2% 30%, 20% 25%, 21% 7%, 39% 14%);
+  transform: rotate(-12deg);
+}
+.townwalk-app .townwalk-cover .cover-map { border-radius: 999px; font-weight: 700; font-size: 14px; }
+.townwalk-app .cover-surprise {
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px dashed #fbf6e866;
+  border-radius: 999px;
+  padding: 5px 12px;
+  transition: border-color .2s, color .2s;
+}
+.townwalk-app .cover-surprise:hover { border-color: var(--zap); color: var(--zap); }
+
+/* ── Ticker: slow, soft, on-brand green ─────────────────── */
+.vibe-ticker {
+  margin: 26px -21px 4px;
+  background: var(--zap-soft);
+  color: #2f4a22;
+  transform: rotate(-1.2deg);
+  overflow: hidden;
+  padding: 9px 0;
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.vibe-ticker-track { display: flex; width: max-content; }
+.vibe-ticker-track > div { display: flex; align-items: center; gap: 18px; padding-right: 18px; }
+.vibe-ticker i { font-style: normal; color: #d36b9c; }
+@media (prefers-reduced-motion: no-preference) {
+  .vibe-ticker-track { animation: vibe-scroll 34s linear infinite; }
+}
+@keyframes vibe-scroll { to { transform: translateX(-50%); } }
+
+/* ── Story shelf ────────────────────────────────────────── */
+.townwalk-app .curiosity-trail { padding: 6px 6px 18px 2px; gap: 14px; scrollbar-width: none; }
+.townwalk-app .curiosity-trail::-webkit-scrollbar { display: none; }
+.townwalk-app .shelf-hint {
+  font-size: 16px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--lift);
+}
+.townwalk-app .curiosity-card {
+  border-radius: 22px;
+  box-shadow: var(--lift);
+  transition: transform .25s var(--bounce), box-shadow .25s;
+}
+.townwalk-app .curiosity-card:nth-child(odd) { transform: rotate(-.8deg); }
+.townwalk-app .curiosity-card:nth-child(even) { transform: rotate(.8deg); }
+.townwalk-app .curiosity-card:hover,
+.townwalk-app .curiosity-card:focus-visible { transform: rotate(0) translateY(-3px); box-shadow: var(--lift-hover); }
+.townwalk-app .curiosity-card small {
+  font-size: 9.5px;
+  font-weight: 700;
+  background: #ffffffb3;
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+.townwalk-app .curiosity-card > span:last-child { font-size: 12px; font-weight: 600; }
+.townwalk-app .curiosity-card .story-art { background: #ffffffa6; border-color: transparent; }
+
+/* ── Bento shortcuts ────────────────────────────────────── */
+.townwalk-app .pocket-shortcuts { gap: 12px; margin: 10px 0 28px; }
+.townwalk-app .pocket-widget {
+  border: 0;
+  border-radius: 22px;
+  box-shadow: var(--lift);
+  transition: transform .2s var(--bounce), box-shadow .2s;
+}
+.townwalk-app .pocket-widget.pink { background: var(--blush); }
+.townwalk-app .pocket-widget.wide { grid-column: 1 / -1; min-height: 92px; padding-right: 92px; }
+.townwalk-app .pocket-widget.wide:after { display: none; }
+.townwalk-app .pocket-widget:hover { transform: translateY(-3px); box-shadow: var(--lift-hover); }
+.townwalk-app .pocket-widget:active { transform: translateY(1px); }
+.townwalk-app .pocket-widget > .icon {
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  background: #ffffffb3;
+  border-radius: 11px;
+}
+.townwalk-app .pocket-widget strong { font-size: 16px; font-weight: 700; }
+.townwalk-app .pocket-widget small { font-size: 11.5px; }
+.townwalk-app .widget-emoji {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  font-size: 40px;
+  transform: translateY(-50%) rotate(10deg);
+  font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+}
+
+/* ── Disclosures & small print ──────────────────────────── */
+.townwalk-app .culture-quick { border-radius: 18px; box-shadow: var(--lift); }
+.townwalk-app .culture-quick summary { font-size: 13.5px; }
+.townwalk-app .culture-quick summary span { font-size: 10.5px; }
+.townwalk-app .content-status,
+.townwalk-app .content-status summary,
+.townwalk-app .content-status .data-note { font-size: 11px; }
+.townwalk-app .catalog-summary { font-size: 11.5px; font-weight: 600; }
+
+/* ── Chips & buttons: soft pills ────────────────────────── */
+.townwalk-app .chip,
+.townwalk-app .heritage-groups button {
+  background: #fff;
+  border-color: var(--soft-line);
+  box-shadow: 0 1px 0 #2327200f;
+  font-weight: 600;
+  transition: background .2s, color .2s, transform .15s;
+}
+.townwalk-app .filter-row .chip { font-size: 11.5px; min-height: 44px; white-space: nowrap; padding: 9px 8px; gap: 5px; }
+.townwalk-app .heritage-groups button { font-size: 11.5px; }
+.townwalk-app .chip:active,
+.townwalk-app .heritage-groups button:active { transform: scale(.96); }
+.townwalk-app .filter-row .chip.active,
+.townwalk-app .heritage-groups button[aria-pressed="true"] {
+  background: var(--deep);
+  color: var(--zap);
+  border-color: var(--deep);
+}
+.townwalk-app .browse-heading .circle-button { width: 44px; height: 44px; background: var(--zap-soft); border-color: transparent; }
+.townwalk-app .button { transition: transform .15s var(--bounce), box-shadow .15s; }
+.townwalk-app .button:hover { transform: translateY(-1px); }
+.townwalk-app .button:active { transform: translateY(1px) scale(.98); }
+
+/* ── Place cards: soft white tiles ──────────────────────── */
+.townwalk-app .places-grid { gap: 14px; }
+.townwalk-app .place-card {
+  background: #fffdf8;
+  border: 1px solid var(--soft-line);
+  border-radius: 22px;
+  padding: 9px 14px 9px 9px;
+  box-shadow: var(--lift);
+  transition: transform .2s var(--bounce), box-shadow .2s;
+}
+.townwalk-app .place-card:hover { transform: translateY(-2px); box-shadow: var(--lift-hover); }
+.townwalk-app .place-art { border-radius: 16px; }
+.townwalk-app .place-number { width: 24px; height: 24px; font-size: 9px; font-weight: 700; }
+.townwalk-app .place-badge { font-size: 8.5px; font-weight: 700; }
+.townwalk-app .place-card-body .eyebrow { font-size: 8.5px; font-weight: 700; color: #7a5a9c; letter-spacing: .4px; }
+.townwalk-app .place-card-body h3 { font-size: 17px; font-weight: 700; line-height: 1.35; }
+.townwalk-app .place-card-body p { font-size: 12.5px; line-height: 1.6; }
+.townwalk-app .place-card-body .text-button {
+  font-size: 11.5px;
+  min-height: 34px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--rose);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.townwalk-app .app-links { font-size: 11px; }
+
+/* ── Tab bar: original light capsule, livelier active pill ── */
+.townwalk-app .app-tabbar a[aria-current="page"] > [data-icon] { background: var(--zap); }
+@media (prefers-reduced-motion: no-preference) {
+  .townwalk-app .app-tabbar a[aria-current="page"] > [data-icon] { animation: tab-pop .35s var(--bounce); }
+}
+@keyframes tab-pop { from { transform: scale(.75); } to { transform: scale(1); } }
+
+/* ── Day plan ───────────────────────────────────────────── */
+.townwalk-app .trip-practical summary { font-size: 13px; }
+.townwalk-app .trip-practical h3 { font-size: 14px; }
+.townwalk-app .trip-practical p,
+.townwalk-app .trip-practical a { font-size: 12.5px; }
+.townwalk-app .day-trip-card {
+  background: linear-gradient(135deg, var(--lilac), var(--sky));
+  border-radius: 22px;
+  box-shadow: var(--lift);
+}
+.townwalk-app .day-trip-card .eyebrow { font-size: 9.5px; }
+.townwalk-app .day-trip-card h2 { font-weight: 700; white-space: nowrap; }
+.townwalk-app .day-trip-card small { font-size: 10.5px; }
+.townwalk-app .day-trip-card .circle-button { width: 44px; height: 44px; background: #fff; border-color: transparent; }
+.townwalk-app .day-trip-sun { color: #e0a21b; }
+.townwalk-app .timeline-row time {
+  font-size: 10.5px;
+  font-weight: 700;
+  background: var(--zap-soft);
+  border-radius: 6px;
+  padding: 1px 2px;
+  letter-spacing: -.3px;
+  text-align: center;
+  height: fit-content;
+}
+.townwalk-app .timeline-row h3 { font-size: 15px; }
+.townwalk-app .timeline-row p { font-size: 12px; }
+.townwalk-app .mountain-detour { border-radius: 20px; }
+
+/* ── Óc Eo Pass: keep the calm paper style, just readable ── */
+.townwalk-app .pass-save-caption,
+.townwalk-app .pass-view .notice,
+.townwalk-app #pass-content > small { font-size: 11px; }
+.townwalk-app .passport-cover small { font-size: 9.5px; }
+
+/* ── Community ──────────────────────────────────────────── */
+.townwalk-app .write-review-card {
+  border: 1px dashed #d36b9c66;
+  background: var(--blush);
+  border-radius: 20px;
+  box-shadow: var(--lift);
+  transition: transform .2s var(--bounce), box-shadow .2s;
+}
+.townwalk-app .write-review-card:hover { transform: translateY(-2px); box-shadow: var(--lift-hover); }
+.townwalk-app .write-review-card strong { font-size: 13.5px; font-weight: 700; }
+.townwalk-app .write-review-card small { font-size: 11px; }
+.townwalk-app .write-review-camera { background: #fff; }
+
+/* ── Map: colours only, sizes untouched ─────────────────── */
+.townwalk-app .map-search-trigger {
+  gap: 8px;
+  padding: 5px 15px 5px 5px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--deep);
+  color: #fbf6e8;
+  font-weight: 700;
+  box-shadow: var(--lift);
+  transition: transform .2s var(--bounce), background .2s;
+}
+.townwalk-app .map-search-trigger > [data-icon] {
+  width: 34px;
+  height: 34px;
+  padding: 8px;
+  border-radius: 50%;
+  background: var(--zap);
+  color: var(--deep);
+  stroke-width: 2.2;
+}
+.townwalk-app .map-search-trigger:hover { transform: translateY(-1px); }
+.townwalk-app .map-search-trigger[aria-expanded=true] { background: var(--zap); color: var(--deep); }
+.townwalk-app .map-search-trigger[aria-expanded=true] > [data-icon] { background: var(--deep); color: var(--zap); }
+.townwalk-app .map-search-trigger[data-search-active=true]::after { background: #f6b8d3; border-color: var(--deep); }
+.townwalk-app .map-search-input {
+  border: 1px solid var(--soft-line);
+  border-radius: 999px;
+  padding: 4px 16px 4px 5px;
+  background: #fff;
+}
+.townwalk-app .map-search-input > [data-icon] {
+  width: 36px;
+  height: 36px;
+  padding: 9px;
+  border-radius: 50%;
+  background: var(--deep);
+  color: var(--zap);
+}
+.townwalk-app .map-search-input:focus-within { border-color: #b9d65a; box-shadow: 0 0 0 4px #d9f27a80; }
+.townwalk-app .map-category-row .chip.active { background: var(--deep); color: var(--zap); }
+
+.townwalk-app :focus-visible { outline: 3px solid #7f8cff; outline-offset: 3px; }
+
+@media (max-width: 359px) {
+  .townwalk-app .hero-badge { width: 50px; height: 50px; font-size: 8.5px; top: 350px; }
+  .townwalk-app .curiosity-heading h2,
+  .townwalk-app .browse-heading h2 { font-size: 24px; }
+  .townwalk-app .pocket-widget.wide { padding-right: 76px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .townwalk-app .curiosity-card,
+  .townwalk-app .pocket-widget,
+  .townwalk-app .place-card,
+  .townwalk-app .button,
+  .townwalk-app .chip { transition: none; }
+}
+
+/* The map screen keeps its measured compact title so the pin card clears the nav on short phones. */
+.townwalk-app .map-title-row .eyebrow { font-size: 8px; margin-bottom: 5px; }
+
+/* Search icons: the SVG sits inside the round badge span */
+.townwalk-app #view-explore > .search-field > [data-icon],
+.townwalk-app .map-search-trigger > [data-icon],
+.townwalk-app .map-search-input > [data-icon] { display: grid; place-items: center; box-sizing: border-box; }
+.townwalk-app #view-explore > .search-field > [data-icon] .icon,
+.townwalk-app .map-search-trigger > [data-icon] .icon,
+.townwalk-app .map-search-input > [data-icon] .icon { width: 100%; height: 100%; color: inherit; stroke-width: 2.2; }
+.townwalk-app .search-field input:focus-visible,
+.townwalk-app .map-search-input input:focus-visible { outline: none; }

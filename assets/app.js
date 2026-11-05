@@ -18,6 +18,8 @@ import { passArtwork, stampColor } from "./pass-art.js";
 import { stampOutline } from "./stamp-shape.js";
 import { appURL } from "./app-paths.js";
 import { mountTownMap } from "./town-map.js";
+import {ARTIFACTS,artifactsForPlaces} from "./artifacts.js";
+import {artifactSection,artifactIndexHTML,artifactDetailHTML,getArtifact} from "./artifact-view.js";
 import { initI18n, translateText, getLanguage, dateLocale } from "./i18n.js";
 import { initEffects, revealView, playEffect, armSound, reducedMotion } from "./effects.js";
 import * as cloud from "./cloud.js";
@@ -248,7 +250,7 @@ function normalizedSearch(value) {
 }
 function matchesSearch(place, query) {
   const text = normalizedSearch(
-    [place.name, ...(Array.isArray(place.aliases) ? place.aliases : [])].join(
+    [place.name, ...(Array.isArray(place.aliases) ? place.aliases : []), ...ARTIFACTS.filter(a=>a.placeId===place.id||a.displayPlaceId===place.id).flatMap(a=>a.name)].join(
       " ",
     ),
   );
@@ -385,6 +387,15 @@ function renderSite() {
 function findPlace(id) {
   return [...site.places, ...site.stops].find((p) => p.id === id);
 }
+function showArtifactIndex(selected="all"){
+ closeMapSearch();
+ openModal("THEO DẤU CỔ VẬT",artifactIndexHTML(site.places,selected),"artifacts");
+ $("#artifact-site-filter").onchange=ev=>{showArtifactIndex(ev.target.value);$("#artifact-site-filter").focus({preventScroll:true});};
+}
+function showArtifact(id){
+ const a=artifactsForPlaces(site.places).find(a=>a.id===id);if(!a)return;
+ closeMapSearch();openModal("HIỆN VẬT ↔ ĐỊA ĐIỂM",artifactDetailHTML(a,site.places),"artifact");
+}
 function placeDetail(id) {
   closeMapSearch();
   const p = findPlace(id);
@@ -405,6 +416,7 @@ function placeDetail(id) {
  ${p.imageCredit ? `<p class="photo-credit">Ảnh: ${e(p.imageCredit)} ${safeURL(p.imageSource) ? `<a href="${e(safeURL(p.imageSource))}" target="_blank" rel="noopener noreferrer">Nguồn ảnh ↗</a>` : ""}</p>` : ""}
  ${p.hook ? `<h3 class="detail-hook">${e(p.hook)}</h3>` : ""}<p class="detail-description">${e(p.description)}</p>
  ${p.lookFor ? `<div class="look-for">${icon("compass")}<div><strong>Thử nhìn kỹ hơn</strong><p>${e(p.lookFor)}</p></div></div>` : ""}
+ ${artifactSection(p,site.places)}
  <div class="visit-facts"><span>${icon("clock")} ${e(p.duration)} phút gợi ý</span><span>${icon("sun")} ${e(p.hours || "Hỏi giờ đón khách")}</span></div>
  ${p.category !== "heritage" ? `<div class="stop-facts">${p.address ? `<p>${icon("pin")} ${e(p.address)}</p>` : ""}${p.price ? `<p>${icon("coffee")} ${e(p.price)}</p>` : ""}</div>` : ""}
  ${canCollectStamp(p) ? `<p class="gps-zone">${icon("pin")} Nhận tem trong bán kính ${Math.min(site.radius,p.checkInRadius || site.radius)} m quanh vị trí tham khảo, sau khi GPS xác định thành công.</p>` : ""}
@@ -1104,6 +1116,23 @@ document.addEventListener("click", (ev) => {
     navigate(route.dataset.route);
     return;
   }
+  const artifact=ev.target.closest("[data-artifact]");
+  if(artifact){showArtifact(artifact.dataset.artifact);return;}
+  const mode=ev.target.closest("[data-artifact-mode]");
+  if(mode){const a=getArtifact(mode.dataset.id);if(a&&modal.dataset.view==="artifact"){
+    body.querySelectorAll("[data-artifact-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b===mode)));
+    $("#artifact-observation").textContent=(mode.dataset.artifactMode==="display"?a.atDisplay:a.onSite)[0];
+  }return;}
+  const answer=ev.target.closest("[data-artifact-answer]");
+  if(answer){const a=getArtifact(answer.dataset.id),number=Number(answer.dataset.artifactAnswer);if(a&&Number.isInteger(number)&&number>=0&&number<a.options.length&&modal.dataset.view==="artifact"){
+    body.querySelectorAll("[data-artifact-answer]").forEach(b=>{b.setAttribute("aria-pressed",String(b===answer));b.classList.remove("answer-correct","answer-retry");});
+    const correct=number===a.answer;answer.classList.add(correct?"answer-correct":"answer-retry");
+    $("#artifact-feedback").innerHTML=`<strong>${correct?"Chính xác!":"Cùng xem lại nhé."}</strong><p>${e(a.explanation[0])}</p>`;
+  }return;}
+  const artifactMap=ev.target.closest("[data-artifact-map]");
+  if(artifactMap){const p=findPlace(artifactMap.dataset.artifactMap);if(p&&eligible(p)){
+    modal.close();mapCategory="all";$("#map-search").value="";renderMap();navigate("map");requestAnimationFrame(()=>selectMapPlace(p.id));
+  }return;}
   const place = ev.target.closest("[data-place]");
   if (place) {
     placeDetail(place.dataset.place);
@@ -1140,6 +1169,7 @@ document.addEventListener("click", (ev) => {
   if (a === "review") showReviewForm();
   if (a === "privacy") showPrivacy();
   if (a === "sources") showSources();
+  if (a === "artifacts") showArtifactIndex();
 });
 let currentUid;
 window.addEventListener("cloud-state", async () => {
