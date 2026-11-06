@@ -16,6 +16,9 @@ import {
 import { icon, mark } from "./icons.js";
 import { passArtwork, stampColor } from "./pass-art.js";
 import {heritageSymbolHTML} from "./heritage-symbols.js";
+import {JOURNEY,journeyState,journeyHTML} from "./journey.js";
+import {campaignHomeHTML} from "./campaign-home.js";
+import {mountStoryCreator} from "./story-creator.js";
 import { stampOutline } from "./stamp-shape.js";
 import { appURL } from "./app-paths.js";
 import { mountTownMap } from "./town-map.js";
@@ -27,6 +30,7 @@ import { initI18n, translateText, getLanguage, dateLocale } from "./i18n.js";
 import { initEffects, revealView, playEffect, armSound, reducedMotion } from "./effects.js";
 import * as cloud from "./cloud.js";
 import { privacyHTML } from "./policy.js";
+export const APP_BUILD='campaign-v1';
 let site = cloneDefault(),
   filter = "heritage",
   profile = { name: "", badges: [], policyVersion: POLICY_VERSION },
@@ -37,19 +41,19 @@ let site = cloneDefault(),
   reviewLoading = false,
   bookPage = 0,
   heritageGroup = "all";
-let mapCategory = "all", mapSelectedId = null, mapHasFramed = false, userPoint = null, userMarker;
+let mapCategory = "all", mapSelectedId = null, mapHasFramed = false, userPoint = null, userMarker, mapJourneyOnly=false;
 const mapMarkers = new Map();
 let activeTab = null,
   reviewsRequested = false,
   passNeedsRender = true;
 history.scrollRestoration = "manual";
 const artifactDeckState=new ArtifactDeckState();
-let artifactDeckUI=null;
+let artifactDeckUI=null,storyCreatorUI=null,storyProfileSignature='',profileEpoch=0,modalEpoch=0,navigationEpoch=0;
 const tabScroll = {};
 const tabTitles = {
   explore: "Khám phá",
   map: "Bản đồ",
-  day: "Lịch trình",
+  day: "Chuyến đi",
   pass: "Óc Eo Pass",
   community: "Cộng đồng",
 };
@@ -58,11 +62,13 @@ const $ = (s) => document.querySelector(s),
   body = $("#modal-body");
 function normalizedTab(hash = location.hash) {
   const value = hash.replace(/^#/, "");
+  if(!value&&new URLSearchParams(location.search).get('journey')===JOURNEY.id)return 'day';
   const aliases = { home: "explore", memories: "community", passport: "pass" };
   return Object.hasOwn(tabTitles, value) ? value : aliases[value] || "explore";
 }
 function activateTab(tab, { focus = false } = {}) {
   if (activeTab === tab) return;
+  navigationEpoch++;
   if (activeTab) tabScroll[activeTab] = window.scrollY;
   if (modal.open) modal.close();
   activeTab = tab;
@@ -135,6 +141,9 @@ function store(k, v) {
 }
 const profileKey = () => `oceo-passport-${cloud.state.user?.uid || "guest"}`;
 function readProfile() {
+  profileEpoch++;
+  if(modal.open&&modal.dataset.view==='story')modal.close();
+  storyCreatorUI?.destroy();storyCreatorUI=null;storyProfileSignature='';
   passNeedsRender = true;
   const v = localRead(profileKey(), {});
   profile = {
@@ -146,22 +155,28 @@ function readProfile() {
   };
 }
 async function saveProfile() {
-  store(profileKey(), profile);
-  if (cloud.state.user) {
+  const uid=cloud.state.user?.uid, data={...profile,badges:[...profile.badges]};
+  store(profileKey(), data);
+  renderCampaign();
+  if (uid) {
     try {
-      await cloud.saveProfile(profile);
+      await cloud.saveProfile(data,uid);
     } catch (err) {
-      toast("Đã giữ trên máy, chưa đồng bộ: " + cloud.friendlyError(err));
+      if(cloud.state.user?.uid===uid)toast("Đã giữ trên máy, chưa đồng bộ: " + cloud.friendlyError(err));
     }
   }
 }
 function openModal(kicker, html, view = "generic") {
+  modalEpoch++;
   artifactDeckUI?.destroy();artifactDeckUI=null;
+  storyCreatorUI?.destroy();storyCreatorUI=null;storyProfileSignature='';
+  modal.classList.toggle('story-dialog',view==='story'||view==='story-sample');
   modal.classList.toggle("artifact-deck-dialog",view==="artifacts");
   modal.classList.toggle("artifact-detail-dialog",view==="artifact");
   $("#artifact-back").hidden=view!=="artifact";
   $("#close-modal").setAttribute("aria-label",translateText(view==="artifact"?"← Về bộ thẻ cổ vật":"Đóng hộp thoại"));
   modal.dataset.view = view;
+  delete modal.dataset.placeId;
   $("#modal-kicker").textContent = kicker;
   body.innerHTML = html;
   modal.classList.toggle("passport-dialog", view === "passport");
@@ -192,7 +207,9 @@ modal.addEventListener("click", (ev) => {
   }
 });
 modal.addEventListener("close", () => {
+  modalEpoch++;
   artifactDeckUI?.destroy();artifactDeckUI=null;
+  storyCreatorUI?.destroy();storyCreatorUI=null;storyProfileSignature='';
   if (photoURL) {
     URL.revokeObjectURL(photoURL);
     photoURL = "";
@@ -279,6 +296,7 @@ function matchesSearch(place, query) {
 }
 function mapPlaces() {
   return [...site.places, ...site.stops.filter(visibleStop)].filter((p) =>
+    (!mapJourneyOnly||JOURNEY.stops.includes(p.id)) &&
     (mapCategory === "all" || p.category === mapCategory) &&
     matchesSearch(p, $("#map-search").value));
 }
@@ -396,6 +414,7 @@ function renderTimeline() {
     .join("");
 }
 function renderSite() {
+  renderCampaign();
   renderHomeStories();
   passNeedsRender = true;
   renderPlaces();
@@ -454,6 +473,7 @@ function placeDetail(id) {
  <small class="detail-privacy">GPS chỉ dùng khi nhận tem, không lưu tọa độ. Đặt tên di tích vào danh sách lưu không xác nhận địa điểm đang mở cửa.</small>`,
     "place",
   );
+  modal.dataset.placeId=p.id;
   $("#share-place").onclick = async () => {
     const url = new URL(location.origin + location.pathname);
     url.searchParams.set("place", p.id);
@@ -505,6 +525,68 @@ function renderSavedTrip() {
     ? `<div class="saved-trip"><h3>Chuyến đi bạn đã lưu <span>${places.length}</span></h3>${places.map((p) => `<button data-place="${e(p.id)}">${icon(p.symbol)} ${e(p.name)} ${icon("arrowup")}</button>`).join("")}<small>Đây là danh sách cá nhân, chưa tối ưu đường đi.</small></div>`
     : "";
 }
+function journeyKey(){return `${profileKey()}:journey`;}
+function journeyIsActive(){
+  const value=localRead(journeyKey(),null);
+  return value?.id===JOURNEY.id&&value?.version===JOURNEY.version&&value?.active===true;
+}
+function journeyShareURL(){
+  const url=new URL(appURL('index.html'));
+  url.searchParams.set('journey',JOURNEY.id);url.hash='day';
+  return url.href;
+}
+function renderCampaign(){
+  const state=journeyState(site,profile.badges),active=journeyIsActive();
+  $('#campaign-home').innerHTML=campaignHomeHTML({active,count:state.count,total:state.total,canStory:state.canStory});
+  $('#campaign-journey').innerHTML=journeyHTML(site,profile.badges,{active});
+  $('#journey-map-bar').innerHTML=`<button data-journey-action="${mapJourneyOnly?'all-map':'map'}" aria-pressed="${mapJourneyOnly}">${icon(mapJourneyOnly?'check':'map')}<span>${mapJourneyOnly?'Đang xem ba chặng':'Xem ba chặng theo dấu cổ vật'}</span></button>${mapJourneyOnly?'<button class="text-button" data-journey-action="all-map">Xem toàn bộ địa điểm</button>':''}`;
+  if(storyCreatorUI&&storyProfileSignature!==JSON.stringify(state.pass.earned.map(p=>p.id))){
+    storyCreatorUI.destroy();storyCreatorUI=null;storyProfileSignature='';modal.close();
+    toast('Bộ tem đã thay đổi. Mở lại công cụ để dùng tiến độ mới.');
+  }
+  hydrate($('#campaign-home'));hydrate($('#campaign-journey'));
+}
+function openJourney(){if(modal.open)modal.close();navigate('day');window.scrollTo({top:0,behavior:'instant'});$('#day-heading').focus({preventScroll:true});}
+function openPersonalStory(){
+  const {earned}=passProgress(site.places,profile.badges);
+  if(!earned.length){showStorySample();return;}
+  const name=(activeTab==='pass'?$('#passport-name')?.value:profile.name)||profile.name;
+  openModal('ÓC EO, CÓ DẤU TÔI.', '<div id="story-creator-root"></div>','story');
+  storyProfileSignature=JSON.stringify(earned.map(p=>p.id));
+  storyCreatorUI=mountStoryCreator({root:$('#story-creator-root'),places:site.places,earned,
+    name,locale:getLanguage(),journeyURL:journeyShareURL(),journeyCount:journeyState(site,profile.badges).count,
+    journeyIds:[...JOURNEY.stops],onClose:()=>modal.close(),onToast:toast});
+}
+function showStorySample(){
+  const image=appURL(`assets/previews/oc-eo-personal-story-${getLanguage()}.webp`);
+  openModal('ÓC EO, CÓ DẤU TÔI.',`<section class="story-sample"><h2>Chuyến đi của bạn sẽ trông thế nào?</h2><p>Đây là mẫu story để xem bố cục. Có một tem thật, bạn có thể chọn ảnh của mình và tạo story riêng.</p><img src="${image}" alt="Ảnh mẫu story cá nhân Óc Eo, có ghi rõ đây là minh hoạ" width="1080" height="1920"><p class="story-privacy">Ảnh Ba Thê: Bùi Thụy Đào Nguyên · CC BY-SA 3.0. Bố cục và tem trong mẫu dùng để minh hoạ.</p><button class="button dark" data-journey-action="open">Chọn chuyến để nhận tem đầu tiên</button><a class="text-button" href="${image}" download="oc-eo-story-sample.webp">Mở mẫu và tải ảnh ↗</a><a class="text-button" href="${appURL('elio-pass-preview.html')}" target="_blank" rel="noopener noreferrer">Xem poster bộ sưu tập ↗</a></section>`,'story-sample');
+}
+async function copyJourneyLink(){
+  const url=journeyShareURL();
+  try{await navigator.clipboard.writeText(url);toast('Đã sao chép liên kết chuyến đi.');}
+  catch{prompt(translateText('Sao chép liên kết chuyến đi:'),url);}
+}
+async function shareJourney(){
+  if(!navigator.share){await copyJourneyLink();return;}
+  try{await navigator.share({title:'Óc Eo Townwalk',text:translateText('Cùng theo dấu cổ vật ở Óc Eo.'),url:journeyShareURL()});}
+  catch(err){if(err.name!=='AbortError')await copyJourneyLink();}
+}
+async function packJourney(button){
+  if(!navigator.serviceWorker?.controller||!('caches' in window)){
+    toast('Ứng dụng chưa lưu xong. Giữ kết nối và thử lại sau.');return;
+  }
+  button.disabled=true;button.setAttribute('aria-busy','true');
+  try{
+    const root=new URL(appURL()),prefix=`oceo-townwalk:${encodeURIComponent(root.pathname)}:`;
+    const cacheName=(await caches.keys()).find(k=>k.startsWith(prefix));
+    if(!cacheName)throw Error('cache');
+    const cache=await caches.open(cacheName),assets=new URL(appURL('assets/'));
+    const images=journeyState(site,profile.badges).stops.map(s=>s.place?.image).filter(Boolean).map(p=>safeURL(p,{image:true})).filter(Boolean).filter(p=>{const u=new URL(p);return u.origin===assets.origin&&u.pathname.startsWith(assets.pathname);});
+    await Promise.all(images.map(async url=>{if(await cache.match(url))return;const r=await fetch(url);if(!r.ok)throw Error('photo');await cache.put(url,r);}));
+    toast('Đã chuẩn bị bản đồ và tư liệu trên thiết bị này. Link nguồn và đặt chỗ cần mạng.');
+  }catch{toast('Chưa chuẩn bị xong. Giữ kết nối rồi thử lại.');}
+  finally{if(button.isConnected){button.disabled=false;button.removeAttribute('aria-busy');}}
+}
 async function checkIn(p) {
   if (!canCollectStamp(p)) return;
   if (profile.badges.includes(p.id)) {
@@ -517,40 +599,46 @@ async function checkIn(p) {
   }
   armSound();
   const btn = $("#checkin");
-  const radius = Math.min(site.radius, p.checkInRadius || site.radius);
+  const owner=profileKey(),epoch=profileEpoch;
   btn.disabled = true;
   btn.textContent = "Đang xác định vị trí…";
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
+      const current=findPlace(p.id);
+      if(owner!==profileKey()||epoch!==profileEpoch)return;
+      if(!current||!canCollectStamp(current)||current.lat!==p.lat||current.lng!==p.lng){toast('Điểm nhận tem đã thay đổi. Mở lại hồ sơ trước khi thử.');return;}
+      const radius=Math.min(site.radius,current.checkInRadius||site.radius);
       const distance = distanceMeters(
         { lat: pos.coords.latitude, lng: pos.coords.longitude },
         p,
       );
       if (pos.coords.accuracy > Math.min(100, radius)) {
         toast("GPS chưa đủ chính xác. Ra nơi thoáng và thử lại.");
-        if (modal.dataset.view === "place") placeDetail(p.id);
+        if (modal.open&&modal.dataset.view === "place"&&modal.dataset.placeId===p.id) placeDetail(p.id);
         return;
       }
       if (distance > radius) {
         toast(
           `Bạn còn cách điểm khoảng ${Math.round(distance)} m. Cần ở trong bán kính ${radius} m để nhận tem.`,
         );
-        if (modal.dataset.view === "place") placeDetail(p.id);
+        if (modal.open&&modal.dataset.view === "place"&&modal.dataset.placeId===p.id) placeDetail(p.id);
         return;
       }
       if (!profile.badges.includes(p.id)) { profile.badges.push(p.id); playEffect("stamp"); }
       await saveProfile();
+      if(owner!==profileKey()||epoch!==profileEpoch)return;
       toast("Một nơi đã đến. Một con tem mới!");
       bookPage = 0;
       showPassport();
     },
     (err) => {
+      if(owner!==profileKey()||epoch!==profileEpoch)return;
       toast(
         err.code === 1
           ? "Bạn chưa cho phép định vị. Có thể tiếp tục khám phá mà không check-in."
           : "Chưa lấy được vị trí. Thử lại ngoài trời hoặc kiểm tra GPS.",
       );
-      if (modal.dataset.view === "place") placeDetail(p.id);
+      if (modal.open&&modal.dataset.view === "place"&&modal.dataset.placeId===p.id) placeDetail(p.id);
     },
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
   );
@@ -659,7 +747,7 @@ function showPassport() {
   bookPage = Math.max(0, Math.min(pages - 1, bookPage));
   passNeedsRender = false;
   $("#pass-content").innerHTML =
-    `<div class="app-view-heading"><div class="eyebrow">GOM TEM DI SẢN. LAN TỎA ÓC EO.</div><h1 id="pass-heading" tabindex="-1">Óc Eo <span class="serif">Pass.</span></h1><p>Mỗi con tem là một lần chạm Óc Eo.</p></div><div class="pass-toolbar"><button class="button dark" id="save-pass-image">Lưu ảnh về máy ${icon("download")}</button><button class="text-button book-toggle" id="toggle-book">Đóng bìa Óc Eo Pass ${icon("passport")}</button></div><p class="pass-save-caption">Lưu ảnh tiến độ bất cứ lúc nào.</p><div class="passport-book"><button class="passport-cover" id="open-book">${mark}<small>ÓC EO TOWNWALK</small><h3>Óc Eo<br><span class="serif">Pass.</span></h3><span>Chạm để mở một chuyến đi ↗</span></button><div class="passport-spread"><div class="passport-page"><div class="eyebrow">ÓC EO TOWNWALK / YOUR PASS</div><h3>Óc Eo.<br><span class="serif">I was here.</span></h3><p>Óc Eo Pass này thuộc về</p><div class="owner-name" data-no-translate>${e(profile.name || translateText("Một tâm hồn tò mò"))}</div><small>Xã Óc Eo · An Giang</small><div class="passport-progress"><span style="width:${total ? (count / total) * 100 : 0}%"></span></div><p>${total ? `Bạn đã đạt ${count} / ${total} tem` : "Bộ sưu tập đang được bổ sung"}</p><small>${cloud.state.user ? "Đồng bộ với tài khoản khi có mạng" : "Chế độ khách · lưu trên thiết bị này"}</small></div><div class="passport-page passport-flip"><div class="eyebrow">NHỮNG NƠI MÌNH ĐÃ CHẠM</div>${all.length ? `<div class="stamp-grid">${all
+    `<div class="app-view-heading"><div class="eyebrow">GOM TEM DI SẢN. LAN TỎA ÓC EO.</div><h1 id="pass-heading" tabindex="-1">Óc Eo <span class="serif">Pass.</span></h1><p>Mỗi con tem là một lần chạm Óc Eo.</p></div><div class="pass-story-entry"><button class="button dark" data-journey-action="story" ${!count ? "disabled" : ""}>Tạo story với ảnh của tôi ${icon("camera")}</button><p>Có một tem là có thể kể. Ảnh chỉ xử lý trên máy.</p></div><div class="pass-toolbar"><button class="button dark" id="save-pass-image">Lưu ảnh về máy ${icon("download")}</button><button class="text-button book-toggle" id="toggle-book">Đóng bìa Óc Eo Pass ${icon("passport")}</button></div><p class="pass-save-caption">Lưu ảnh tiến độ bất cứ lúc nào.</p><div class="passport-book"><button class="passport-cover" id="open-book">${mark}<small>ÓC EO TOWNWALK</small><h3>Óc Eo<br><span class="serif">Pass.</span></h3><span>Chạm để mở một chuyến đi ↗</span></button><div class="passport-spread"><div class="passport-page"><div class="eyebrow">ÓC EO TOWNWALK / YOUR PASS</div><h3>Óc Eo.<br><span class="serif">I was here.</span></h3><p>Óc Eo Pass này thuộc về</p><div class="owner-name" data-no-translate>${e(profile.name || translateText("Một tâm hồn tò mò"))}</div><small>Xã Óc Eo · An Giang</small><div class="passport-progress"><span style="width:${total ? (count / total) * 100 : 0}%"></span></div><p>${total ? `Bạn đã đạt ${count} / ${total} tem` : "Bộ sưu tập đang được bổ sung"}</p><small>${cloud.state.user ? "Đồng bộ với tài khoản khi có mạng" : "Chế độ khách · lưu trên thiết bị này"}</small></div><div class="passport-page passport-flip"><div class="eyebrow">NHỮNG NƠI MÌNH ĐÃ CHẠM</div>${all.length ? `<div class="stamp-grid">${all
       .slice(bookPage * 4, bookPage * 4 + 4)
       .map(
         (p) =>
@@ -700,6 +788,7 @@ function showPassport() {
   };
   $("#clear-passport").onclick = async () => {
     if (!confirm(translateText("Xóa tên và tất cả tem trong Óc Eo Pass này?"))) return;
+    profileEpoch++;
     profile = { name: "", badges: [], policyVersion: POLICY_VERSION };
     await saveProfile();
     showPassport();
@@ -727,11 +816,15 @@ function showPassport() {
   $("#passport-login")?.addEventListener("click", showLogin);
 }
 async function showCertificate({progress = false, download = false, name = ""} = {}) {
+  const owner=profileKey(),epoch=profileEpoch,dialogVersion=modalEpoch,navVersion=navigationEpoch;
+  const sameOwner=()=>owner===profileKey()&&epoch===profileEpoch;
+  const sameView=()=>sameOwner()&&dialogVersion===modalEpoch&&navVersion===navigationEpoch;
   const {collection, earned, complete} = passProgress(site.places, profile.badges);
   if (!progress && !complete) return;
   const exportName = (name || profile.name || translateText("Một tâm hồn tò mò")).trim().slice(0,60);
   const date = new Intl.DateTimeFormat(dateLocale(), {timeZone:"Asia/Ho_Chi_Minh"}).format(new Date());
   const {svg,width,height} = await passArtwork({collection,earned,name:exportName,date,locale:getLanguage()});
+  if(!sameOwner()||(!download&&!sameView()))return;
   const url = URL.createObjectURL(
     new Blob([svg], { type: "image/svg+xml;charset=utf-8" }),
   );
@@ -745,6 +838,7 @@ async function showCertificate({progress = false, download = false, name = ""} =
     c.getContext("2d").drawImage(img, 0, 0);
     const blob = await new Promise((r) => c.toBlob(r, "image/png"));
     if (!blob) throw Error("Không xuất được ảnh.");
+    if(!sameOwner()||(!download&&!sameView()))return;
     if (download) {
       downloadBlob(blob, "oc-eo-pass.png");
       toast("Ảnh PNG đã sẵn sàng. Nếu máy mở ảnh, nhấn giữ để lưu.");
@@ -898,6 +992,7 @@ async function showAccount() {
     try {
       await cloud.deleteAccount();
       localStorage.removeItem(key);
+      localStorage.removeItem(`${key}:journey`);
       modal.close();
       toast("Đã xóa tài khoản và dữ liệu trên Firebase.");
       loadReviews(true);
@@ -1135,6 +1230,27 @@ $("#account-button").onclick = () =>
 $("#write-review").onclick = showReviewForm;
 $("#more-reviews").onclick = () => loadReviews($("#more-reviews").dataset.retry==="true");
 document.addEventListener("click", (ev) => {
+  const journeyButton=ev.target.closest('[data-journey-action]');
+  if(journeyButton){
+    if(journeyButton.disabled)return;
+    const action=journeyButton.dataset.journeyAction,state=journeyState(site,profile.badges);
+    if(action==='open'){if(modal.open)modal.close();openJourney();}
+    if(action==='start'){
+      if(!state.canStart){toast('Một chặng đang chờ xác nhận. Xem lại hồ sơ trước khi chọn.');return;}
+      if(store(journeyKey(),{id:JOURNEY.id,version:JOURNEY.version,active:true})){renderCampaign();toast('Đã giữ chuyến này trên thiết bị. Tem cũ vẫn được tính riêng.');}
+    }
+    if(action==='stop'){store(journeyKey(),{id:JOURNEY.id,version:JOURNEY.version,active:false});renderCampaign();}
+    if(action==='story')openPersonalStory();
+    if(action==='sample')showStorySample();
+    if(action==='map'||action==='all-map'){
+      mapJourneyOnly=action==='map';mapCategory='all';$('#map-search').value='';
+      if(modal.open)modal.close();renderCampaign();renderMap();navigate('map');
+      if(journeyButton.dataset.place){const p=findPlace(journeyButton.dataset.place);if(p&&eligible(p))requestAnimationFrame(()=>selectMapPlace(p.id));}
+    }
+    if(action==='share')void shareJourney();
+    if(action==='pack')void packJourney(journeyButton);
+    return;
+  }
   const route = ev.target.closest("[data-route]");
   if (route && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey && ev.button === 0) {
     ev.preventDefault();
@@ -1203,16 +1319,19 @@ window.addEventListener("cloud-state", async () => {
   if (currentUid === user?.uid) return;
   currentUid = user?.uid;
   readProfile();
+  renderCampaign();
+  const responseEpoch=profileEpoch;
   if (user) {
     try {
       const remote = await cloud.loadProfile();
-      if (remote && cloud.state.user?.uid === user.uid) {
+      if (remote && cloud.state.user?.uid === user.uid && responseEpoch===profileEpoch) {
         profile = {
           name: typeof remote.name === "string" ? remote.name : "",
           badges: Array.isArray(remote.badges) ? remote.badges : [],
           policyVersion: POLICY_VERSION,
         };
         store(profileKey(), profile);
+        renderCampaign();
       }
     } catch {
       toast(
@@ -1226,7 +1345,8 @@ hydrate();
 readProfile();
 renderSite();
 renderReviews();
-activateTab(normalizedTab());
+const incomingJourney=new URLSearchParams(location.search).get('journey')===JOURNEY.id;
+activateTab(incomingJourney&&!location.hash?'day':normalizedTab());
 cloud
   .watchSite(
     (data) => {
@@ -1250,15 +1370,12 @@ function updateConnection() {
 window.addEventListener("online",()=>{updateConnection();if(activeTab==="community"&&$("#more-reviews").dataset.retry==="true")loadReviews(true);});
 window.addEventListener("offline", updateConnection);
 updateConnection();
-if ("serviceWorker" in navigator)
-  window.addEventListener("load", () =>
-    navigator.serviceWorker.register(appURL("sw.js")).catch(() => {}),
-  );
 const linkedPlace = new URLSearchParams(location.search).get("place");
-if (linkedPlace && findPlace(linkedPlace)) placeDetail(linkedPlace);
+if (!incomingJourney && linkedPlace && findPlace(linkedPlace)) placeDetail(linkedPlace);
 
 window.addEventListener('oceo-language-change', () => {
   renderReviews();
+  storyCreatorUI?.setLocale?.(getLanguage());
   const owner=document.querySelector('.owner-name');
   if(owner && !profile.name)owner.textContent=translateText('Một tâm hồn tò mò');
 });

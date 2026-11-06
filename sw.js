@@ -3,9 +3,10 @@ const APP_ROOT = new URL('./', self.location.href);
 const INDEX_URL = new URL('index.html', APP_ROOT).href;
 const ASSETS_PATH = new URL('assets/', APP_ROOT).pathname;
 const CACHE_PREFIX = `oceo-townwalk:${encodeURIComponent(APP_ROOT.pathname)}:`;
-const CACHE = CACHE_PREFIX + '2026-11-06-v20';
+const CACHE = CACHE_PREFIX + '2026-11-06-v21';
 const CORE = [
   "index.html",
+  "assets/boot.js",
   "assets/style.css",
   "assets/app-shell.css",
   "assets/discover.css",
@@ -31,6 +32,16 @@ const CORE = [
   "assets/fonts/townwalk-sc-bold.woff2",
   "assets/pass-art.js",
   "assets/pass-poster.js",
+  "assets/campaign-home.js",
+  "assets/campaign.css",
+  "assets/campaign-messages.js",
+  "assets/journey.js",
+  "assets/journey-story.css",
+  "assets/story-creator.js",
+  "assets/story-art.js",
+  "assets/previews/oc-eo-personal-story-vi.webp",
+  "assets/previews/oc-eo-personal-story-en.webp",
+  "assets/previews/oc-eo-personal-story-zh.webp",
   "assets/heritage-symbols.js",
   "assets/heritage-art/nandin-giong-cat.webp",
   "assets/heritage-art/linh-son-bac-relief.webp",

@@ -2,6 +2,8 @@
 
 A phone-first Vietnamese heritage guide with five separate screens, source-backed archaeology stories, real OpenStreetMap locations and an animated **Óc Eo Pass**.
 
+The campaign entry now connects a three-stop suggested journey with earned stamps and a personal-photo story editor. Photos stay on the device; the editor exports a 1080×1920 PNG, offers native sharing where supported and copies a public journey link. Journey progress and the 15-stop collection remain separate. See [implementation and field checks](docs/CAMPAIGN-IMPLEMENTATION.md).
+
 ## Run and rebuild
 
 ```sh

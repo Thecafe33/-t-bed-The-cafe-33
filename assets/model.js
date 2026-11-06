@@ -70,8 +70,11 @@ export function eligible(p) {
     Math.abs(p.lng) <= 180
   );
 }
+export function isAccessClosed(p) {
+  return p?.closed === true || ['closed','temporarily-closed','restricted','no-access'].includes(p?.accessStatus);
+}
 export function canCollectStamp(p) {
-  return p.category === "heritage" && p.collectible !== false && eligible(p);
+  return p.category === "heritage" && p.collectible !== false && eligible(p) && !isAccessClosed(p);
 }
 export function passProgress(places, badges = []) {
   const collection = places.filter(p => p.category === "heritage" && p.collectible !== false && p.scopeConfirmed === true && contentSourced(p));

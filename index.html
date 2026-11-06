@@ -23,9 +23,11 @@
     <link rel="stylesheet" href="./assets/town-map.css" />
     <link rel="stylesheet" href="./assets/genz.css" />
     <link rel="stylesheet" href="./assets/artifacts.css" />
+    <link rel="stylesheet" href="./assets/campaign.css" />
+    <link rel="stylesheet" href="./assets/journey-story.css" />
     <script src="./assets/vendor/leaflet.js" defer></script>
     <script src="./assets/vendor/leaflet.markercluster.js" defer></script>
-    <script type="module" src="./assets/app.js"></script>
+    <script type="module" src="./assets/boot.js"></script>
   </head>
   <body class="townwalk-app">
     <a class="skip-link" href="#main">Bỏ qua đến nội dung</a>
@@ -55,6 +57,7 @@
       </button>
       </div>
     </header>
+    <div id="boot-state" class="boot-state" role="status" data-no-translate>Đang mở Óc Eo…</div>
     <main id="main" class="app-main">
       <section
         id="view-explore"
@@ -74,6 +77,7 @@
           <span>✳ ĐI CHƠI CÙNG DI SẢN</span
           ><span class="guest-pill">Không cần đăng nhập</span>
         </div>
+        <div id="campaign-home"></div>
         <label class="search-field"
           ><span data-icon="search"></span
           ><input
@@ -82,11 +86,12 @@
             placeholder="Tìm Gò Sáu Thuận, Gò Út Trạch…"
             aria-label="Tìm địa điểm"
         /></label>
+        <details class="campaign-landscape"><summary>Nhìn Óc Eo từ Ba Thê ↗</summary>
         <div class="pocket-hero townwalk-cover">
           <div class="cover-edition"><span>ĐI MỘT VÒNG ÓC EO</span><span>10°N / 105°E</span></div>
           <div class="cover-wordmark" aria-hidden="true">ÓC EO<span data-mark></span></div>
           <div class="pocket-hero-copy">
-            <h1 id="explore-heading" tabindex="-1">Ngàn năm tuổi.<br><span class="serif">Vẫn rất cuốn.</span></h1>
+            <h2 id="landscape-heading">Ngàn năm tuổi.<br><span class="serif">Vẫn rất cuốn.</span></h2>
             <p>Một đô thị cổ.<br>Một ngày khám phá theo cách mới.</p>
           </div>
           <img src="./assets/photos/ba-the.jpg" alt="Núi Ba Thê nhìn từ đường Gò Cây Thị; ảnh Bùi Thụy Đào Nguyên, CC BY-SA 3.0" width="900" height="560">
@@ -96,6 +101,7 @@
           <span class="hero-photo-credit">Ảnh: Bùi Thụy Đào Nguyên · CC BY-SA 3.0</span>
           <div class="cover-actions"><a href="#map" data-route="map" class="button cover-map">Đi thôi! <span data-icon="arrowup"></span></a><button id="surprise-me" class="cover-surprise"><span data-icon="compass"></span> Bốc một điểm đi</button></div>
         </div>
+        </details>
         <div class="vibe-ticker" aria-hidden="true"><div class="vibe-ticker-track"><div><span>Không cần đăng nhập</span><i>✦</i><span>Chạy được cả khi offline</span><i>✦</i><span>Gom tem. Khoe Óc Eo.</span><i>✦</i><span>Đi gần. Chạm sâu.</span><i>✦</i></div><div><span>Không cần đăng nhập</span><i>✦</i><span>Chạy được cả khi offline</span><i>✦</i><span>Gom tem. Khoe Óc Eo.</span><i>✦</i><span>Đi gần. Chạm sâu.</span><i>✦</i></div></div></div>
         <section class="curiosity-section" aria-labelledby="curiosity-heading">
           <div class="curiosity-heading"><div><span class="eyebrow">CHUYỆN Ở ĐÂY, CHƯA CHẮC BẠN BIẾT</span><h2 id="curiosity-heading">Óc Eo có <span class="serif">plot twist.</span> <span class="emoji" aria-hidden="true">🤯</span></h2></div><span class="shelf-hint" aria-hidden="true">↔</span></div>
@@ -183,6 +189,7 @@
         hidden
       >
         <div class="map-title-row"><div><span class="eyebrow">ÓC EO TRONG TÚI BẠN</span><h1 id="map-heading" tabindex="-1">Bản đồ <span class="serif">Óc Eo.</span></h1></div><button id="toggle-map-search" class="map-search-trigger" aria-label="Tìm điểm đến" aria-expanded="false" aria-controls="map-search-panel"><span data-icon="search"></span><span>Tìm điểm</span></button></div>
+        <div id="journey-map-bar" class="journey-map-bar"></div>
         <div class="map-layout">
           <div class="map-board">
             <div id="osm-map" aria-label="Bản đồ riêng Óc Eo Townwalk, vị trí có nguồn"></div>
@@ -218,12 +225,11 @@
         hidden
       >
         <div class="app-view-heading">
-          <div class="eyebrow">MỘT NGÀY. NHIỀU ĐIỀU KHÁM PHÁ.</div>
-          <h1 id="day-heading" tabindex="-1">
-            Một ngày <span class="serif">Óc Eo.</span> <span class="emoji" aria-hidden="true">☀️</span>
-          </h1>
-          <p>Không chạy deadline. Chỉ theo những điều thú vị.</p>
+          <div class="eyebrow">THEO DẤU CỔ VẬT. KỂ ÓC EO.</div>
+          <h1 id="day-heading" tabindex="-1">Chuyến đi Óc Eo.</h1>
+          <p>Mang về một phát hiện, một khoảnh khắc và những dấu đã nhận.</p>
         </div>
+        <div id="campaign-journey"></div>
         <details class="trip-practical">
           <summary>Trước khi đi: đón khách, di chuyển, ăn nghỉ</summary>
           <div>
@@ -263,6 +269,7 @@
             >
           </div>
         </details>
+        <details class="journey-legacy"><summary>Lịch khung một ngày và điểm đã lưu</summary>
         <div class="day-trip-card">
           <span class="day-trip-sun" aria-hidden="true">☀</span>
           <div>
@@ -287,6 +294,7 @@
         </details>
         <div id="saved-trip"></div>
         <div class="timeline" id="timeline"></div>
+        </details>
         <aside class="mountain-detour" aria-labelledby="mountain-detour-title">
           <div class="eyebrow">HIDDEN GEM · NGOÀI LỊCH CHÍNH</div>
           <h3 id="mountain-detour-title">Một góc khác trên Ba Thê.</h3>
@@ -340,7 +348,7 @@
       ><a href="#map" data-route="map"
         ><span data-icon="map"></span><span>Bản đồ</span></a
       ><a href="#day" data-route="day"
-        ><span data-icon="clock"></span><span>Lịch trình</span></a
+        ><span data-icon="clock"></span><span>Chuyến đi</span></a
       ><a href="#pass" data-route="pass"
         ><span data-icon="passport"></span><span>Bộ tem</span></a
       ><a href="#community" data-route="community"

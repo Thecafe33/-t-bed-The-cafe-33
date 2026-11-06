@@ -33,7 +33,7 @@ with sync_playwright() as p:
   assert page.locator('#modal').evaluate('e=>e.scrollWidth<=e.clientWidth')
  page.set_viewport_size({'width':390,'height':844});page.locator('#modal').evaluate('e=>e.scrollTop=0');page.screenshot(path=str(out/'oc-eo-hidden-gem-warning.png'))
  page.locator('#close-modal').click();page.locator('.app-tabbar [data-route=day]').click()
- page.locator('.timeline-row').filter(has_text='08:30').locator('[data-place]').click();expect(page.locator('#modal-body h2')).to_have_text('Nhà trưng bày Văn hóa Óc Eo');page.locator('#close-modal').click()
+ page.locator('.journey-legacy>summary').click();page.locator('.timeline-row').filter(has_text='08:30').locator('[data-place]').click();expect(page.locator('#modal-body h2')).to_have_text('Nhà trưng bày Văn hóa Óc Eo');page.locator('#close-modal').click()
  page.locator('.timeline-row').filter(has_text='09:30').locator('[data-place]').click();expect(page.locator('#modal-body h2')).to_have_text('Chùa Linh Sơn');page.locator('#close-modal').click()
  expect(page.locator('.mountain-detour')).to_contain_text('NGOÀI LỊCH CHÍNH')
  page.locator('.app-tabbar [data-route=pass]').click()

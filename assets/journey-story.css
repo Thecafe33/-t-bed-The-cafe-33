@@ -1,0 +1,104 @@
+/* A journey is a separate screen; maps and personal-media controls keep their own flow. */
+.boot-state { max-width:520px;margin:16px auto;padding:16px 20px;background:#f3ead5;color:#351b27;font-size:13px;line-height:1.7; }
+.boot-state[hidden] { display:none; }
+.boot-state button { display:block;min-height:44px;border-radius:12px;background:#351b27;color:#f3ead5;padding:10px 16px;margin-top:12px; }
+.campaign-landscape,.journey-legacy { border:1px solid #d9dccb;border-radius:18px;margin:15px 0;padding:0 14px; }
+.campaign-landscape>summary,.journey-legacy>summary { padding:15px 0;min-height:48px;font-size:13px;font-weight:600;cursor:pointer; }
+.campaign-landscape .townwalk-cover { margin:0 0 15px; }
+.campaign-journey { margin:8px 0 24px;color:#351b27; }
+.campaign-journey h2 { font-size:30px;letter-spacing:-1px;line-height:1.2;margin:8px 0 14px; }
+.campaign-journey p { font-size:13px;line-height:1.8; }
+.campaign-journey .journey-intro { font-size:14px; }
+.journey-progress { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 10px; }
+.journey-progress>div { border:1px solid #d7d6c5;padding:15px;border-radius:18px;background:#f3ead5; }
+.journey-progress>div:first-child { background:#351b27;color:#f3ead5;border-color:#351b27; }
+.journey-progress span { display:block;font-size:11px;line-height:1.6; }
+.journey-progress strong { display:block;font-size:32px;letter-spacing:-1px;margin-top:7px; }
+.campaign-journey .journey-progress-note { font-size:11px;color:#6b655d; }
+.journey-access { background:#eeeee1;border:1px solid #d9dccb;border-radius:15px;padding:14px;margin:14px 0; }
+.journey-access>summary { min-height:44px;font-size:13px;font-weight:700;cursor:pointer;line-height:1.6; }
+.journey-access strong { font-size:13px;line-height:1.6;display:block; }
+.journey-access p { font-size:12px; }
+.journey-primary-actions,.journey-card-actions { display:flex;flex-wrap:wrap;gap:9px;align-items:center; }
+.campaign-journey .button { font-size:12px;min-height:46px;padding:12px 15px;line-height:1.6;border-radius:14px; }
+.journey-primary-actions>.button:first-child { flex:1; }
+.journey-active { padding:10px 13px;background:#dce8bf;border-radius:12px;font-size:12px;font-weight:700; }
+.campaign-journey .journey-unavailable { padding:12px 14px;border-radius:12px;background:#f2e4cf;font-size:12px; }
+.journey-stops { list-style:none;display:grid;gap:14px;padding:0;margin:22px 0; }
+.journey-stop { min-width:0; }
+.journey-stop article { border:1px solid #d8d6c8;border-radius:20px;padding:18px;background:#fffdf5; }
+.journey-step-heading { display:flex;align-items:center;gap:12px; }
+.journey-step-number { border-radius:50%;width:38px;height:38px;flex-shrink:0;display:grid;place-items:center;background:#351b27;color:#f3ead5;font-size:13px; }
+.journey-step-heading h3 { font-size:19px;line-height:1.4;letter-spacing:-.5px;margin:0; }
+.journey-stop h4 { font-size:12px;line-height:1.6;margin:17px 0 6px; }
+.campaign-journey .journey-step-status { font-size:11px;color:#64704b;margin:12px 0; }
+.journey-stop[data-journey-status=earned] article { border-color:#a7b18a; }
+.journey-stop[data-journey-status=closed] article,.journey-stop[data-journey-status=scope] article { background:#eeece5; }
+.campaign-journey .text-button { min-height:44px;font-size:12px;text-align:left;line-height:1.6; }
+.journey-rest { border-top:1px solid #d8d6c8;padding-top:18px; }
+.journey-rest h3 { font-size:23px;line-height:1.3; }
+.journey-rest-options { display:grid;gap:12px; }
+.journey-rest-card { padding:16px;background:#e9e5f0;border-radius:17px; }
+.journey-rest-card:last-child { background:#e8edda; }
+.journey-rest-card h4 { font-size:18px;line-height:1.4; }
+.journey-finish { display:grid;gap:9px;margin:22px 0; }
+.journey-finish p { margin:0 0 10px; }
+.journey-finish .journey-pack-note { font-size:11px;color:#6b655d; }
+.journey-complete { border-radius:14px;background:#dce8bf;padding:12px; }
+.journey-map-bar { display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px; }
+.journey-map-bar>button { display:flex;align-items:center;gap:8px;min-height:44px;border-radius:13px;padding:10px 12px;font-size:12px;text-align:left;background:#eeeee1;color:#351b27; }
+.journey-map-bar>button[aria-pressed=true] { background:#351b27;color:#f3ead5; }
+.journey-map-bar .icon { width:18px;height:18px;flex-shrink:0; }
+.pass-story-entry { margin:16px 0; }
+.pass-story-entry>.button { width:100%;min-height:48px;font-size:14px; }
+.townwalk-app .pass-story-entry p { font-size:11px;line-height:1.6;margin:7px 0; }
+/* Native dialog top layer gives the editor a dedicated, mobile full-screen view. */
+.townwalk-app dialog.story-dialog { width:100%;max-width:560px;height:94dvh;max-height:94dvh;padding:0;overflow:hidden; }
+.townwalk-app dialog.story-dialog[open] { display:flex;flex-direction:column; }
+.story-dialog .modal-header { margin:0;padding:8px 16px;gap:10px;border-bottom:1px solid #dfd9cc;background:#faf8ef;flex-shrink:0; }
+.story-dialog .modal-header .circle-button { width:44px;height:44px;flex-shrink:0; }
+.story-dialog #modal-body { padding:18px;overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1; }
+.story-dialog #modal-kicker { font-size:10px;letter-spacing:1px;line-height:1.6; }
+.story-creator { color:#351b27; }
+.story-creator h2,.story-sample h2 { font-size:28px;line-height:1.25;letter-spacing:-.8px;margin:0 0 12px; }
+.story-creator p,.story-sample p { font-size:13px;line-height:1.8; }
+.story-creator .field { font-size:12px;line-height:1.6;margin:16px 0; }
+.story-creator input:not([type=checkbox]):not([type=range]),.story-creator select,.story-creator textarea { font-size:16px;min-height:46px;max-width:100%;border-radius:13px; }
+.story-modes { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0; }
+.story-creator button { min-height:44px;border-radius:13px;font-size:12px;line-height:1.6;padding:10px 13px;background:#eeeade;color:#351b27; }
+.story-modes button[aria-pressed=true] { background:#351b27;color:#f3ead5; }
+.story-upload { position:relative;display:block;min-height:54px;font-size:14px;font-weight:700;border:1px dashed #8b7463;border-radius:16px;background:#f3ead5;padding:15px;cursor:pointer; }
+.story-upload input[type=file] { position:absolute;width:1px;min-height:1px!important;height:1px;padding:0;overflow:hidden;clip-path:inset(50%); }
+.story-upload:focus-within { outline:3px solid #8b7463;outline-offset:3px; }
+.story-creator .story-intro { font-size:12px;line-height:1.6;margin:8px 0 12px; }
+.story-creator .story-privacy,.story-creator .story-stamp-note,.story-creator .story-share-note { font-size:11px;color:#6c665e; }
+.story-creator .story-error:empty { display:none; }
+.story-creator .story-error { padding:12px;border-radius:13px;background:#f0d8cc;font-size:12px; }
+.story-photo-controls { margin:15px 0;padding:14px;background:#eeeee1;border-radius:15px; }
+.story-photo-controls[hidden] { display:none; }
+.story-photo-controls>label { display:block;margin:12px 0;font-size:12px; }
+.story-photo-controls input[type=range] { display:block;width:100%;min-height:44px; }
+.story-fact-toggle { display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.7;margin:17px 0; }
+.story-fact-toggle input { min-width:20px;min-height:20px;margin:0; }
+.story-preview { display:block;width:100%!important;height:auto!important;max-height:50svh;object-fit:contain;border-radius:14px;background:#e3ddcf;border:1px solid #d4c8b6; }
+.story-creator .story-status { font-size:12px;min-height:22px; }
+.story-actions { display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0; }
+.story-actions [data-story-action=download] { background:#351b27;color:#f3ead5; }
+.story-actions [data-story-action=copy] { grid-column:1/-1;background:#e1e8c7; }
+.story-link { display:block;overflow-wrap:anywhere;font-size:11px;line-height:1.7;margin:15px 0; }
+.story-options { border-top:1px solid #d8d6c8;margin-top:18px; }
+.story-options>summary { font-size:14px;font-weight:700;min-height:48px;padding:14px 0;cursor:pointer; }
+.story-sample img { display:block;width:100%;height:auto;border-radius:16px;margin:15px 0; }
+.story-sample>.button { min-height:48px;font-size:13px;margin:12px 0; }
+.story-sample>.text-button { display:block;min-height:44px;font-size:13px; }
+@media(max-width:600px) {
+ .townwalk-app dialog.story-dialog { width:100%;max-width:none;height:100dvh;max-height:100dvh;margin:0;border:0;border-radius:0; }
+ .story-dialog .modal-header { padding-top:calc(8px + env(safe-area-inset-top,0px)); }
+ .story-dialog #modal-body { padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)); }
+}
+@media(max-width:359px) {
+ .story-dialog #modal-body { padding-inline:13px; }
+ .journey-progress>div { padding:12px; }
+ .journey-progress strong { font-size:28px; }
+ .journey-step-heading h3 { font-size:17px; }
+}

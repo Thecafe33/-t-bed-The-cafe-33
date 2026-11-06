@@ -4,8 +4,12 @@ import { POLICY_MESSAGES } from './locales-policy.js';
 import { contentMessageRows } from './locales-content.js';
 import { CURATED } from './content.js';
 import { EXTRA_MESSAGES } from './locales-extra.js';
+import {homeMessages} from './campaign-home.js';
+import {journeyMessages} from './journey.js';
+import {storyMessages} from './story-creator.js';
+import {campaignMessages} from './campaign-messages.js';
 const normal=value=>String(value).normalize('NFC').replace(/\s+/g,' ').trim();
-const messages=new Map([...UI_MESSAGES,...POLICY_MESSAGES,...EXTRA_MESSAGES,...contentMessageRows(),...artifactMessageRows()].map(([vi,en,zh])=>[normal(vi),{en,zh}]));
+const messages=new Map([...UI_MESSAGES,...POLICY_MESSAGES,...EXTRA_MESSAGES,...contentMessageRows(),...artifactMessageRows(),...homeMessages,...journeyMessages,...storyMessages,...campaignMessages].map(([vi,en,zh])=>[normal(vi),{en,zh}]));
 const names=new Set([...CURATED.places,...CURATED.stops].flatMap(p=>[p.name,p.address,...(p.aliases||[])]).filter(Boolean).concat(['Óc Eo','Óc Eo.','óc eo','ÓC EO','Óc Eo Pass','ÓC EO TOWNWALK','Óc Eo, An Giang','Óc Eo, An Giang, Việt Nam']).map(v=>normal(v).toLowerCase()));
 let language='vi';try{const saved=localStorage.getItem('oceo-language');if(['vi','en','zh'].includes(saved))language=saved;}catch{}
 export const getLanguage=()=>language;
@@ -52,7 +56,7 @@ function dynamic(text,lang){
  if((m=text.match(/^Ảnh: (.+)$/)))return choose(`Photo: ${m[1]}`,`照片：${m[1]}`,lang);
  if((m=text.match(/^Ảnh trải nghiệm do (.+) chia sẻ$/)))return choose(`Experience photo shared by ${m[1]}`,`${m[1]}分享的旅行照片`,lang);
  if((m=text.match(/^Còn tìm thấy bằng: (.+)$/)))return choose(`Also searchable as: ${m[1]}`,`也可搜索：${m[1]}`,lang);
- if((m=text.match(/^(Khám phá|Bản đồ|Lịch trình|Óc Eo Pass|Cộng đồng) — (.+)$/)))return `${translateText(m[1],lang)} — ${m[2]}`;
+ if((m=text.match(/^(Khám phá|Bản đồ|Lịch trình|Chuyến đi|Óc Eo Pass|Cộng đồng) — (.+)$/)))return `${translateText(m[1],lang)} — ${m[2]}`;
  if((m=text.match(/^Đã giữ trên máy, chưa đồng bộ: (.+)$/)))return choose(`Saved on this device, not synced: ${translateText(m[1],lang)}`,`已保存在本机，尚未同步：${translateText(m[1],lang)}`,lang);
  return null;
 }

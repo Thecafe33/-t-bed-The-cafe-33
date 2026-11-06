@@ -91,7 +91,7 @@ with sync_playwright() as p:
  # Normal tab changes invoke one short reveal; reduced-motion changes invoke none.
  reveals=page.evaluate('window.__reveals');go('day');assert page.evaluate('window.__reveals')==reveals+1
  page.emulate_media(reduced_motion='reduce');reveals=page.evaluate('window.__reveals');go('pass');assert page.evaluate('window.__reveals')==reveals
- page.locator('#language-select').select_option('vi');go('explore');expect(page.locator('h1:visible')).to_contain_text('Ngàn năm tuổi.')
+ page.locator('#language-select').select_option('vi');go('explore');expect(page.locator('h1:visible')).to_contain_text('Óc Eo,')
  page.goto(origin+'/privacy.html',wait_until='networkidle');page.locator('#language-select').select_option('zh')
  expect(page.locator('#privacy-content')).to_contain_text('仅在点击签到或地图上的附近地点按钮时请求位置')
  expect(page.locator('#privacy-content')).to_contain_text('隐私')

@@ -71,9 +71,10 @@ export async function loadProfile() {
   const s = await sdk.getDoc(sdk.doc(db, "townwalkProfiles", u.uid));
   return s.exists() ? s.data() : null;
 }
-export async function saveProfile(profile) {
+export async function saveProfile(profile, expectedUid=state.user?.uid) {
   await connect();
   const u = requireUser();
+  if(!expectedUid||u.uid!==expectedUid)throw Error('Tài khoản đã thay đổi. Thử lưu lại.');
   await sdk.setDoc(sdk.doc(db, "townwalkProfiles", u.uid), {
     name: profile.name,
     badges: profile.badges,
