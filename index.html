@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="./assets/campaign.css?v=20261106-mountain" />
     <link rel="stylesheet" href="./assets/journey-story.css?v=20261106-fresh" />
     <link rel="stylesheet" href="./assets/place-feed.css?v=20261106-mountain" />
+    <link rel="stylesheet" href="./assets/header.css?v=20261106-header" />
     <script src="./assets/vendor/leaflet.js" defer></script>
     <script src="./assets/vendor/leaflet.markercluster.js" defer></script>
     <script type="module" src="./assets/boot.js"></script>
@@ -41,21 +42,27 @@
         ><span data-mark></span
         ><span>óc eo<span class="brand-sub">TOWNWALK</span></span></a
       >
-      <div class="header-location">
-        <span data-icon="pin"></span
-        ><span>Óc Eo, An Giang<small>ĐI GẦN. CHẠM SÂU.</small></span>
-      </div>
       <div class="header-tools">
-        <label class="language-picker"><span class="sr-only">Chọn ngôn ngữ</span><select id="language-select" aria-label="Chọn ngôn ngữ" data-no-translate><option value="vi">Tiếng Việt</option><option value="en">English</option><option value="zh">简体中文</option></select></label>
+        <button type="button" class="header-deck header-control" data-action="artifacts" aria-label="Theo dấu cổ vật" title="Theo dấu cổ vật"><span data-icon="cards"></span></button>
+        <div class="language-picker" id="header-language">
+          <select id="language-select" aria-label="Chọn ngôn ngữ" data-no-translate><option value="vi">VN · Tiếng Việt</option><option value="en">EN · English</option><option value="zh">中文 · 简体中文</option></select>
+          <button type="button" id="language-trigger" class="header-control" aria-label="Chọn ngôn ngữ" aria-haspopup="listbox" aria-expanded="false" aria-controls="language-options" hidden><span id="language-code" data-no-translate>VN</span><span data-icon="chevrondown"></span></button>
+          <div id="language-options" class="language-options" role="listbox" aria-label="Chọn ngôn ngữ" hidden>
+            <div class="language-menu-label" aria-hidden="true" data-no-translate>LANGUAGE</div>
+            <button type="button" role="option" aria-selected="true" data-language="vi" tabindex="-1" data-no-translate><span class="language-option-code">VN</span><span lang="vi">Tiếng Việt</span><span class="language-check" data-icon="check"></span></button>
+            <button type="button" role="option" aria-selected="false" data-language="en" tabindex="-1" data-no-translate><span class="language-option-code">EN</span><span lang="en">English</span><span class="language-check" data-icon="check"></span></button>
+            <button type="button" role="option" aria-selected="false" data-language="zh" tabindex="-1" data-no-translate><span class="language-option-code">中文</span><span lang="zh-Hans">简体中文</span><span class="language-check" data-icon="check"></span></button>
+          </div>
+        </div>
         <button class="circle-button" id="sound-toggle" aria-label="Bật âm thanh" aria-pressed="false"><span data-icon="soundoff"></span></button>
-      <button
-        class="circle-button"
-        id="account-button"
-        aria-label="Đăng nhập hoặc mở tài khoản"
-      >
-        <span data-icon="user"></span
-        ><span class="sr-only" id="account-label">Đăng nhập</span>
-      </button>
+        <button
+          class="circle-button"
+          id="account-button"
+          aria-label="Đăng nhập hoặc mở tài khoản"
+        >
+          <span data-icon="user"></span
+          ><span class="sr-only" id="account-label">Đăng nhập</span>
+        </button>
       </div>
     </header>
     <div id="boot-state" class="boot-state" role="status" data-no-translate>Đang mở Óc Eo…</div>

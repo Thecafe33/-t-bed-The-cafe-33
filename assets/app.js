@@ -19,6 +19,7 @@ import {heritageSymbolHTML} from "./heritage-symbols.js";
 import {JOURNEY,journeyState,journeyHTML} from "./journey.js";
 import {campaignHomeHTML} from "./campaign-home.js";
 import {placeCardHTML} from "./place-feed.js";
+import {initHeader} from "./header.js";
 import {mountStoryCreator} from "./story-creator.js";
 import { stampOutline } from "./stamp-shape.js";
 import { appURL } from "./app-paths.js";
@@ -1405,4 +1406,5 @@ window.addEventListener('oceo-language-change', () => {
   if(owner && !profile.name)owner.textContent=translateText('Một tâm hồn tò mò');
 });
 initI18n();
+initHeader();
 initEffects();
