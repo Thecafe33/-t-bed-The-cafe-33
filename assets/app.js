@@ -18,6 +18,7 @@ import { passArtwork, stampColor } from "./pass-art.js";
 import {heritageSymbolHTML} from "./heritage-symbols.js";
 import {JOURNEY,journeyState,journeyHTML} from "./journey.js";
 import {campaignHomeHTML} from "./campaign-home.js";
+import {placeCardHTML} from "./place-feed.js";
 import {mountStoryCreator} from "./story-creator.js";
 import { stampOutline } from "./stamp-shape.js";
 import { appURL } from "./app-paths.js";
@@ -247,6 +248,7 @@ function renderPlaces() {
         heritageGroup === "all" ||
         p.group === heritageGroup),
   );
+  if(filter==='heritage')data.sort((a,b)=>Number(!!safeURL(b.image,{image:true}))-Number(!!safeURL(a.image,{image:true})));
   $("#data-note").textContent =
     filter === "heritage"
       ? `${site.places.length} hồ sơ: di tích khu A/B, nhà trưng bày và điểm khám phá tùy chọn. Không phải toàn bộ mọi di chỉ khảo cổ. Đọc nguồn riêng và lưu ý tiếp cận từng điểm; vị trí OSM là tham khảo.`
@@ -260,12 +262,7 @@ function renderPlaces() {
       b.setAttribute("aria-pressed", String(b.dataset.group === heritageGroup)),
     );
   $("#places-grid").innerHTML = data.length
-    ? data
-        .map(
-          (p, i) =>
-            `<article class="place-card"><button class="place-art ${["butter", "lavender", "peach", "lime"].includes(p.color) ? p.color : "butter"}" data-place="${e(p.id)}" aria-label="Tìm hiểu ${e(p.name)}">${safeURL(p.image, { image: true }) ? `<img src="${e(safeURL(p.image, { image: true }))}" alt="${e(p.name)}" loading="lazy">` : icon(p.symbol)}<span class="place-number">0${i + 1}</span><span class="place-badge">${icon(eligible(p) ? "check" : "clock")} ${eligible(p) ? "Có pin" : contentSourced(p) ? "Có tư liệu" : p.localRecommendation ? "Gợi ý địa phương" : "Chờ xác minh"}</span></button><div class="place-card-body"><div class="eyebrow">${e(p.label || "MỘT MẢNH GHÉP ÓC EO")}</div><h3><button data-place="${e(p.id)}" style="text-align:left;padding:0">${e(p.name)}</button>${icon("arrowup")}</h3><p>${e(p.hook || p.description.slice(0, 110))}${!p.hook && p.description.length > 110 ? "…" : ""}</p>${p.accessWarningShort ? `<p class="place-access-warning">${icon("compass")} ${e(p.accessWarningShort)}</p>` : ""}<button class="text-button" data-place="${e(p.id)}">Mở câu chuyện ${icon("arrow")}</button></div></article>`,
-        )
-        .join("")
+    ? data.map((p,i)=>placeCardHTML(p,i,{saved:savedSiteIds().includes(p.id)})).join('')
     : $("#place-search").value.trim()
       ? empty(
           "Chưa tìm thấy trong danh sách.",
@@ -277,7 +274,27 @@ function renderPlaces() {
             : "Một chỗ nghỉ, đang chờ xác minh.",
           "Chưa có cơ sở được xác minh trong xã Óc Eo sau sáp nhập. Chúng mình sẽ cập nhật tên, địa chỉ và nguồn thực tế; không gợi ý quán hay nơi lưu trú giả.",
         );
+  $('#places-grid').scrollLeft=0;
+  catalogCardObserver.disconnect();
+  $('#places-grid').querySelectorAll('.feed-card').forEach(card=>catalogCardObserver.observe(card));
+  requestAnimationFrame(syncCatalogShelf);
 }
+function syncCatalogShelf(){
+ const rail=$('#places-grid'),max=rail.scrollWidth-rail.clientWidth;
+ // Size the shelf to the card in view, so a longer warning far along the shelf
+ // does not leave empty space below every other stop. Search keeps natural height.
+ if(document.body.classList.contains('is-searching'))rail.style.height='';
+ else if(rail.clientWidth){
+  const bounds=rail.getBoundingClientRect();
+  const cards=[...rail.querySelectorAll('.feed-card')];
+  const current=cards.reduce((best,card)=>Math.abs(card.getBoundingClientRect().left-bounds.left)<Math.abs(best.getBoundingClientRect().left-bounds.left)?card:best,cards[0]);
+  rail.style.height=current?`${Math.ceil(current.getBoundingClientRect().height)+26}px`:'';
+ }
+ document.querySelectorAll('[data-catalog-move]').forEach(button=>button.disabled=Number(button.dataset.catalogMove)<0?rail.scrollLeft<3:rail.scrollLeft>=max-3);
+}
+const catalogCardObserver=new ResizeObserver(syncCatalogShelf);
+$('#places-grid').addEventListener('scroll',syncCatalogShelf,{passive:true});
+window.addEventListener('resize',syncCatalogShelf);
 function normalizedSearch(value) {
   return String(value)
     .normalize("NFD")
@@ -524,6 +541,9 @@ function renderSavedTrip() {
   $("#saved-trip").innerHTML = places.length
     ? `<div class="saved-trip"><h3>Chuyến đi bạn đã lưu <span>${places.length}</span></h3>${places.map((p) => `<button data-place="${e(p.id)}">${icon(p.symbol)} ${e(p.name)} ${icon("arrowup")}</button>`).join("")}<small>Đây là danh sách cá nhân, chưa tối ưu đường đi.</small></div>`
     : "";
+  document.querySelectorAll('[data-save-place]').forEach(button=>{
+    const saved=ids.includes(button.dataset.savePlace);button.classList.toggle('is-saved',saved);button.setAttribute('aria-pressed',String(saved));button.setAttribute('aria-label',translateText(saved?'Bỏ lưu điểm':'Lưu điểm'));button.innerHTML=icon(saved?'check':'heart');
+  });
 }
 function journeyKey(){return `${profileKey()}:journey`;}
 function journeyIsActive(){
@@ -1230,6 +1250,10 @@ $("#account-button").onclick = () =>
 $("#write-review").onclick = showReviewForm;
 $("#more-reviews").onclick = () => loadReviews($("#more-reviews").dataset.retry==="true");
 document.addEventListener("click", (ev) => {
+  const catalogMove=ev.target.closest('[data-catalog-move]');
+  if(catalogMove){const rail=$('#places-grid'),width=rail.querySelector('.place-card')?.getBoundingClientRect().width||rail.clientWidth;rail.scrollBy({left:Number(catalogMove.dataset.catalogMove)*(width+16),behavior:reducedMotion()?'auto':'smooth'});return;}
+  const saveCard=ev.target.closest('[data-save-place]');
+  if(saveCard){const p=findPlace(saveCard.dataset.savePlace);if(!p)return;let ids=savedSiteIds();ids=ids.includes(p.id)?ids.filter(id=>id!==p.id):[...ids,p.id];store('oceo-saved-sites',ids);renderSavedTrip();return;}
   const journeyButton=ev.target.closest('[data-journey-action]');
   if(journeyButton){
     if(journeyButton.disabled)return;
@@ -1374,6 +1398,7 @@ const linkedPlace = new URLSearchParams(location.search).get("place");
 if (!incomingJourney && linkedPlace && findPlace(linkedPlace)) placeDetail(linkedPlace);
 
 window.addEventListener('oceo-language-change', () => {
+  requestAnimationFrame(syncCatalogShelf);
   renderReviews();
   storyCreatorUI?.setLocale?.(getLanguage());
   const owner=document.querySelector('.owner-name');

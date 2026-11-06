@@ -49,7 +49,7 @@
 .townwalk-app .map-title-row .eyebrow { font-size:8px; margin-bottom:5px; }
 .map-title-row .circle-button { width:44px; height:44px; background:#f0f1e5; flex-shrink:0; }
 .townwalk-app .map-layout { overflow:visible; border:0; background:transparent; border-radius:0; }
-.townwalk-app .map-board { border-radius:24px; overflow:hidden; border:1px solid #d1d8be; height:clamp(450px,calc(100svh - 247px),690px); min-height:0; }
+.townwalk-app .map-board { border-radius:24px; overflow:hidden; border:1px solid #d1d8be; height:clamp(450px,calc(100svh - 303px),690px); min-height:0; }
 .townwalk-app #osm-map { height:100%; width:100%; background:#e5e9dc; }
 .map-explorer-tools { position:absolute; top:13px; left:12px; right:12px; z-index:700; pointer-events:none; }
 .map-explorer-tools>* { pointer-events:auto; }
@@ -111,7 +111,7 @@
 
 .map-loading { position:absolute; top:129px; left:13px; z-index:640; background:#fffdf7f5; border:1px solid #cbd0ba; border-radius:20px; padding:8px 11px; color:#536b4d; font-size:10px; }
 @media(max-height:700px) {
-  .townwalk-app .map-board { height:clamp(300px,calc(100svh - 247px),450px); }
+  .townwalk-app .map-board { height:clamp(280px,calc(100svh - 303px),450px); }
   .townwalk-app .leaflet-control-zoom { display:none; }
   .map-utility { flex-direction:row; top:124px; }
   .map-selection { padding:12px; }

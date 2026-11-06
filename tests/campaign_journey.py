@@ -22,8 +22,8 @@ export function friendlyError(e){return e.message;}
 """))
  q=c.new_page();errors=[];q.on('pageerror',lambda e:errors.append(str(e)))
  q.goto(origin,wait_until='networkidle')
- expect(q.locator('h1:visible')).to_contain_text('Óc Eo,')
- assert q.locator('.campaign-home [data-journey-action=open]').bounding_box()['y']<600
+ expect(q.locator('h1:visible')).to_contain_text('Ngàn năm tuổi.')
+ assert q.locator('.pocket-hero>img').bounding_box()['y']<500
  assert q.evaluate("localStorage.getItem('oceo-passport-guest')") is None
  q.locator('.campaign-home [data-journey-action=sample]').click()
  expect(q.locator('#modal')).to_have_attribute('data-view','story-sample')

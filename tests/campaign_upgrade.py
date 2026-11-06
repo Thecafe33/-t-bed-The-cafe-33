@@ -38,7 +38,9 @@ try:
   assert q.evaluate("async()=>(await import('/assets/app.js')).APP_BUILD")=='campaign-v1'
   assert q.evaluate("async()=>typeof(await import('/assets/model.js')).isAccessClosed")=='function'
   q.locator('.app-tabbar [data-route=explore]').click()
-  assert q.locator('.campaign-home').evaluate('e=>getComputedStyle(e).backgroundColor')=='rgb(251, 248, 239)'
+  assert q.locator('.hub-map').evaluate('e=>getComputedStyle(e).backgroundColor')=='rgb(223, 232, 198)'
+  assert q.locator('.campaign-home').evaluate('e=>getComputedStyle(e).backgroundColor')!='rgb(53, 27, 39)'
+  expect(q.locator('.pocket-hero>img')).to_be_visible()
   q.locator('.app-tabbar [data-route=day]').click()
   assert q.evaluate("async()=>!(await caches.keys()).some(k=>k.includes('old-upgrade-test'))")
   c.set_offline(True);q.reload(wait_until='domcontentloaded');expect(q.locator('#journey-title')).to_be_visible(timeout=15000)

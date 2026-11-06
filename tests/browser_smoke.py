@@ -16,10 +16,10 @@ with sync_playwright() as p:
   expect(page.locator(f'.app-tabbar [data-route={tab}]')).to_have_attribute('aria-current','page')
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),tab
  page.goto('http://127.0.0.1:8000',wait_until='networkidle')
- expect(page.locator('h1:visible')).to_contain_text('Óc Eo,')
+ expect(page.locator('h1:visible')).to_contain_text('Ngàn năm tuổi.')
  expect(page.locator('.app-view:visible')).to_have_count(1)
  expect(page.locator('.place-card')).to_have_count(16)
- assert page.locator('.campaign-home [data-journey-action=open]').bounding_box()['y']<650
+ assert page.locator('.pocket-hero>img').bounding_box()['y']<500
  assert page.locator('#place-search').bounding_box()['y']<page.locator('#places-grid').bounding_box()['y']
  assert page.locator('.place-card-body p').first.evaluate('e=>parseFloat(getComputedStyle(e).fontSize)')>=12
  expect(page.locator('#timeline')).not_to_be_visible()

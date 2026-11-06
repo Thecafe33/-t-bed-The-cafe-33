@@ -11,7 +11,7 @@ with sync_playwright() as p:
  expect(page.locator('.curiosity-card')).to_have_count(3)
  page.locator('.curiosity-card[data-place=go-giong-cat]').click();expect(page.locator('.detail-description').first).to_contain_text('Nandin');page.locator('#close-modal').click()
  page.locator('.curiosity-card[data-place=nha-trung-bay-cu-ba-the]').click();expect(page.locator('.access-warning')).to_contain_text('mưa');expect(page.locator('#checkin')).to_have_count(0);page.locator('#close-modal').click()
- page.locator('.campaign-landscape>summary').click();page.locator('#surprise-me').click();first=page.locator('#modal h2').first.inner_text();page.locator('#close-modal').click();page.locator('#surprise-me').click();assert page.locator('#modal h2').first.inner_text()!=first;page.locator('#close-modal').click()
+ page.locator('#surprise-me').click();first=page.locator('#modal h2').first.inner_text();page.locator('#close-modal').click();page.locator('#surprise-me').click();assert page.locator('#modal h2').first.inner_text()!=first;page.locator('#close-modal').click()
  page.locator('.app-tabbar [data-route=map]').click();expect(page.locator('#map-network-state')).not_to_be_visible()
  expect(page.locator('.townwalk-cartography svg').first).to_be_visible()
  expect(page.locator('.leaflet-tile')).to_have_count(0)
