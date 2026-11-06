@@ -113,7 +113,7 @@ export async function renderStoryArtwork({photo=null,places,featured,name='',cap
  textBox(ctx,caption||storyText('defaultCaption',locale),{x:64,y:1251,width:952,size:34,minSize:26,maxLines:3});
  ctx.fillStyle='#efb6a0';ctx.fillRect(42,1140,5,80);
  const fact=includeFact?storyFact(featured,locale):'';
- if(fact){ctx.fillStyle='#eef2e8';ctx.beginPath();ctx.roundRect(48,1370,984,78,18);ctx.fill();}
+ if(fact){ctx.fillStyle='#eef2e8';ctx.beginPath();if(typeof ctx.roundRect==='function')ctx.roundRect(48,1370,984,78,18);else ctx.rect(48,1370,984,78);ctx.fill();}
  if(fact)textBox(ctx,fact,{x:64,y:1383,width:952,size:24,minSize:19,maxLines:2,color:'#596f60'});
  const count=places.length,w=count===1?300:count===2?325:290,gap=28,total=count*w+(count-1)*gap;
  places.forEach((place,i)=>stamp(ctx,place,symbols[i],(1080-total)/2+i*(w+gap),1470,w,254,locale,i));
