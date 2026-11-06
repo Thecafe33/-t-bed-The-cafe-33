@@ -4,6 +4,8 @@ Cập nhật 06/11/2026. Triển khai phần sản phẩm P0 trong [kế hoạch
 
 ## Đã có trong web
 
+Hướng thị giác theo điều chỉnh cuối: nền cream, chữ xanh đậm, sage/lavender/vàng bơ và coral dùng có tiết chế; ưu tiên điện thoại, chữ rõ, khoảng thở và ảnh cá nhân. Home bỏ mảng plum–bronze nặng. Story và tem bộ sưu tập cùng bảng màu sáng, giữ hiện vật làm dấu nhận diện.
+
 - Home mới: nhẫn Nandin Giồng Cát, lời mời chọn chuyến ba điểm, tiếp tục chuyến đã lưu, tạo story hoặc xem mẫu khi chưa có tem. Giữ danh mục, tư liệu và ảnh Ba Thê trong mục mở thêm.
 - Tab **Chuyến đi**: Nhà trưng bày Văn hóa Óc Eo, Linh Sơn Bắc, Gò Giồng Cát; nguồn và gợi ý quan sát, trạng thái tiếp cận, hai lựa chọn nghỉ, liên kết đặt trước The cafe 33, chuẩn bị tư liệu ngoại tuyến. Thứ tự kể chuyện chưa được quảng bá là tuyến đi bộ hoặc đường tối ưu đã kiểm chứng.
 - Hai tiến độ riêng: các điểm của chuyến đã có tem /3 và bộ sưu tập Óc Eo Pass /15. Tem lịch sử vẫn được tính; không suy ra đã đi cùng ngày. Cafe và hidden gem không thành điều kiện hoàn thành.

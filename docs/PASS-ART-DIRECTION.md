@@ -1,6 +1,6 @@
 # Óc Eo Pass — tem hiện vật
 
-Cập nhật 06/11/2026 theo ảnh và phản hồi của người dùng. Ảnh xuất dùng nhẫn Nandin làm điểm neo lớn, nền mực tím nâu, giấy kem và tông kim loại cổ. Bỏ hoa trang trí, phong cảnh tưởng tượng và icon kim cương/đền chung chung khỏi tem. Giữ viền tem có các vết khuyết bán nguyệt lớn. Màu giao diện chung và phần bản đồ không thuộc thay đổi này.
+Cập nhật 06/11/2026 theo ảnh và phản hồi của người dùng. Ảnh xuất dùng nhẫn Nandin làm điểm neo lớn, nền giấy cream, chữ xanh đậm, tem sage/lavender/vàng bơ/coral và sắc kim loại từ chính hiện vật. Sau phản hồi tiếp theo về Gen Z, home và story ưu tiên bảng màu sáng cùng bố cục thoáng. Bỏ hoa trang trí, phong cảnh tưởng tượng và icon kim cương/đền chung chung khỏi tem. Giữ viền tem có các vết khuyết bán nguyệt lớn. Màu giao diện chung và phần bản đồ không thuộc thay đổi này.
 
 ## Tư liệu và liên hệ địa điểm
 

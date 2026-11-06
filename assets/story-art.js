@@ -48,7 +48,7 @@ export const storyMessages=[...Object.values(STORY_COPY),...Object.values(FACTS)
 export const storyText=(key,locale='vi')=>(STORY_COPY[key]||['','',''])[({vi:0,en:1,zh:2}[locale]||0)];
 export const storyFact=(place,locale='vi')=>FACTS[place?.id]?.[({vi:0,en:1,zh:2}[locale]||0)]||'';
 export const storyFactSource=place=>FACTS[place?.id]?heritageSymbol(place).sourceUrl||'':'';
-const INK='#351b27',PAPER='#f3ead5';
+const INK='#203d34',PAPER='#fbf8ef';
 const imageCache=new Map();
 const toDataURL=blob=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);});
 async function symbolImage(place){
@@ -76,8 +76,8 @@ function textBox(ctx,value,{x,y,width,size=32,minSize=24,maxLines=3,lineHeight=1
  if(rows.length>maxLines){rows=rows.slice(0,maxLines);let last=rows.at(-1);while(last&&ctx.measureText(last+'…').width>width)last=Array.from(last).slice(0,-1).join('');rows[rows.length-1]=last+'…';}
  ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='top';rows.forEach((line,i)=>ctx.fillText(line,x,y+i*size*lineHeight));return rows.length*size*lineHeight;
 }
-function stamp(ctx,place,image,x,y,w,h,locale){
- const path=new Path2D(stampOutline(w,h));ctx.save();ctx.translate(x,y);ctx.fillStyle='#ddc59c';ctx.translate(3,4);ctx.fill(path);ctx.translate(-3,-4);ctx.fillStyle='#fff9eb';ctx.fill(path);ctx.clip(path);
+function stamp(ctx,place,image,x,y,w,h,locale,index=0){
+ const path=new Path2D(stampOutline(w,h));ctx.save();ctx.translate(x,y);ctx.fillStyle='#203d3419';ctx.translate(3,4);ctx.fill(path);ctx.translate(-3,-4);ctx.fillStyle=['#dfe8c6','#e2daf5','#f6e4a8'][index%3];ctx.fill(path);ctx.clip(path);
  textBox(ctx,'ÓC EO',{x:19,y:18,width:w-38,size:15,minSize:15,maxLines:1,weight:800});
  if(image)containImage(ctx,image,30,38,w-60,Math.max(80,h-125));
  textBox(ctx,place.name,{x:w/2,y:h-75,width:w-35,size:21,minSize:16,maxLines:2,weight:800,align:'center'});ctx.restore();
@@ -93,31 +93,34 @@ export async function renderStoryArtwork({photo=null,places,featured,name='',cap
  if(document.fonts)await document.fonts.ready;
  const symbols=await Promise.all(places.map(symbolImage));
  const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;const ctx=canvas.getContext('2d');if(!ctx)throw Error('canvas unavailable');
- ctx.fillStyle=INK;ctx.fillRect(0,0,1080,1920);
+ ctx.fillStyle=photo?INK:'#e2daf5';ctx.fillRect(0,0,1080,1920);
+ const topInk=photo?PAPER:INK;
  if(photo){
   const frameH=1100,scale=fit==='contain'?Math.min(1080/photo.width,frameH/photo.height):Math.max(1080/photo.width,frameH/photo.height),w=photo.width*scale,h=photo.height*scale;
   ctx.save();ctx.beginPath();ctx.rect(0,0,1080,frameH);ctx.clip();ctx.drawImage(photo,(1080-w)*focusX,(frameH-h)*focusY,w,h);ctx.restore();
  }else{
   const picture=await symbolImage(featured);if(picture)containImage(ctx,picture,280,290,520,610);
  }
- const shade=ctx.createLinearGradient(0,0,0,470);shade.addColorStop(0,'#000000a8');shade.addColorStop(1,'#00000000');ctx.fillStyle=shade;ctx.fillRect(0,0,1080,470);
- const bottom=ctx.createLinearGradient(0,800,0,1100);bottom.addColorStop(0,'#00000000');bottom.addColorStop(1,'#000000ba');ctx.fillStyle=bottom;ctx.fillRect(0,800,1080,300);
- textBox(ctx,'ÓC EO.',{x:62,y:118,width:950,size:122,minSize:122,maxLines:1,weight:800,color:PAPER});
- if(demo){ctx.fillStyle='#d8dba9';ctx.fillRect(790,130,225,67);textBox(ctx,storyText('demo',locale),{x:902,y:149,width:205,size:27,minSize:23,maxLines:1,weight:800,align:'center'});}
- textBox(ctx,storyText('title',locale),{x:70,y:262,width:930,size:27,minSize:24,maxLines:1,color:PAPER});
- textBox(ctx,storyText(demo?'demoPoint':'selected',locale),{x:66,y:925,width:948,size:19,minSize:18,maxLines:1,color:PAPER,weight:800});
- textBox(ctx,featured.name,{x:62,y:968,width:950,size:46,minSize:30,maxLines:2,color:PAPER,weight:800});
+ if(photo){const shade=ctx.createLinearGradient(0,0,0,470);shade.addColorStop(0,'#000000a8');shade.addColorStop(1,'#00000000');ctx.fillStyle=shade;ctx.fillRect(0,0,1080,470);
+ const bottom=ctx.createLinearGradient(0,800,0,1100);bottom.addColorStop(0,'#00000000');bottom.addColorStop(1,'#000000ba');ctx.fillStyle=bottom;ctx.fillRect(0,800,1080,300);}
+ textBox(ctx,'ÓC EO.',{x:62,y:118,width:950,size:122,minSize:122,maxLines:1,weight:800,color:topInk});
+ if(demo){ctx.fillStyle='#f6e4a8';ctx.fillRect(790,130,225,67);textBox(ctx,storyText('demo',locale),{x:902,y:149,width:205,size:27,minSize:23,maxLines:1,weight:800,align:'center'});}
+ textBox(ctx,storyText('title',locale),{x:70,y:262,width:930,size:27,minSize:24,maxLines:1,color:topInk});
+ textBox(ctx,storyText(demo?'demoPoint':'selected',locale),{x:66,y:925,width:948,size:19,minSize:18,maxLines:1,color:topInk,weight:800});
+ textBox(ctx,featured.name,{x:62,y:968,width:950,size:46,minSize:30,maxLines:2,color:topInk,weight:800});
  ctx.fillStyle=PAPER;ctx.fillRect(0,1100,1080,820);
  textBox(ctx,name||storyText('unnamed',locale),{x:64,y:1140,width:952,size:43,minSize:27,maxLines:2,weight:800});
  textBox(ctx,caption||storyText('defaultCaption',locale),{x:64,y:1251,width:952,size:34,minSize:26,maxLines:3});
+ ctx.fillStyle='#efb6a0';ctx.fillRect(42,1140,5,80);
  const fact=includeFact?storyFact(featured,locale):'';
- if(fact)textBox(ctx,fact,{x:64,y:1383,width:952,size:24,minSize:19,maxLines:2,color:'#6a5146'});
+ if(fact){ctx.fillStyle='#eef2e8';ctx.beginPath();ctx.roundRect(48,1370,984,78,18);ctx.fill();}
+ if(fact)textBox(ctx,fact,{x:64,y:1383,width:952,size:24,minSize:19,maxLines:2,color:'#596f60'});
  const count=places.length,w=count===1?300:count===2?325:290,gap=28,total=count*w+(count-1)*gap;
- places.forEach((place,i)=>stamp(ctx,place,symbols[i],(1080-total)/2+i*(w+gap),1470,w,254,locale));
+ places.forEach((place,i)=>stamp(ctx,place,symbols[i],(1080-total)/2+i*(w+gap),1470,w,254,locale,i));
  textBox(ctx,`${count} ${storyText('stamps',locale)}`,{x:64,y:1760,width:952,size:22,minSize:20,maxLines:1,weight:800});
  const link=journeyURL?new URL(journeyURL).host+new URL(journeyURL).pathname.replace(/index\.html$/,''):'';
  textBox(ctx,link||'#OcEoTownwalk  #ChamOcEo',{x:64,y:1800,width:952,size:20,minSize:16,maxLines:1});
- textBox(ctx,`${storyText(demo?'demoNote':photo?'ownPhoto':'artOnly',locale)} · ${storyText('illustration',locale)}`,{x:64,y:1850,width:952,size:13,minSize:11,maxLines:2,color:'#6a5146'});
+ textBox(ctx,`${storyText(demo?'demoNote':photo?'ownPhoto':'artOnly',locale)} · ${storyText('illustration',locale)}`,{x:64,y:1850,width:952,size:13,minSize:11,maxLines:2,color:'#596f60'});
  const blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(Error('PNG export failed')),'image/png'));
  return {canvas,blob,width:1080,height:1920};
 }
