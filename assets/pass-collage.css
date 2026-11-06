@@ -1,0 +1,23 @@
+/* Ticket-paper collage belongs to the Pass, with clear controls outside the artwork. */
+#view-pass { color:#171714;background:#f4eedc; }
+#view-pass .app-view-heading h1 { display:inline-block;padding:10px 16px;background:#ff49a5;border:2px solid #171714;box-shadow:4px 4px 0 #171714;transform:rotate(-2deg);font-size:48px;letter-spacing:-3px;line-height:1.1;margin:14px 0 22px; }
+#view-pass .app-view-heading h1 .serif { font-family:inherit;font-weight:800;color:inherit; }
+#view-pass .passport-spread { gap:22px;background:transparent;box-shadow:none;border:0; }
+#view-pass .passport-page { background:#e9f429;color:#171714;border:2px solid #171714;border-radius:0;box-shadow:4px 5px 0 #171714; }
+#view-pass .passport-page:first-child { position:relative;background:#b9ed30;border-radius:18px 0 18px 0;transform:rotate(-1deg); }
+#view-pass .passport-page:first-child::after { content:'';display:block;margin-top:18px;border-bottom:2px dashed #171714; }
+#view-pass .passport-page h3 { font-weight:800;letter-spacing:-2px; }
+#view-pass .passport-page .owner-name { color:#171714;overflow-wrap:anywhere; }
+#view-pass .passport-progress { background:#17171422;border:1px solid #171714;border-radius:0; }
+#view-pass .passport-progress>span { background:#ff49a5; }
+#view-pass .passport-cover { background:#ff49a5;color:#171714;border:3px solid #171714;border-radius:4px;box-shadow:6px 6px 0 #171714; }
+#view-pass .passport-cover h3,#view-pass .passport-cover .serif { color:#171714; }
+#view-pass .stamp-grid { gap:16px 12px;padding:10px 2px; }
+#view-pass .stamp.earned:nth-child(3n+1) { transform:rotate(-3deg); }
+#view-pass .stamp.earned:nth-child(3n+2) { transform:rotate(2deg); }
+#view-pass .stamp { color:#171714; }
+#view-pass .pass-toolbar { gap:12px; }
+#view-pass .button { border-radius:10px;min-height:46px; }
+#view-pass #save-pass-image { background:#171714;color:#f4eedc;border:2px solid #171714;box-shadow:3px 3px 0 #ff49a5; }
+#view-pass .pass-story-entry { background:#83d9e2;border:1px solid #171714;border-radius:0;padding:16px; }
+@media(max-width:359px) { #view-pass .app-view-heading h1 { font-size:41px; } }

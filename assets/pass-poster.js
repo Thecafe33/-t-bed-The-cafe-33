@@ -2,7 +2,7 @@ import {escapeHTML as e} from './model.js';
 import {stampOutline} from './stamp-shape.js';
 import {heritageGraphic,heritageSymbol} from './heritage-symbols.js';
 
-export const POSTER_INK='#203d34',POSTER_PAPER='#fbf8ef';
+export const POSTER_INK='#171714',POSTER_PAPER='#f4eedc';
 const copy={
  vi:{owner:'CHUYẾN ĐI CỦA',count:'ĐỊA ĐIỂM ĐÃ CHECK-IN',section:'MỖI ĐIỂM ĐẾN. MỘT DẤU RIÊNG.',footer:'Chạm di sản. Chia sẻ Óc Eo.',full:'Đã gom đủ bộ. Khoe Óc Eo thôi!',empty:'Tem đầu tiên đang chờ bạn.',hint:'Đến điểm, check-in rồi kể câu chuyện của bạn.',art:'MINH HOẠ CẢM HỨNG HIỆN VẬT ÓC EO',personal:'BỘ SƯU TẬP CÁ NHÂN',date:'ÓC EO · AN GIANG',unit:'TEM',lead:'đi rồi, kể thôi.'},
  en:{owner:'THIS WALK BELONGS TO',count:'DESTINATIONS CHECKED IN',section:'EVERY STOP. A DIFFERENT IMPRESSION.',footer:'Meet heritage. Share Óc Eo.',full:'Full set. Share Óc Eo!',empty:'Your first stamp is waiting.',hint:'Check in at a destination. Share your story.',art:'ILLUSTRATIONS INSPIRED BY ÓC EO OBJECTS',personal:'PERSONAL COLLECTION',date:'ÓC EO · AN GIANG',unit:'STAMPS',lead:'walk. share. repeat.'},
@@ -13,10 +13,17 @@ function wrap(value,max){
  const tokens=String(value).trim().split(/\s+/).flatMap(word=>Array.from(word).reduce((a,c,i)=>{if(i%max===0)a.push('');a[a.length-1]+=c;return a;},[]));
  const rows=[];for(const word of tokens){if(rows.length&&Array.from(rows.at(-1)).length+Array.from(word).length+1<=max)rows[rows.length-1]+=' '+word;else rows.push(word);}return rows;
 }
+function ticketEdge(w,h){
+ const points=[];for(let x=0;x<=w;x+=12)points.push([x,(Math.round(x/12)%2)*6]);
+ for(let y=0;y<=h;y+=12)points.push([w-(Math.round(y/12)%2)*6,y]);
+ for(let x=w;x>=0;x-=12)points.push([x,h-(Math.round((w-x)/12)%2)*6]);
+ for(let y=h;y>=0;y-=12)points.push([(Math.round((h-y)/12)%2)*6,y]);
+ return 'M'+points.map(p=>p.join(' ')).join('L')+'Z';
+}
 function stamp(place,i,collection,{x,y,w,h,images,locale}){
  const symbol=heritageSymbol(place),ink=POSTER_INK;
- const paper=['#dfe8c6','#e2daf5','#f6e4a8','#efc6b4','#d9e9ec'][i%5];
- const outline=stampOutline(w,h),id=`cut-${i}`,angle=[-2,1.4,-.7,1.8][i%4];
+ const paper=['#ff49a5','#e9f429','#b9ed30','#83d9e2','#bea8f1'][i%5];
+ const outline=stampOutline(w,h),id=`cut-${i}`,angle=[-3,2,-1.5,3][i%4];
  const number=String(collection.findIndex(p=>p.id===place.id)+1).padStart(2,'0');
  const rows=wrap(place.name.toLocaleUpperCase('vi-VN'),20).slice(0,3),fs=rows.length>2?17:21;
  const nameY=h-22-(rows.length-1)*(fs+3),artY=34,artH=Math.max(40,nameY-artY-fs-36);
@@ -32,7 +39,7 @@ export function buildHeritagePoster({collection,earned,name,date,locale='vi',fon
  const height=Math.max(1920,top+rows*cellH+(rows-1)*22+175),footerY=height-125;
  const defs=`<defs><style>${fontCSS}</style><pattern id="stamp-grain" width="13" height="17" patternUnits="userSpaceOnUse"><circle cx="2" cy="4" r=".65" fill="#203d341b"/><circle cx="10" cy="12" r=".45" fill="#203d3420"/></pattern><pattern id="cover-grain" width="7" height="9" patternUnits="userSpaceOnUse"><circle cx="2" cy="4" r=".55" fill="#fbf8ef18"/></pattern></defs>`;
  const nameRows=wrap(name,27).slice(0,3),nameBase=nameRows.length>2?510:nameRows.length>1?525:558,nameSize=nameRows.length>1?26:Math.min(72,495/(Math.max(4,Array.from(name).length)*.65));
- const hero=`<rect width="1080" height="590" fill="${POSTER_INK}"/><rect width="1080" height="590" fill="url(#cover-grain)"/><path d="M64 102h952" stroke="#fbf8ef49"/><text x="65" y="75" font-size="25" font-weight="800" letter-spacing="4" fill="${POSTER_PAPER}">ÓC EO PASS</text><text x="1015" y="74" font-size="13" letter-spacing="2" text-anchor="end" fill="#c6dc9e">TOWNWALK / ${e(date)}</text><g fill="${POSTER_PAPER}" font-weight="800" letter-spacing="-12"><text x="49" y="269" font-size="182">ÓC</text><text x="57" y="427" font-size="182">EO.</text></g><text x="370" y="401" transform="rotate(-90 370 401)" font-size="15" letter-spacing="3" fill="#c6dc9e">${e(S.date)}</text><g transform="rotate(7 814 337)" color="#c6dc9e">${heritageGraphic('ring',{x:530,y:116,w:496,h:433,images})}</g><text data-owner-label="" x="65" y="477" fill="#c6dc9e" font-size="12" letter-spacing="2">${e(S.owner)}</text>${nameRows.map((line,j)=>`<text data-owner-name="" x="62" y="${nameBase+j*(nameSize+3)}" font-family="Lora,TownwalkSC,Georgia,serif" font-style="italic" font-size="${nameSize}" fill="${POSTER_PAPER}">${e(line)}</text>`).join('')}<text x="1017" y="568" fill="#c6dc9e" text-anchor="end" font-size="10" letter-spacing="1">NANDIN / ÓC EO</text>`;
+ const hero=`<rect width="1080" height="590" fill="#83d9e2"/><rect width="1080" height="590" fill="url(#stamp-grain)"/><g transform="translate(40 35) rotate(-3 500 130)"><path d="${ticketEdge(995,265)}" fill="#ff49a5" stroke="${POSTER_INK}" stroke-width="5"/><text x="35" y="55" font-size="22" font-weight="800" letter-spacing="5">TOWNWALK / ${e(date)}</text><text x="24" y="224" font-size="156" font-weight="800" letter-spacing="-10">ÓC EO PASS</text></g><g transform="translate(570 286) rotate(6 210 135)"><path d="${ticketEdge(450,275)}" fill="#e9f429" stroke="${POSTER_INK}" stroke-width="3"/>${heritageGraphic('ring',{x:116,y:13,w:230,h:223,images})}<text x="225" y="251" text-anchor="middle" font-size="13" font-weight="800" letter-spacing="2">NANDIN / ÓC EO</text></g><g transform="translate(55 337) rotate(-2 245 105)"><path d="M0 0H485V73a22 22 0 0 0 0 44v93H0v-93a22 22 0 0 0 0-44Z" fill="#b9ed30" stroke="${POSTER_INK}" stroke-width="3"/><path d="M385 12v186" stroke="${POSTER_INK}" stroke-dasharray="5 6"/><text data-owner-label="" x="27" y="39" font-size="12" letter-spacing="2">${e(S.owner)}</text>${nameRows.map((line,j)=>`<text data-owner-name="" x="25" y="${nameRows.length>1?85+j*34:119}" font-size="${nameRows.length>1?Math.min(27,335/(Math.max(...nameRows.map(r=>Array.from(r).length))*.65)):Math.min(65,335/(Math.max(4,Array.from(name).length)*.65))}" font-weight="800">${e(line)}</text>`).join('')}<text x="27" y="184" font-size="13" font-weight="800">${e(S.date)}</text><text transform="translate(438 185) rotate(-90)" font-size="21" font-weight="800">${count} / ${total}</text></g>`;
  const progress=`<path d="M64 671h952" stroke="${POSTER_INK}" stroke-width="1.5"/><text data-poster-progress="" x="61" y="650" font-size="68" font-weight="800" letter-spacing="-4">${count}<tspan font-size="36" font-weight="500" letter-spacing="-2"> / ${total}</tspan></text><text x="310" y="613" font-size="17" font-weight="800" letter-spacing="1.5">${e(S.count)}</text><text x="310" y="641" font-size="15">${e(count===total&&total>0?S.full:S.lead)}</text><text x="64" y="697" font-size="12" font-weight="800" letter-spacing="2">${e(S.section)}</text>`;
  const stamps=earned.map((p,i)=>{const row=Math.floor(i/cols),length=Math.min(cols,count-row*cols),rowW=length*cellW+(length-1)*gap;return stamp(p,i,collection,{x:(1080-rowW)/2+(i%cols)*(cellW+gap),y:top+row*(cellH+22),w:cellW,h:cellH,images,locale});}).join('');
  const empty=`<path d="${stampOutline(900,620)}" transform="translate(90 810)" fill="#e1c697"/><text x="540" y="1050" text-anchor="middle" font-size="40" font-weight="800">${e(S.empty)}</text><text x="540" y="1120" text-anchor="middle" font-size="24">${e(S.hint)}</text><text x="540" y="1260" text-anchor="middle" font-size="42" font-family="Lora,TownwalkSC,Georgia,serif" font-style="italic">Óc Eo is calling.</text>`;
