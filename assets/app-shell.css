@@ -1710,6 +1710,9 @@
 html[lang=en] .pocket-hero h1 { font-size: clamp(25px,7.2vw,32px); }
 .townwalk-app .app-view { animation: none; }
 .townwalk-app .stamp-grid .stamp.earned { animation: quiet-stamp .28s ease-out both; }
+.townwalk-app .stamp-grid .heritage-stamp-art { display:block; width:100%; height:98px; color:#351b27; margin-bottom:6px; }
+.townwalk-app .stamp-grid .heritage-stamp-art>svg { display:block; width:100%; height:100%; }
+.townwalk-app .stamp-grid .stamp { min-height:200px; }
 .townwalk-app .passport-flip { animation-duration: .32s; animation-timing-function: ease-out; }
 .townwalk-app .passport-cover,.townwalk-app .passport-spread { transition-duration: .32s; }
 @keyframes quiet-stamp { from { opacity: 0; translate: 0 5px; scale: .985; } to { opacity: 1; translate: 0 0; scale: 1; } }

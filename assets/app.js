@@ -15,6 +15,7 @@ import {
 } from "./model.js";
 import { icon, mark } from "./icons.js";
 import { passArtwork, stampColor } from "./pass-art.js";
+import {heritageSymbolHTML} from "./heritage-symbols.js";
 import { stampOutline } from "./stamp-shape.js";
 import { appURL } from "./app-paths.js";
 import { mountTownMap } from "./town-map.js";
@@ -662,7 +663,7 @@ function showPassport() {
       .slice(bookPage * 4, bookPage * 4 + 4)
       .map(
         (p) =>
-          `<button class="stamp earned ${["butter", "lavender", "peach", "lime"].includes(p.color) ? p.color : "butter"}" style="background:${stampColor(p)}" data-place="${e(p.id)}" aria-label="${e(p.name)}: đã check-in">${icon(p.symbol)}<b>${e(p.name.toUpperCase())}</b><small>ĐÃ CHECK-IN</small></button>`,
+          `<button class="stamp earned ${["butter", "lavender", "peach", "lime"].includes(p.color) ? p.color : "butter"}" style="background:${stampColor(p)}" data-place="${e(p.id)}" aria-label="${e(p.name)}: đã check-in">${heritageSymbolHTML(p)}<b>${e(p.name.toUpperCase())}</b><small>ĐÃ CHECK-IN</small></button>`,
       )
       .join(
         "",
