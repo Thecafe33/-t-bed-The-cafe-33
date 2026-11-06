@@ -1,7 +1,7 @@
 import {appURL} from './app-paths.js';
 import {buildHeritagePoster} from './pass-poster.js';
 import {HERITAGE_IMAGES,heritageSymbol} from './heritage-symbols.js';
-const COLORS=['#ff49a5','#e9f429','#b9ed30','#83d9e2','#bea8f1'];
+const COLORS=['#e6b85c','#b6d7cd','#e8c9ad','#c4c8a8','#ece2c7'];
 export function stampColor(place){
  let hash=0;for(const char of place.id)hash=(hash*31+char.charCodeAt(0))>>>0;
  return COLORS[hash%COLORS.length];
