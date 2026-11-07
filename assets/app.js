@@ -777,36 +777,50 @@ function showPassport() {
       .join(
         "",
       )}</div>` : `<div class="pass-empty">${icon("compass")}<h3>Tem đầu tiên đang chờ bạn.</h3><p>Đến điểm, check-in bằng GPS rồi tem mới xuất hiện ở đây.</p><button class="button outline" data-route="map">Chọn điểm check-in ${icon("arrow")}</button></div>`}</div></div></div><div class="passport-controls"><button class="text-button" id="prev-page" ${bookPage === 0 ? "disabled" : ""}>← Trang trước</button><span>${bookPage + 1} / ${pages}</span><button class="text-button" id="next-page" ${bookPage === pages - 1 ? "disabled" : ""}>Trang sau →</button></div><label class="field">Tên trên Óc Eo Pass<input id="passport-name" maxlength="60" autocomplete="off" value="${e(profile.name)}" placeholder="Bạn muốn được gọi là gì?"></label><button class="text-button" id="save-name">Lưu tên ${icon("check")}</button><div class="notice">${complete ? "Bạn đã gom trọn bộ tem Óc Eo. Khoe chuyến đi của bạn thôi!" : `Bộ sưu tập có ${total} điểm, hiện ${ready.length} điểm có vị trí mở check-in. Tem chỉ xuất hiện sau khi bạn check-in thành công. Điểm chờ tọa độ vẫn nằm trong tổng bộ sưu tập, chưa phát tem.`}</div><div class="passport-actions"><button class="button outline" id="certificate" ${!count ? "disabled" : ""}>Chia sẻ Óc Eo Pass ${icon("arrowup")}</button>${!cloud.state.user ? '<button class="button outline" id="passport-login">Đăng nhập để đồng bộ</button>' : ""}<button class="text-button danger" id="clear-passport">Xóa Óc Eo Pass này</button></div><details class="pass-destinations"><summary>${total} điểm trong bộ sưu tập ${icon("plus")}</summary><p>Đây là danh sách điểm đến, không phải tem đã nhận.</p>${collection.map(p=>`<button data-place="${e(p.id)}"><span>${e(p.name)}<small>${earned.some(s=>s.id===p.id)?"Đã check-in":canCollectStamp(p)?"Đến điểm để check-in":"Chờ xác nhận vị trí"}</small></span>${icon(earned.some(s=>s.id===p.id)?"check":"arrow")}</button>`).join("")}</details><p class="pass-export-hint">Lưu được cả khi đang gom tem. Ảnh ghi đúng tiến độ hiện tại; trên iPhone, nếu ảnh mở ra, nhấn giữ ảnh hoặc chọn Chia sẻ → Lưu hình ảnh.</p><small>Kỷ niệm tự ghi nhận, không phải giấy chứng nhận chính thức hoặc bằng chứng chống gian lận vị trí.</small>`;
+  // Lead with the actual Pass; put export and photo tools after the collection.
+  const content=$('#pass-content'),book=content.querySelector('.passport-book');
+  const toolbar=content.querySelector('.pass-toolbar'),story=content.querySelector('.pass-story-entry');
+  book.before($('#toggle-book'));
+  content.querySelector('.passport-controls').after(toolbar);
+  toolbar.after(content.querySelector('.pass-save-caption'));
+  content.querySelector('.pass-save-caption').after(story);
+  book.dataset.paginated=String(pages>1);
   hydrate($("#pass-content"));
   updateStampBorders();
-  $("#toggle-book").onclick = () => {
-    playEffect("paper");
-    const book = $(".passport-book");
-    book.classList.toggle("closed");
-    $("#toggle-book").innerHTML =
-      (book.classList.contains("closed")
-        ? "Mở Óc Eo Pass "
-        : "Đóng bìa Óc Eo Pass ") + icon("passport");
+  const turnBook=(closed)=>{
+    playEffect('paper');
+    book.classList.toggle('closed',closed);
+    $('#toggle-book').innerHTML=(closed?'Mở Óc Eo Pass ':'Đóng bìa Óc Eo Pass ')+icon('passport');
+    $('#toggle-book').setAttribute('aria-expanded',String(!closed));
+    const face=book.querySelector(closed?'.passport-cover':'.passport-spread');
+    face.getAnimations().forEach(animation=>animation.cancel());
+    if(!reducedMotion())face.animate([{opacity:0,transform:`perspective(1000px) rotateY(${closed?12:-8}deg) translateY(5px)`},{opacity:1,transform:'perspective(1000px) rotateY(0deg) translateY(0)'}],{duration:380,easing:'cubic-bezier(.22,1,.36,1)'});
+    if(!closed)$('#toggle-book').focus({preventScroll:true});
   };
-  $("#open-book").onclick = () => {
-    playEffect("paper");
-    $(".passport-book").classList.remove("closed");
-    $("#toggle-book").innerHTML = "Đóng bìa Óc Eo Pass " + icon("passport");
-  };
+  $('#toggle-book').setAttribute('aria-expanded','true');
+  $('#toggle-book').onclick=()=>turnBook(!book.classList.contains('closed'));
+  $('#open-book').onclick=()=>turnBook(false);
   $("#save-name").onclick = async () => {
     profile.name = $("#passport-name").value.trim();
     await saveProfile();
     showPassport();
     toast("Đã lưu tên trên Óc Eo Pass.");
   };
-  $("#prev-page").onclick = () => {
-    bookPage--;
-    showPassport();
+  const turnPage=direction=>{
+    if(bookPage+direction<0||bookPage+direction>=pages)return;
+    const draft=$('#passport-name').value,scroll=window.scrollY;
+    bookPage+=direction;showPassport();
+    $('#passport-name').value=draft;
+    const preferred=$(direction>0?'#next-page':'#prev-page');
+    (preferred.disabled?$(direction>0?'#prev-page':'#next-page'):preferred).focus({preventScroll:true});
+    window.scrollTo({top:scroll,behavior:'instant'});
+    playEffect('paper');
+    if(!reducedMotion()){
+      $('.passport-flip').animate([{opacity:.25,transform:`translateX(${direction*18}px)`},{opacity:1,transform:'translateX(0)'}],{duration:300,easing:'cubic-bezier(.22,1,.36,1)'});
+    }
   };
-  $("#next-page").onclick = () => {
-    bookPage++;
-    showPassport();
-  };
+  $('#prev-page').onclick=()=>turnPage(-1);
+  $('#next-page').onclick=()=>turnPage(1);
   $("#clear-passport").onclick = async () => {
     if (!confirm(translateText("Xóa tên và tất cả tem trong Óc Eo Pass này?"))) return;
     profileEpoch++;

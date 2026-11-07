@@ -1,32 +1,57 @@
-/* Ticket-paper collage belongs to the Pass, with clear controls outside the artwork. */
-#view-pass { color:#171714;background:#f4eedc; }
-#view-pass .app-view-heading h1 { display:inline-block;padding:10px 16px;background:#bd704e;border:2px solid #171714;box-shadow:4px 4px 0 #171714;transform:rotate(-2deg);font-size:48px;letter-spacing:-3px;line-height:1.1;margin:14px 0 22px; }
-#view-pass .app-view-heading h1 .serif { font-family:inherit;font-weight:800;color:inherit; }
-#view-pass .passport-spread { gap:22px;background:transparent;box-shadow:none;border:0; }
-#view-pass .passport-page { background:#ece2c7;color:#171714;border:2px solid #171714;border-radius:0;box-shadow:4px 5px 0 #171714; }
-#view-pass .passport-page:first-child { position:relative;background:#b6d7cd;border-radius:18px 0 18px 0;transform:rotate(-1deg); }
-#view-pass .passport-page:first-child::after { content:'';display:block;margin-top:18px;border-bottom:2px dashed #171714; }
-#view-pass .passport-page h3 { font-weight:800;letter-spacing:-2px; }
-#view-pass .passport-page .owner-name { color:#171714;overflow-wrap:anywhere; }
-#view-pass .passport-progress { background:#17171422;border:1px solid #171714;border-radius:0; }
-#view-pass .passport-progress>span { background:#bd704e; }
-#view-pass .passport-cover { background:#bd704e;color:#171714;border:3px solid #171714;border-radius:4px;box-shadow:6px 6px 0 #171714; }
-#view-pass .passport-cover h3,#view-pass .passport-cover .serif { color:#171714; }
-#view-pass .stamp-grid { gap:16px 12px;padding:10px 2px; }
-#view-pass .stamp.earned:nth-child(3n+1) { transform:rotate(-3deg); }
-#view-pass .stamp.earned:nth-child(3n+2) { transform:rotate(2deg); }
-#view-pass .stamp { color:#171714; }
-#view-pass .pass-toolbar { gap:12px; }
-#view-pass .button { border-radius:10px;min-height:46px; }
-#view-pass #save-pass-image { background:#171714;color:#f4eedc;border:2px solid #171714;box-shadow:3px 3px 0 #bd704e; }
-#view-pass .pass-story-entry { background:#e6b85c;border:1px solid #171714;border-radius:0;padding:16px; }
-@media(max-width:359px) { #view-pass .app-view-heading h1 { font-size:41px; } }
-
-#view-pass .passport-page:first-child { background:#b6d7cd; }
-#view-pass .passport-page::before { background:none; }
-#view-pass .pass-total-display { display:flex;align-items:baseline;gap:10px;color:#295c52;margin:12px 0; }
-#view-pass .pass-total-display strong { font-size:96px;line-height:1;font-weight:800;letter-spacing:-7px; }
-#view-pass .pass-total-display span { font-size:30px;font-weight:700; }
-#view-pass .stamp-grid { grid-template-columns:1.15fr 1fr;align-items:start; }
-#view-pass .stamp.earned:nth-child(3n+1) { min-height:245px; }
-#view-pass .stamp.earned:nth-child(3n+2) { margin-top:16px;min-height:200px; }
+/* A calm collection surface. Motion uses opacity and transforms only. */
+#view-pass { color:#203d34;background:#fbf8ef; }
+#view-pass .app-view-heading { margin-bottom:12px; }
+#view-pass .app-view-heading h1 { font-size:44px;letter-spacing:-2px;line-height:1.15;margin:10px 0; }
+#view-pass .app-view-heading h1 .serif { color:#668060; }
+#view-pass .app-view-heading p { font-size:13px;line-height:1.65; }
+#view-pass #toggle-book { min-height:44px;margin:0 0 0 auto;padding:8px 0;font-size:12px;align-items:center;gap:8px;color:#526b58; }
+#view-pass .passport-book,#view-pass .passport-book.closed { max-width:none;width:100%;margin:4px 0 16px; }
+#view-pass .passport-spread { border:0;border-radius:26px;background:#fffdf7;box-shadow:0 8px 28px #203d340a;overflow:hidden; }
+#view-pass .passport-page { border:0;box-shadow:none;padding:24px 20px; }
+#view-pass .passport-page:first-child { background:linear-gradient(135deg,#e8efdb,#f5f3df);border-bottom:1px dashed #b6c2a6;position:relative;gap:8px 16px; }
+#view-pass .passport-page:first-child::before,#view-pass .passport-page:first-child::after { display:none; }
+#view-pass .passport-page:first-child>.eyebrow { font-size:9px;margin-bottom:12px;letter-spacing:1px; }
+#view-pass .passport-page:first-child h3 { font-size:34px; }
+#view-pass .passport-page:first-child>p:first-of-type { font-size:10px;line-height:1.6; }
+#view-pass .passport-page .owner-name { font-size:20px;line-height:1.4;overflow-wrap:anywhere; }
+#view-pass .passport-page:first-child>small { font-size:10px;line-height:1.6; }
+#view-pass .pass-total-display { grid-column:1/-1;display:flex;align-items:baseline;gap:10px;margin:12px 0 0; }
+#view-pass .pass-total-display strong { font-size:64px;line-height:1;letter-spacing:-4px;font-weight:800; }
+#view-pass .pass-total-display span { font-size:23px;color:#70836a; }
+#view-pass .passport-progress { margin:10px 0 0;height:6px;border:0;border-radius:99px;background:#d9e1ca;overflow:hidden; }
+#view-pass .passport-progress>span { background:#53784d;border-radius:99px; }
+#view-pass .passport-page:first-child>p:last-of-type { margin:4px 0;font-size:13px; }
+#view-pass .passport-page:last-child { background:#fffdf7;padding:24px 16px; }
+#view-pass .passport-page:last-child>.eyebrow { font-size:10px;letter-spacing:1px;margin-bottom:20px; }
+#view-pass .passport-flip,#view-pass .passport-cover { animation:none; }
+#view-pass .passport-cover { border:0;border-radius:26px;background:linear-gradient(135deg,#254e42,#163c32);color:#fbf6e8;box-shadow:0 8px 28px #203d3415;min-height:350px; }
+#view-pass .passport-cover h3,#view-pass .passport-cover .serif { color:#edf0cf; }
+#view-pass .passport-cover small { font-size:10px; }
+#view-pass .passport-cover>span { font-size:13px; }
+#view-pass .stamp-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px; }
+#view-pass .stamp-grid .stamp { min-height:195px;padding:18px 10px;transform:none;animation:none; }
+#view-pass .stamp-grid .stamp b { font-size:11px;line-height:1.4;max-width:none; }
+#view-pass .stamp-grid .stamp small { font-size:8px; }
+#view-pass .stamp-grid .heritage-stamp-art { height:94px;color:#203d34; }
+#view-pass .passport-book[data-paginated=true] .passport-page:last-child { min-height:475px; }
+#view-pass .passport-controls { display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 20px;font-size:12px; }
+#view-pass .passport-controls button { min-height:44px;font-size:12px;padding:10px 12px;border-radius:14px;background:#eff1e5; }
+#view-pass .passport-controls button:disabled { opacity:.4; }
+#view-pass .pass-toolbar { display:flex;margin:0; }
+#view-pass #save-pass-image { width:100%;min-height:48px;border:0;border-radius:16px;background:#203d34;color:#fffdf7;box-shadow:none;font-size:14px; }
+#view-pass .pass-save-caption { text-align:center;font-size:11px;margin:9px 0 18px; }
+#view-pass .pass-story-entry { background:#eeebf5;border:0;border-radius:20px;padding:16px;margin:0 0 24px; }
+#view-pass .pass-story-entry .button { border-radius:14px;background:#5b5570;color:#fffdf7; }
+#view-pass .pass-empty { padding:12px 8px 18px;text-align:center; }
+#view-pass .pass-empty h3 { font-size:22px;line-height:1.35;letter-spacing:-.6px; }
+#view-pass .pass-empty p { font-size:13px;line-height:1.7; }
+#view-pass .pass-empty>.icon { width:36px;height:36px;color:#76906a; }
+#view-pass .button,#view-pass input { border-radius:15px;min-height:46px; }
+#view-pass button:focus-visible { outline:2px solid #53784d;outline-offset:3px; }
+@media(prefers-reduced-motion:no-preference) {
+ #view-pass .stamp { transition:transform .18s ease; }
+ #view-pass .stamp:active { transform:scale(.97); }
+ #view-pass .button { transition:background-color .18s ease,transform .18s ease; }
+ #view-pass .button:active { transform:scale(.985); }
+}
+@media(max-width:359px) { #view-pass .app-view-heading h1 { font-size:39px; }#view-pass .passport-page { padding:22px 16px; }#view-pass .passport-page .owner-name { font-size:17px; }#view-pass .stamp-grid .stamp b { font-size:10px; } }
