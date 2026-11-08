@@ -35,7 +35,10 @@ export function initQuickNavigation(navigate){
   document.documentElement.classList.remove('quick-nav-scroll-locked');
   window.scrollTo({left:saved.x,top:saved.y,behavior:'instant'});
  }
- function cancelAnimations(){for(const animation of animations)animation.cancel();animations.clear();wave.removeAttribute('style');}
+ function cancelAnimations(onlyWave=false){
+  for(const animation of animations){if(onlyWave&&animation.effect?.target!==wave)continue;animation.cancel();animations.delete(animation);}
+  wave.removeAttribute('style');
+ }
  function close(restore=true){
   sequence++;expectedTab=null;cancelAnimations();dialog.classList.remove('is-revealing');
   if(dialog.open)dialog.close();
@@ -62,7 +65,7 @@ export function initQuickNavigation(navigate){
  }
  async function choose(button,event){
   if(!dialog.open)return;
-  const ticket=++sequence;cancelAnimations();dialog.classList.remove('is-revealing');brand.classList.add('quick-nav-origin-hidden');expectedTab=button.dataset.quickRoute;
+  const ticket=++sequence;cancelAnimations(true);dialog.classList.remove('is-revealing');brand.classList.add('quick-nav-origin-hidden');expectedTab=button.dataset.quickRoute;
   const rect=button.getBoundingClientRect();
   const x=event?.detail?event.clientX:rect.x+rect.width/2,y=event?.detail?event.clientY:rect.y+rect.height/2;
   const radius=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y))+2;

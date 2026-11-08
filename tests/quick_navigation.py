@@ -34,6 +34,8 @@ with sync_playwright() as p:
    spin=q.locator('.quick-nav-brand .brand-mark').evaluate('e=>e.getAnimations()[0].currentTime')
    q.wait_for_timeout(100)
    assert q.locator('.quick-nav-brand .brand-mark').evaluate('e=>e.getAnimations()[0].currentTime')>spin
+   q.evaluate("document.querySelector('[data-quick-route=map]').click()")
+   assert q.locator('.quick-nav-brand .brand-mark').evaluate('e=>e.getAnimations().some(a=>a.effect.getTiming().iterations===Infinity)')
    q.keyboard.press('Escape')
   # Wheel and touch gestures cannot move the background; dismissing restores it.
   q.evaluate('window.scrollTo({top:420,behavior:"instant"})');saved=q.evaluate('scrollY');assert saved>0
