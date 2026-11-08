@@ -8,6 +8,10 @@ with sync_playwright() as p:
   q=c.new_page();errors=[];q.on('pageerror',lambda e:errors.append(str(e)));q.goto(origin,wait_until='networkidle')
   brand=q.locator('.app-header .brand');dialog=q.locator('#quick-navigation')
   def tap_brand():
+   # Keyboard focus reveals chrome that is intentionally hidden after scrolling.
+   if q.locator('html').evaluate("e=>e.classList.contains('navigation-concealed')"):
+    brand.evaluate('e=>{e.blur();e.focus({preventScroll:true})}')
+    q.wait_for_function("document.querySelector('.app-header').getBoundingClientRect().top>=-1")
    rect=brand.bounding_box();q.mouse.click(rect['x']+rect['width']/2,rect['y']+rect['height']/2)
   brand.click();expect(dialog).to_be_visible();expect(q.locator('[data-quick-route=explore]')).to_be_focused()
   q.keyboard.press('Escape');expect(dialog).to_be_hidden();expect(brand).to_be_focused()

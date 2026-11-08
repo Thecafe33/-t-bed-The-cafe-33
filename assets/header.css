@@ -46,3 +46,9 @@
  .app-header .language-picker select,.townwalk-app .app-header #language-trigger { width:56px;padding-inline:5px;gap:3px; }
 }
 @media(prefers-reduced-motion:no-preference) { .app-header button { transition:background-color .15s ease,border-color .15s ease; } }
+
+/* Keep layout and the pill's horizontal centring intact while sliding offscreen. */
+.townwalk-app .app-header,.townwalk-app .app-tabbar { translate:0 0;transition:translate .18s cubic-bezier(.22,1,.36,1); }
+.navigation-concealed .townwalk-app .app-header { translate:0 calc(-100% - 10px);pointer-events:none; }
+.navigation-concealed .townwalk-app .app-tabbar { translate:0 calc(100% + 26px + env(safe-area-inset-bottom,0px));pointer-events:none; }
+@media(prefers-reduced-motion:reduce) { .townwalk-app .app-header,.townwalk-app .app-tabbar { transition:none; } }

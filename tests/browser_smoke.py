@@ -10,7 +10,10 @@ with sync_playwright() as p:
  context.route('**/*',lambda r:r.continue_() if r.request.url.startswith('http://127.0.0.1:8000') else r.abort())
  page=context.new_page();errors=[];page.on('pageerror',lambda err:errors.append(str(err)))
  def go(tab):
-  page.locator(f'.app-tabbar [data-route={tab}]').click()
+  link=page.locator(f'.app-tabbar [data-route={tab}]')
+  if page.locator('html').evaluate("e=>e.classList.contains('navigation-concealed')"):
+   link.evaluate('e=>{e.blur();e.focus({preventScroll:true})}')
+  link.click()
   expect(page.locator('.app-view:visible')).to_have_count(1)
   expect(page.locator(f'[data-view={tab}]')).to_be_visible()
   expect(page.locator(f'.app-tabbar [data-route={tab}]')).to_have_attribute('aria-current','page')

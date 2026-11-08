@@ -1,7 +1,9 @@
+import {initScrollNavigation} from './scroll-navigation.js';
 import {getLanguage,setLanguage,translateText} from './i18n.js';
 
 /** Native select fallback; an accessible, keyboard-operated listbox when enhanced. */
 export function initHeader(){
+ initScrollNavigation();
  const picker=document.querySelector('#header-language');
  if(!picker)return;
  const select=picker.querySelector('select'),trigger=picker.querySelector('#language-trigger');
