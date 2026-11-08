@@ -72,7 +72,7 @@ export function initQuickNavigation(navigate){
   const origin=`${x}px ${y}px`;
   wave.style.background=getComputedStyle(button).getPropertyValue('--nav-color');
   // Keep the current page untouched until the colour completely covers it.
-  const expansion=animate(wave,[{opacity:1,clipPath:`circle(0px at ${origin})`},{opacity:1,clipPath:`circle(${radius}px at ${origin})`}],{duration:560,easing:'cubic-bezier(.32,0,.12,1)',fill:'forwards'});
+  const expansion=animate(wave,[{opacity:1,clipPath:`circle(0px at ${origin})`},{opacity:1,clipPath:`circle(${radius}px at ${origin})`}],{duration:170,easing:'cubic-bezier(.32,0,.12,1)',fill:'forwards'});
   if(expansion){try{await expansion.finished;}catch{return;}}
   if(ticket!==sequence||!dialog.open)return;
   const tab=expectedTab;
@@ -81,11 +81,11 @@ export function initQuickNavigation(navigate){
   navigate(tab,{reveal:false});lockScroll();
   // Let layout/map sizing settle behind an opaque viewport-sized colour layer.
   // No page-wide blur or giant scaled bitmap competes with the reveal.
-  if(!reducedMotion())await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  if(!reducedMotion())await new Promise(resolve=>requestAnimationFrame(resolve));
   if(ticket!==sequence||!dialog.open)return;
   const view=document.querySelector(`.app-view[data-view="${tab}"]`);
   dialog.classList.add('is-revealing');brand.classList.remove('quick-nav-origin-hidden');
-  const reveal=animate(wave,[{opacity:1},{opacity:0}],{duration:520,easing:'cubic-bezier(.25,0,.25,1)',fill:'forwards'});
+  const reveal=animate(wave,[{opacity:1},{opacity:0}],{duration:150,easing:'cubic-bezier(.25,0,.25,1)',fill:'forwards'});
   if(reveal){try{await reveal.finished;}catch{return;}}
   if(ticket!==sequence||!dialog.open)return;
   close(false);view?.querySelector('h1')?.focus({preventScroll:true});

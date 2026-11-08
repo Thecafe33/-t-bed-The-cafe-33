@@ -1,131 +1,167 @@
-import {dealCards,stopElementMotion} from './interaction-motion.js';
+import {stopElementMotion} from './interaction-motion.js';
 import {artifactsForPlaces} from './artifacts.js';
 import {artifactListHTML,artifactStackHTML} from './artifact-view.js';
 import {reducedMotion,playEffect} from './effects.js';
+import {translateText} from './i18n.js';
 
-/** A finite gallery. Browsing never changes GPS stamps or profile data. */
+/** Persistent cards, a continuous position and interruptible momentum. */
 export function mountArtifactDeck({root,dialog,state,places,onOpen}){
  const abort=new AbortController(),options={signal:abort.signal};
- let disposed=false,busy=false,gesture=null,suppressUntil=0,frame=0;
- const animations=new Set();
- const find=selector=>root.querySelector(selector);
- const cards=()=>[...root.querySelectorAll('.artifact-swipe-card')];
+ let disposed=false,gesture=null,frame=0,wheelTimer=0,suppressUntil=0;
+ let position=state.index,target=position,velocity=0,moving=false,pendingFocus=null;
+ let entries=[],stack=null,stride=140;
+ const find=s=>root.querySelector(s);
  const filtered=()=>artifactsForPlaces(places).filter(a=>state.selected==='all'||a.placeId===state.selected);
- function pose(card,slot){
-  const depth=Math.abs(slot),sign=Math.sign(slot),width=card.offsetWidth;
-  const x=sign*width*(Math.min(depth,1)*.78+Math.max(0,depth-1)*.23);
-  return {transform:`translate3d(${x}px,0,${-Math.min(depth,1)*125-Math.max(0,depth-1)*85}px) rotateY(${-sign*Math.min(depth,1)*46}deg)`,opacity:depth>2?Math.max(0,3-depth):1,zIndex:String(10-Math.round(depth*2))};
- }
- function layout(offset=0){
-  for(const card of cards()){
-   const slot=Number(card.dataset.deckLayer)-offset;
-   Object.assign(card.style,pose(card,slot));
+ const clamp=value=>Math.max(0,Math.min(Math.max(0,state.total-1),value));
+ function paint(){
+  if(!stack)return;
+  stack.dataset.position=position.toFixed(4);
+  for(const {element,index,width} of entries){
+   const slot=index-position,depth=Math.abs(slot),sign=Math.sign(slot);
+   const x=sign*width*(Math.min(depth,1)*.78+Math.max(0,depth-1)*.23);
+   element.style.transform=`translate3d(${x}px,0,${-Math.min(depth,1)*125-Math.max(0,depth-1)*85}px) rotateY(${-sign*Math.min(depth,1)*46}deg)`;
+   element.style.opacity=depth>2?String(Math.max(0,3-depth)):'1';
+   element.style.zIndex=String(20-Math.round(depth*2));
   }
  }
- function stop(){cancelAnimationFrame(frame);frame=0;for(const a of animations)a.cancel();animations.clear();for(const card of cards())stopElementMotion(card);}
- function render({focus=null,enter=false}={}){
+ function stop(){
+  cancelAnimationFrame(frame);frame=0;clearTimeout(wheelTimer);moving=false;pendingFocus=null;
+  for(const {element} of entries)stopElementMotion(element);
+ }
+ function commit(index){
+  const previous=state.index;state.index=clamp(Math.round(index));
+  for(const {element,index:i} of entries){
+   const active=i===state.index;
+   element.dataset.deckLayer=String(i-state.index);
+   element.inert=!active;element.tabIndex=active?0:-1;
+   if(active){element.setAttribute('data-deck-active','');element.dataset.artifact=element.dataset.galleryId;element.removeAttribute('aria-hidden');}
+   else{element.removeAttribute('data-deck-active');element.removeAttribute('data-artifact');element.setAttribute('aria-hidden','true');}
+  }
+  const status=find('#artifact-deck-progress');
+  const label=state.view==='list'?`${state.total} thẻ`:`Thẻ ${state.total?state.index+1:0} / ${state.total}`;
+  if(status.textContent!==translateText(label))status.textContent=translateText(label);
+  if(state.view==='deck'){
+   find('#artifact-previous').disabled=!state.total||state.index===0;
+   find('#artifact-next').disabled=!state.total||state.index===state.total-1;
+   find('#artifact-open').disabled=!state.total;
+   if(state.total&&find('#artifact-open').textContent!==translateText('Soi kỹ thẻ này'))find('#artifact-open').textContent=translateText('Soi kỹ thẻ này');
+  }
+  if(previous!==state.index)playEffect('paper');
+ }
+ function measure(){
+  for(const entry of entries)entry.width=entry.element.offsetWidth;
+  stride=Math.max(100,(entries[0]?.width||280)*.48);
+  paint();
+ }
+ function render({focus=null}={}){
   if(disposed)return;
-  stop();state.setItems(filtered().map(a=>a.id));const list=state.view==='list';
+  stop();gesture=null;state.setItems(filtered().map(a=>a.id));state.index=clamp(state.index);
+  const list=state.view==='list';
   find('#artifact-site-filter').value=state.selected;
   find('#artifact-random').setAttribute('aria-pressed',String(state.random));
-  find('#artifact-random').disabled=state.total<2;
-  find('#artifact-shuffle').disabled=state.total<1;
-  find('#artifact-view-toggle').textContent=list?'Chồng thẻ':'Danh sách';
-  find('#artifact-deck-progress').textContent=list?`${state.total} thẻ`:`Thẻ ${state.total?Math.min(state.index+1,state.total):0} / ${state.total}`;
+  find('#artifact-random').disabled=state.total<2;find('#artifact-shuffle').disabled=state.total<1;
+  find('#artifact-view-toggle').textContent=translateText(list?'Chồng thẻ':'Danh sách');
+  // Rebuild only when the collection/order or presentation changes, never on drag.
   find('#artifact-presentation').innerHTML=list?artifactListHTML(places,state.selected):artifactStackHTML(state,places);
-  layout();if(focus)find(focus)?.focus({preventScroll:true});
-  if(enter&&find('[data-deck-active]'))dealCards(root);
+  stack=find('.artifact-stack');
+  entries=[...root.querySelectorAll('.artifact-swipe-card')].map(element=>({element,index:Number(element.dataset.galleryIndex),width:0}));
+  position=target=state.index;velocity=0;measure();commit(state.index);
+  if(focus)find(focus)?.focus({preventScroll:true});
  }
- async function settle(offset,duration){
-  cancelAnimationFrame(frame);frame=0;
-  if(reducedMotion()){layout(offset);return;}
-  const batch=cards().map(card=>{
-   stopElementMotion(card);
-   const from={transform:getComputedStyle(card).transform,opacity:getComputedStyle(card).opacity,zIndex:getComputedStyle(card).zIndex};
-   const to=pose(card,Number(card.dataset.deckLayer)-offset);
-   Object.assign(card.style,to);
-   const a=card.animate([from,to],{duration,easing:'cubic-bezier(.22,.7,.18,1)'});
-   animations.add(a);a.finished.then(()=>animations.delete(a),()=>animations.delete(a));return a.finished;
-  });
-  await Promise.all(batch);
- }
- async function move(step=1,keyboardFocus=false){
-  if(disposed||busy||state.view!=='deck'||(step>0&&state.complete)||(step<0&&state.index===0))return;
-  busy=true;
-  try{
-   await settle(step,620);
+ function glide(destination,initialVelocity=0,focus=null){
+  stop();target=clamp(Math.round(destination));velocity=initialVelocity;pendingFocus=focus;
+  if(reducedMotion()||Math.abs(target-position)<.001){position=target;paint();commit(target);if(focus)find(focus)?.focus({preventScroll:true});return;}
+  moving=true;let last=performance.now();
+  function tick(now){
    if(disposed)return;
-   if(step>0)state.next();else state.previous();
-   playEffect('paper');render({focus:keyboardFocus?(state.complete?'#artifact-open':step>0?'#artifact-next':state.index?'#artifact-previous':'#artifact-open'):null});
-  }catch{/* Closing or replacing the gallery cancels its entire transition. */}
-  finally{busy=false;}
+   const dt=Math.min(.032,(now-last)/1000);last=now;
+   // A damped spring keeps velocity continuous, and can be grabbed at any frame.
+   velocity+=(280*(target-position)-34*velocity)*dt;
+   position+=velocity*dt;
+   paint();
+   if(Math.abs(position-target)<.002&&Math.abs(velocity)<.025){
+    position=target;velocity=0;moving=false;frame=0;paint();commit(target);
+    if(pendingFocus)find(pendingFocus)?.focus({preventScroll:true});pendingFocus=null;
+   }else frame=requestAnimationFrame(tick);
+  }
+  frame=requestAnimationFrame(tick);
  }
- async function snap(){
-  if(disposed)return;
-  try{await settle(0,380);if(!disposed&&!gesture)layout();}catch{}
+ function step(direction){
+  if(state.view!=='deck'||!state.total)return;
+  const next=clamp((moving?target:Math.round(position))+direction);
+  glide(next,velocity,next===0?'#artifact-open':direction>0?'#artifact-next':'#artifact-previous');
  }
  root.addEventListener('change',event=>{
-  if(event.target.id!=='artifact-site-filter'||busy)return;
-  state.selected=event.target.value;render({focus:'#artifact-site-filter'});
+  if(event.target.id==='artifact-site-filter'){state.selected=event.target.value;render({focus:'#artifact-site-filter'});}
  },options);
  root.addEventListener('click',event=>{
-  const button=event.target.closest('button');if(!button||busy)return;
+  const button=event.target.closest('button');if(!button)return;
   switch(button.id){
-   case 'artifact-shuffle':state.shuffle();render({focus:'#artifact-shuffle',enter:true});playEffect('paper');break;
-   case 'artifact-random':state.setRandom(!state.random);render({focus:'#artifact-random',enter:true});break;
+   case 'artifact-shuffle':state.shuffle();render({focus:'#artifact-shuffle'});playEffect('paper');break;
+   case 'artifact-random':state.setRandom(!state.random);render({focus:'#artifact-random'});break;
    case 'artifact-view-toggle':state.view=state.view==='deck'?'list':'deck';render({focus:'#artifact-view-toggle'});break;
-   case 'artifact-previous':void move(-1,true);break;
-   case 'artifact-next':void move(1,true);break;
-   case 'artifact-open':if(state.current)onOpen(state.current);else if(state.total){state.shuffle();render({enter:true});}break;
+   case 'artifact-previous':step(-1);break;
+   case 'artifact-next':step(1);break;
+   case 'artifact-open':stop();position=clamp(Math.round(position));paint();commit(position);if(state.current)onOpen(state.current);break;
   }
  },options);
  root.addEventListener('click',event=>{
-  if(event.target.closest('[data-deck-active]')&&(busy||performance.now()<suppressUntil)){event.preventDefault();event.stopImmediatePropagation();}
+  if(event.target.closest('.artifact-stack')&&(moving||gesture||performance.now()<suppressUntil)){event.preventDefault();event.stopImmediatePropagation();}
  },{...options,capture:true});
  root.addEventListener('pointerdown',event=>{
-  const card=event.target.closest('[data-deck-active]');
-  if(!card||busy||!event.isPrimary||event.button!==0)return;
-  stop();layout();
-  gesture={id:event.pointerId,card,startX:event.clientX,startY:event.clientY,dx:0,dy:0,axis:null};
+  const surface=event.target.closest('.artifact-stack');
+  if(!surface||!state.total||!event.isPrimary||event.button!==0)return;
+  const wasMoving=moving;stop();
+  if(wasMoving)suppressUntil=performance.now()+400;
+  gesture={id:event.pointerId,surface,startX:event.clientX,startY:event.clientY,startPosition:position,startIndex:Math.round(position),dx:0,dy:0,axis:null,lastX:event.clientX,lastTime:event.timeStamp,velocity:0,desired:position};
  },options);
  root.addEventListener('pointermove',event=>{
   if(!gesture||gesture.id!==event.pointerId)return;
   const g=gesture;g.dx=event.clientX-g.startX;g.dy=event.clientY-g.startY;
   if(!g.axis){
-   if(Math.abs(g.dy)>10&&Math.abs(g.dy)>Math.abs(g.dx)*1.2)g.axis='vertical';
-   else if(Math.abs(g.dx)>8&&Math.abs(g.dx)>Math.abs(g.dy)*1.2){g.axis='horizontal';g.card.setPointerCapture(event.pointerId);g.card.classList.add('is-dragging');}
+   if(Math.abs(g.dy)>8&&Math.abs(g.dy)>Math.abs(g.dx)*1.2)g.axis='vertical';
+   else if(Math.abs(g.dx)>6&&Math.abs(g.dx)>Math.abs(g.dy)*1.2){g.axis='horizontal';g.surface.setPointerCapture(event.pointerId);g.surface.classList.add('is-dragging');}
   }
   if(g.axis!=='horizontal')return;
   if(event.cancelable)event.preventDefault();
-  if(frame)return;
-  frame=requestAnimationFrame(()=>{
-   frame=0;if(!gesture)return;
-   let offset=Math.max(-1,Math.min(1,-gesture.dx/(gesture.card.offsetWidth*.78)));
-   if(state.index===0&&offset<0)offset*=.15;
-   if(!reducedMotion())layout(offset);
-  });
+  const dt=event.timeStamp-g.lastTime;
+  if(dt>0){const instantaneous=-(event.clientX-g.lastX)/stride/(dt/1000);g.velocity=g.velocity*.35+Math.max(-18,Math.min(18,instantaneous))*.65;}
+  g.lastX=event.clientX;g.lastTime=event.timeStamp;
+  const raw=g.startPosition-g.dx/stride;
+  g.desired=raw<0?raw*.12:raw>state.total-1?state.total-1+(raw-state.total+1)*.12:raw;
+  if(!frame)frame=requestAnimationFrame(()=>{frame=0;if(gesture){position=gesture.desired;paint();}});
  },{...options,passive:false});
  function release(event,cancelled=false){
   if(!gesture||gesture.id!==event.pointerId)return;
-  const g=gesture;gesture=null;cancelAnimationFrame(frame);frame=0;
-  if(g.card.hasPointerCapture(event.pointerId))g.card.releasePointerCapture(event.pointerId);
-  g.card.classList.remove('is-dragging');
-  if(g.axis!=='horizontal'){if(g.axis==='vertical')suppressUntil=performance.now()+400;return;}
-  suppressUntil=performance.now()+700;
-  const threshold=Math.max(48,Math.min(85,g.card.offsetWidth*.24)),step=g.dx<0?1:-1;
-  if(!cancelled&&Math.abs(g.dx)>=threshold&&Math.abs(g.dx)>Math.abs(g.dy)*1.2&&(step>0||state.index>0))void move(step);
-  else void snap();
+  const g=gesture;gesture=null;
+  if(g.surface.hasPointerCapture(event.pointerId))g.surface.releasePointerCapture(event.pointerId);
+  g.surface.classList.remove('is-dragging');
+  if(g.axis!=='horizontal'){
+   if(g.axis==='vertical'||Math.abs(position-Math.round(position))>.002){suppressUntil=performance.now()+250;glide(position);}
+   return;
+  }
+  suppressUntil=performance.now()+300;
+  position=g.desired;paint();
+  const speed=event.timeStamp-g.lastTime>80||cancelled||reducedMotion()?0:g.velocity;
+  glide(cancelled?g.startIndex:position+speed*.16,speed);
  }
  root.addEventListener('pointerup',event=>release(event),options);
  root.addEventListener('pointercancel',event=>release(event,true),options);
- root.addEventListener('lostpointercapture',event=>{if(gesture?.id===event.pointerId&&event.target===gesture.card)release(event,true);},options);
+ root.addEventListener('lostpointercapture',event=>{if(gesture?.id===event.pointerId&&event.target===gesture.surface)release(event,true);},options);
+ root.addEventListener('wheel',event=>{
+  if(!event.target.closest('.artifact-stack')||!state.total||(!event.shiftKey&&Math.abs(event.deltaX)<=Math.abs(event.deltaY)))return;
+  event.preventDefault();stop();suppressUntil=performance.now()+250;
+  const unit=event.deltaMode===1?16:event.deltaMode===2?stack.clientWidth:1;
+  position=clamp(position+(event.deltaX||event.deltaY)*unit/stride);paint();
+  wheelTimer=setTimeout(()=>glide(position),80);
+ },{...options,passive:false});
  dialog.addEventListener('keydown',event=>{
-  if(disposed||state.view!=='deck'||event.target.closest('input,select,textarea')||event.altKey||event.ctrlKey||event.metaKey)return;
-  if(event.key==='ArrowRight'){event.preventDefault();void move(1,true);}
-  if(event.key==='ArrowLeft'){event.preventDefault();void move(-1,true);}
+  if(state.view!=='deck'||event.target.closest('input,select,textarea')||event.altKey||event.ctrlKey||event.metaKey)return;
+  if(event.key==='ArrowRight'){event.preventDefault();step(1);}
+  if(event.key==='ArrowLeft'){event.preventDefault();step(-1);}
  },options);
- const resize=new ResizeObserver(()=>{if(!disposed&&!busy&&!gesture)layout();});resize.observe(root);
- window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',event=>{if(event.matches){for(const a of animations)a.finish();}},options);
- render({enter:true});
- return {destroy(){disposed=true;gesture=null;stop();resize.disconnect();abort.abort();}};
+ const resize=new ResizeObserver(()=>{if(!disposed)measure();});resize.observe(root);
+ window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',event=>{if(event.matches&&moving)glide(target);},options);
+ render();
+ return {destroy(){state.index=clamp(Math.round(position));disposed=true;stop();gesture=null;resize.disconnect();abort.abort();}};
 }

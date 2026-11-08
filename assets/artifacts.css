@@ -190,3 +190,7 @@
  .artifact-stack:has(.artifact-photo) { height:780px; }
 }
 @media(prefers-reduced-motion:reduce) { .artifact-swipe-card { will-change:auto; } }
+/* Gesture ownership stays on the stable surface, including gaps and side cards. */
+.artifact-stack { touch-action:pan-y pinch-zoom;cursor:grab; }
+.artifact-stack.is-dragging,.artifact-stack.is-dragging .artifact-swipe-card { cursor:grabbing; }
+.artifact-swipe-card img { pointer-events:none;-webkit-user-drag:none; }
