@@ -1,3 +1,4 @@
+import {dealCards,stopElementMotion} from './interaction-motion.js';
 import {artifactsForPlaces} from './artifacts.js';
 import {artifactListHTML,artifactStackHTML} from './artifact-view.js';
 import {reducedMotion,playEffect} from './effects.js';
@@ -21,7 +22,7 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
   find('#artifact-presentation').innerHTML=list?artifactListHTML(places,state.selected):artifactStackHTML(state,places);
   if(focus)find(focus)?.focus({preventScroll:true});
   const card=find('[data-deck-active]');
-  if(enter&&card&&!reducedMotion())card.animate([{opacity:.65,transform:'translateY(5px) scale(.985)'},{opacity:1,transform:'translateY(0) rotate(-1deg) scale(1)'}],{duration:160,easing:'ease-out'});
+  if(enter&&card)dealCards(root);
  }
  async function next(direction=1,keyboardFocus=false){
   if(disposed||busy||state.complete||state.view!=='deck')return;
@@ -29,7 +30,7 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
   try{
    if(card&&!reducedMotion()){
     const distance=Math.max(360,root.clientWidth+70)*direction;
-    animation=card.animate([{transform:card.style.transform||'rotate(-1deg)',opacity:1},{transform:`translate(${distance}px, 20px) rotate(${direction*15}deg)`,opacity:0}],{duration:190,easing:'cubic-bezier(.3,.05,.6,1)',fill:'forwards'});
+    animation=card.animate([{transform:card.style.transform||'rotate(-1deg)',opacity:1},{transform:`translate(${distance}px, 20px) rotate(${direction*15}deg)`,opacity:0}],{duration:260,easing:'cubic-bezier(.3,.05,.6,1)',fill:'forwards'});
     await animation.finished;
    }
    if(disposed)return;
@@ -40,7 +41,7 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
  function snap(card){
   if(!card||disposed)return;
   card.style.removeProperty('--swipe-strength');
-  if(!reducedMotion())card.animate([{transform:card.style.transform||'rotate(-1deg)'},{transform:'rotate(-1deg)'}],{duration:160,easing:'ease-out'});
+  if(!reducedMotion())card.animate([{transform:card.style.transform||'rotate(-1deg)'},{transform:'rotate(-1deg)'}],{duration:230,easing:'cubic-bezier(.22,1,.36,1)'});
   card.style.removeProperty('transform');card.classList.remove('is-dragging');
  }
  root.addEventListener('change',event=>{
@@ -66,6 +67,7 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
  root.addEventListener('pointerdown',event=>{
   const card=event.target.closest('[data-deck-active]');
   if(!card||busy||!event.isPrimary||event.button!==0)return;
+  stopElementMotion(card);
   gesture={id:event.pointerId,card,startX:event.clientX,startY:event.clientY,dx:0,dy:0,axis:null};
  },options);
  root.addEventListener('pointermove',event=>{
@@ -101,6 +103,6 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
   if(event.key==='ArrowRight'){event.preventDefault();void next(1,true);}
   if(event.key==='ArrowLeft'&&!busy){event.preventDefault();state.previous();render({enter:true,focus:'#artifact-open'});}
  },options);
- render();
+ render({enter:true});
  return {destroy(){disposed=true;gesture=null;animation?.cancel();abort.abort();}};
 }

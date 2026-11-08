@@ -1,0 +1,14 @@
+.stamp-grid { position:relative; }
+.stamp-spark { position:absolute;z-index:4;pointer-events:none;font-size:23px;line-height:1;color:#7c9054;opacity:0; }
+.stamp-spark:nth-of-type(2n) { color:#b79a48; }
+.artifact-detail-media { transform-origin:center; }
+.artifact-swipe-card { backface-visibility:hidden; }
+@media(prefers-reduced-motion:no-preference) {
+ .artifact-detail-media .artifact-swipe-art { transition:transform .3s cubic-bezier(.22,1,.36,1); }
+ .artifact-answers button,.artifact-mode button { transition:background-color .18s ease,transform .18s ease; }
+ .artifact-answers button:active,.artifact-mode button:active { transform:scale(.97); }
+ details.artifact-challenge[open] summary { color:#426548; }
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference) {
+ .artifact-detail-media:hover .artifact-swipe-art { transform:translateY(-5px) rotate(-4deg) scale(1.08); }
+}

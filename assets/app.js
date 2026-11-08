@@ -1,3 +1,4 @@
+import {clearInteractionMotion,revealArtifact,revealAnswer,celebrateStamp} from './interaction-motion.js';
 import {
   HERITAGE_REFERENCE_URL,
   SOURCE_CATALOG,
@@ -70,6 +71,7 @@ function normalizedTab(hash = location.hash) {
 }
 function activateTab(tab, { focus = false } = {}) {
   if (activeTab === tab) return;
+  clearInteractionMotion();
   navigationEpoch++;
   if (activeTab) tabScroll[activeTab] = window.scrollY;
   if (modal.open) modal.close();
@@ -169,6 +171,7 @@ async function saveProfile() {
   }
 }
 function openModal(kicker, html, view = "generic") {
+  clearInteractionMotion();
   modalEpoch++;
   artifactDeckUI?.destroy();artifactDeckUI=null;
   storyCreatorUI?.destroy();storyCreatorUI=null;storyProfileSignature='';
@@ -209,6 +212,7 @@ modal.addEventListener("click", (ev) => {
   }
 });
 modal.addEventListener("close", () => {
+  clearInteractionMotion();
   modalEpoch++;
   artifactDeckUI?.destroy();artifactDeckUI=null;
   storyCreatorUI?.destroy();storyCreatorUI=null;storyProfileSignature='';
@@ -451,11 +455,12 @@ function showArtifactIndex(selected=artifactDeckState.selected){
  artifactDeckState.selected=selected==='all'||available.some(a=>a.placeId===selected)?selected:'all';
  openModal("THEO DẤU CỔ VẬT",artifactIndexHTML(site.places,artifactDeckState.selected),"artifacts");
  artifactDeckUI=mountArtifactDeck({root:body,dialog:modal,state:artifactDeckState,places:site.places,onOpen:showArtifact});
- if(returning)$("#artifact-open")?.focus({preventScroll:true});
+ if(returning){$("#artifact-open")?.focus({preventScroll:true});revealArtifact(body.querySelector("[data-deck-active]"),true);}
 }
 function showArtifact(id){
  const a=artifactsForPlaces(site.places).find(a=>a.id===id);if(!a)return;
  closeMapSearch();openModal("HIỆN VẬT ↔ ĐỊA ĐIỂM",artifactDetailHTML(a,site.places),"artifact");
+ revealArtifact(body.querySelector(".artifact-detail-media"));
  $("#artifact-back").focus({preventScroll:true});
 }
 function placeDetail(id) {
@@ -645,12 +650,21 @@ async function checkIn(p) {
         if (modal.open&&modal.dataset.view === "place"&&modal.dataset.placeId===p.id) placeDetail(p.id);
         return;
       }
-      if (!profile.badges.includes(p.id)) { profile.badges.push(p.id); playEffect("stamp"); }
+      const newlyEarned=!profile.badges.includes(p.id);
+      if (newlyEarned) { profile.badges.push(p.id); playEffect("stamp"); }
       await saveProfile();
       if(owner!==profileKey()||epoch!==profileEpoch)return;
       toast("Một nơi đã đến. Một con tem mới!");
-      bookPage = 0;
+      const earned=passProgress(site.places,profile.badges).earned;
+      bookPage=Math.max(0,Math.floor(earned.findIndex(place=>place.id===p.id)/4));
+      passNeedsRender=true;
       showPassport();
+      const viewEpoch=navigationEpoch;
+      if(newlyEarned)requestAnimationFrame(()=>{
+        if(owner!==profileKey()||epoch!==profileEpoch||viewEpoch!==navigationEpoch||activeTab!=='pass'||modal.open)return;
+        const stamp=[...document.querySelectorAll('.stamp.earned')].find(element=>element.dataset.place===p.id);
+        celebrateStamp(stamp);
+      });
     },
     (err) => {
       if(owner!==profileKey()||epoch!==profileEpoch)return;
@@ -1302,12 +1316,14 @@ document.addEventListener("click", (ev) => {
   if(mode){const a=getArtifact(mode.dataset.id);if(a&&modal.dataset.view==="artifact"){
     body.querySelectorAll("[data-artifact-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b===mode)));
     $("#artifact-observation").textContent=(mode.dataset.artifactMode==="display"?a.atDisplay:a.onSite)[0];
+    revealAnswer($("#artifact-observation"));
   }return;}
   const answer=ev.target.closest("[data-artifact-answer]");
   if(answer){const a=getArtifact(answer.dataset.id),number=Number(answer.dataset.artifactAnswer);if(a&&Number.isInteger(number)&&number>=0&&number<a.options.length&&modal.dataset.view==="artifact"){
     body.querySelectorAll("[data-artifact-answer]").forEach(b=>{b.setAttribute("aria-pressed",String(b===answer));b.classList.remove("answer-correct","answer-retry");});
     const correct=number===a.answer;answer.classList.add(correct?"answer-correct":"answer-retry");
     $("#artifact-feedback").innerHTML=`<strong>${correct?"Chính xác!":"Cùng xem lại nhé."}</strong><p>${e(a.explanation[0])}</p>`;
+    revealAnswer($("#artifact-feedback"));
   }return;}
   const artifactMap=ev.target.closest("[data-artifact-map]");
   if(artifactMap){const p=findPlace(artifactMap.dataset.artifactMap);if(p&&eligible(p)){
