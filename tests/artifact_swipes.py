@@ -28,13 +28,13 @@ with sync_playwright() as p:
  page.locator('#artifact-view-toggle').click();assert current()==old
  assert page.evaluate("localStorage.getItem('oceo-passport-guest')")==profile
  assert page.evaluate('window.__audioCreated')==0
- page.locator('#close-modal').click();page.locator('#language-select').select_option('zh');page.locator('.artifact-launch').click()
+ page.evaluate("location.hash='explore'");expect(page.locator('#view-explore')).to_be_visible();page.locator('#language-select').select_option('zh');page.locator('.artifact-launch').click()
  for width,height in [(320,568),(390,844)]:
   page.set_viewport_size({'width':width,'height':height});page.locator('#artifact-shuffle').click();at(0)
   for index in range(9):
    assert page.locator('[data-deck-active]').evaluate('e=>{const f=e.getBoundingClientRect();return [...e.querySelectorAll(".artifact-swipe-title,.artifact-swipe-place,.artifact-swipe-open")].every(c=>{const b=c.getBoundingClientRect();return b.top>=f.top-1&&b.bottom<=f.bottom+1})}'),(width,index)
    if index<8:page.locator('#artifact-next').click();at(index+1)
-  assert not page.evaluate("async()=>(await import('/assets/i18n.js')).untranslatedUI(document.querySelector('#modal'))")
+  assert not page.evaluate("async()=>(await import('/assets/i18n.js')).untranslatedUI(document.querySelector('#view-artifacts'))")
  assert not errors,errors;c.close()
  c=b.new_context(viewport={'width':390,'height':844},reduced_motion='reduce')
  c.route('**/*',lambda r:r.continue_() if r.request.url.startswith(origin) else r.abort())

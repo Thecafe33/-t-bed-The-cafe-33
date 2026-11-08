@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="./assets/discover.css?v=20261106-mountain" />
     <link rel="stylesheet" href="./assets/town-map.css" />
     <link rel="stylesheet" href="./assets/genz.css" />
-    <link rel="stylesheet" href="./assets/artifacts.css?v=20261108-direct" />
+    <link rel="stylesheet" href="./assets/artifacts.css?v=20261108-page" />
     <link rel="stylesheet" href="./assets/campaign.css?v=20261106-mountain" />
     <link rel="stylesheet" href="./assets/journey-story.css?v=20261106-fresh" />
     <link rel="stylesheet" href="./assets/place-feed.css?v=20261106-mountain" />
@@ -46,7 +46,7 @@
         ><span>óc eo<span class="brand-sub">TOWNWALK</span></span></a
       >
       <div class="header-tools">
-        <button type="button" class="header-deck header-control" data-action="artifacts" aria-label="Theo dấu cổ vật" title="Theo dấu cổ vật"><span data-icon="cards"></span></button>
+        <a href="#artifacts" class="header-deck header-control" data-route="artifacts" aria-label="Theo dấu cổ vật" title="Theo dấu cổ vật"><span data-icon="cards"></span></a>
         <div class="language-picker" id="header-language">
           <select id="language-select" aria-label="Chọn ngôn ngữ" data-no-translate><option value="vi">VN · Tiếng Việt</option><option value="en">EN · English</option><option value="zh">中文 · 简体中文</option></select>
           <button type="button" id="language-trigger" class="header-control" aria-label="Chọn ngôn ngữ" aria-haspopup="listbox" aria-expanded="false" aria-controls="language-options" hidden><span id="language-code" data-no-translate>VN</span><span data-icon="chevrondown"></span></button>
@@ -338,6 +338,10 @@
         <button id="more-reviews" class="text-button" hidden>
           Xem thêm câu chuyện <span data-icon="arrow"></span>
         </button>
+      </section>
+      <section id="view-artifacts" class="app-view" data-view="artifacts" aria-labelledby="artifacts-heading" hidden>
+        <div class="eyebrow">THEO DẤU CỔ VẬT</div>
+        <div id="artifact-page-content"></div>
       </section>
     </main>
     <nav class="mobile-nav app-tabbar" aria-label="Chức năng chính">

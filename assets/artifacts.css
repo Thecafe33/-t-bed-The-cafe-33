@@ -194,3 +194,13 @@
 .artifact-stack { touch-action:pan-y pinch-zoom;cursor:grab; }
 .artifact-stack.is-dragging,.artifact-stack.is-dragging .artifact-swipe-card { cursor:grabbing; }
 .artifact-swipe-card img { pointer-events:none;-webkit-user-drag:none; }
+
+/* The collection has its own route and scrolls with the page. */
+.townwalk-app[data-tab="artifacts"] .app-main { max-width:1000px; }
+#view-artifacts .artifact-index>h1 { margin:8px 0 10px; }
+#view-artifacts .artifact-browser-tools,#view-artifacts .artifact-browser-status { max-width:500px;margin-inline:auto; }
+#view-artifacts .artifact-index-cards { max-width:600px;margin-inline:auto; }
+.app-header .header-deck[aria-current="page"] { box-shadow:inset 0 0 0 1px #56734c; }
+@media(min-width:601px) {
+ #view-artifacts>.eyebrow,#view-artifacts .artifact-index>h1,#view-artifacts .artifact-deck-intro { text-align:center; }
+}

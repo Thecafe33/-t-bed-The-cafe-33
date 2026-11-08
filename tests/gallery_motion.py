@@ -43,6 +43,6 @@ with sync_playwright() as p:
  touch('touchStart',45)
  for x in [90,150,220,300]:touch('touchMove',x)
  q.wait_for_timeout(60);assert float(q.locator('.artifact-stack').get_attribute('data-position'))<start-1
- touch('touchEnd');q.locator('#close-modal').click();expect(q.locator('#modal')).to_be_hidden()
+ touch('touchEnd');q.evaluate("location.hash='explore'");expect(q.locator('#view-explore')).to_be_visible();expect(q.locator('#modal')).to_be_hidden()
  b.close()
 print('PASS: multi-card direct manipulation, same-gesture reversal, interruptible momentum, real touch flick, reduced motion, zero card replacement, stable detail return.')

@@ -52,6 +52,7 @@ let activeTab = null,
   passNeedsRender = true;
 history.scrollRestoration = "manual";
 const artifactDeckState=new ArtifactDeckState();
+let artifactPageData="";
 let artifactDeckUI=null,storyCreatorUI=null,storyProfileSignature='',profileEpoch=0,modalEpoch=0,navigationEpoch=0;
 const tabScroll = {};
 const tabTitles = {
@@ -60,6 +61,7 @@ const tabTitles = {
   day: "Chuyến đi",
   pass: "Óc Eo Pass",
   community: "Cộng đồng",
+  artifacts: "Theo dấu cổ vật",
 };
 const $ = (s) => document.querySelector(s),
   modal = $("#modal"),
@@ -76,6 +78,7 @@ function activateTab(tab, { focus = false, reveal = true } = {}) {
   clearInteractionMotion();
   navigationEpoch++;
   if (activeTab) tabScroll[activeTab] = window.scrollY;
+  if(activeTab==="artifacts"){artifactDeckUI?.destroy();artifactDeckUI=null;}
   if (modal.open) modal.close();
   activeTab = tab;
   if(tab!=="map")closeMapSearch();
@@ -86,6 +89,8 @@ function activateTab(tab, { focus = false, reveal = true } = {}) {
     if (link.dataset.route === tab) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
+  $(".header-deck").toggleAttribute("aria-current",tab==="artifacts");
+  if(tab==="artifacts")$(".header-deck").setAttribute("aria-current","page");
   document.body.dataset.tab = tab;
   document.title = `${tabTitles[tab]} — Óc Eo townwalk`;
   if (
@@ -94,6 +99,7 @@ function activateTab(tab, { focus = false, reveal = true } = {}) {
   )
     showPassport();
   if (tab === "map") showTownMap();
+  if (tab === "artifacts") renderArtifactPage();
   if (tab === "community" && !reviewsRequested) {
     reviewsRequested = true;
     loadReviews(true);
@@ -176,7 +182,6 @@ async function saveProfile() {
 function openModal(kicker, html, view = "generic") {
   clearInteractionMotion();
   modalEpoch++;
-  artifactDeckUI?.destroy();artifactDeckUI=null;
   storyCreatorUI?.destroy();storyCreatorUI=null;storyProfileSignature='';
   modal.classList.toggle('story-dialog',view==='story'||view==='story-sample');
   modal.classList.toggle("artifact-deck-dialog",view==="artifacts");
@@ -217,7 +222,6 @@ modal.addEventListener("click", (ev) => {
 modal.addEventListener("close", () => {
   clearInteractionMotion();
   modalEpoch++;
-  artifactDeckUI?.destroy();artifactDeckUI=null;
   storyCreatorUI?.destroy();storyCreatorUI=null;storyProfileSignature='';
   if (photoURL) {
     URL.revokeObjectURL(photoURL);
@@ -447,18 +451,28 @@ function renderSite() {
   renderTimeline();
   renderSavedTrip();
   if (activeTab === "pass") showPassport();
+  if(activeTab==="artifacts"&&artifactPageData!==JSON.stringify(site.places))renderArtifactPage();
 }
 function findPlace(id) {
   return [...site.places, ...site.stops].find((p) => p.id === id);
 }
+function renderArtifactPage(){
+ const root=$("#artifact-page-content");
+ artifactPageData=JSON.stringify(site.places);
+ artifactDeckUI?.destroy();
+ root.innerHTML=artifactIndexHTML(site.places,artifactDeckState.selected,{page:true});
+ hydrate(root);
+ artifactDeckUI=mountArtifactDeck({root,dialog:$("#view-artifacts"),state:artifactDeckState,places:site.places,onOpen:showArtifact});
+}
 function showArtifactIndex(selected=artifactDeckState.selected){
  const returning=modal.open&&modal.dataset.view==="artifact";
- closeMapSearch();
  const available=artifactsForPlaces(site.places);
- artifactDeckState.selected=selected==='all'||available.some(a=>a.placeId===selected)?selected:'all';
- openModal("THEO DẤU CỔ VẬT",artifactIndexHTML(site.places,artifactDeckState.selected),"artifacts");
- artifactDeckUI=mountArtifactDeck({root:body,dialog:modal,state:artifactDeckState,places:site.places,onOpen:showArtifact});
- if(returning){$("#artifact-open")?.focus({preventScroll:true});revealArtifact(body.querySelector("[data-deck-active]"),true);}
+ const next=selected==='all'||available.some(a=>a.placeId===selected)?selected:'all';
+ const changed=artifactDeckState.selected!==next;artifactDeckState.selected=next;
+ closeMapSearch();if(modal.open)modal.close();
+ if(activeTab!=="artifacts")navigate("artifacts");
+ else if(changed||!artifactDeckUI)renderArtifactPage();
+ if(returning)$("#artifact-open")?.focus({preventScroll:true});
 }
 function showArtifact(id){
  const a=artifactsForPlaces(site.places).find(a=>a.id===id);if(!a)return;

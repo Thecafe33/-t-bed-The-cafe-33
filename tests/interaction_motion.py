@@ -17,7 +17,7 @@ with sync_playwright() as p:
   q.wait_for_function("document.querySelectorAll('.stamp-spark').length===0")
   before=q.evaluate('motionLog.length');stamp.click();q.locator('#checkin').click();assert not q.evaluate("start=>motionLog.slice(start).some(x=>JSON.stringify(x.frames).includes('scale(1.38)'))",before)
   q.locator('.header-deck').click();q.locator('#artifact-open').click();expect(q.locator('.artifact-detail')).to_be_visible();q.locator('#artifact-back').click();expect(q.locator('[data-deck-active]')).to_have_count(1)
-  q.locator('#artifact-next').click();q.locator('#close-modal').click();expect(q.locator('#modal')).not_to_be_visible()
+  q.locator('#artifact-next').click();q.evaluate("location.hash='explore'");expect(q.locator('#view-explore')).to_be_visible();expect(q.locator('#modal')).not_to_be_visible()
   assert not errors,errors;c.close()
  b.close()
 print('PASS: failed GPS never celebrates; fifth earned stamp opens its page and animates once; particles clean up; reduced motion bypass; detail flip/back and closing mid-swipe stay usable. Local transport only.')

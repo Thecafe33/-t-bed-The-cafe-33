@@ -50,7 +50,7 @@ with sync_playwright() as p:
   q.locator('.app-header .brand').click();expect(q.locator('#quick-navigation')).to_be_visible()
   q.mouse.wheel(0,400);expect(root).not_to_have_class('navigation-concealed')
   q.keyboard.press('Escape');visible()
-  q.locator('.header-deck').click();q.locator('#modal-body').evaluate('e=>e.scrollTop=300');q.wait_for_timeout(50)
+  q.locator('.header-deck').click();q.locator('#artifact-open').click();q.locator('#modal-body').evaluate('e=>e.scrollTop=300');q.wait_for_timeout(50)
   expect(root).not_to_have_class('navigation-concealed');q.locator('#close-modal').click();visible()
   # Real root wheel events use the same directional behaviour.
   scroll(0);q.mouse.move(200,400);q.mouse.wheel(0,350);expect(root).to_have_class('navigation-concealed')
