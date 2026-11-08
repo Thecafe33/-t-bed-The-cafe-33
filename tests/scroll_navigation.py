@@ -23,6 +23,16 @@ with sync_playwright() as p:
    expect(root).to_have_class('navigation-concealed')
   q.locator('#language-trigger').evaluate("e=>e.setAttribute('aria-expanded','false')")
   q.wait_for_timeout(50);expect(root).to_have_class('navigation-concealed')
+  # Chrome can report small reversals while the page still trends downward.
+  # This sequence used to reveal/hide the bars three times.
+  q.evaluate("()=>{window.chromeChanges=[];let previous=document.documentElement.classList.contains('navigation-concealed');new MutationObserver(()=>{const next=document.documentElement.classList.contains('navigation-concealed');if(next!==previous){chromeChanges.push(next);previous=next;}}).observe(document.documentElement,{attributes:true,attributeFilter:['class']})}")
+  for offset in [340,374,364,398,388,422]:scroll(offset)
+  q.wait_for_timeout(220);assert q.evaluate('chromeChanges')==[]
+  # Height-only changes (mobile browser toolbar) must preserve hidden state.
+  q.set_viewport_size({'width':390,'height':790});q.wait_for_timeout(220)
+  expect(root).to_have_class('navigation-concealed')
+  q.set_viewport_size({'width':390,'height':844});q.wait_for_timeout(80)
+  scroll(0);visible();scroll(350);expect(root).to_have_class('navigation-concealed');q.wait_for_timeout(210)
   # Tiny reversals must not make either bar flicker.
   scroll(347);expect(root).to_have_class('navigation-concealed')
   scroll(349);scroll(345);expect(root).to_have_class('navigation-concealed')
@@ -45,6 +55,18 @@ with sync_playwright() as p:
   # Real root wheel events use the same directional behaviour.
   scroll(0);q.mouse.move(200,400);q.mouse.wheel(0,350);expect(root).to_have_class('navigation-concealed')
   q.mouse.wheel(0,-90);expect(root).not_to_have_class('navigation-concealed')
+  if motion=='no-preference':
+   scroll(0);visible();q.evaluate('chromeChanges=[]')
+   touch=c.new_cdp_session(q)
+   touch.send('Input.dispatchTouchEvent',{'type':'touchStart','touchPoints':[{'x':200,'y':650,'id':1}]})
+   for point in [610,560,500,430,350,260]:
+    touch.send('Input.dispatchTouchEvent',{'type':'touchMove','touchPoints':[{'x':200,'y':point,'id':1}]})
+   touch.send('Input.dispatchTouchEvent',{'type':'touchEnd','touchPoints':[]})
+   expect(root).to_have_class('navigation-concealed');q.wait_for_timeout(250)
+   assert q.evaluate('chromeChanges')==[True]
+   q.touchscreen.tap(5,400);q.wait_for_timeout(100)
+   assert q.evaluate('chromeChanges')==[True]
+   touch.detach()
   if motion=='reduce':expect(header).to_have_css('transition-duration','0s')
   assert not errors,errors;c.close()
  b.close()

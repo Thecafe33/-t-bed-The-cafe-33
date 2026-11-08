@@ -47,8 +47,10 @@
 }
 @media(prefers-reduced-motion:no-preference) { .app-header button { transition:background-color .15s ease,border-color .15s ease; } }
 
-/* Keep layout and the pill's horizontal centring intact while sliding offscreen. */
-.townwalk-app .app-header,.townwalk-app .app-tabbar { translate:0 0;transition:translate .18s cubic-bezier(.22,1,.36,1); }
-.navigation-concealed .townwalk-app .app-header { translate:0 calc(-100% - 10px);pointer-events:none; }
-.navigation-concealed .townwalk-app .app-tabbar { translate:0 calc(100% + 26px + env(safe-area-inset-bottom,0px));pointer-events:none; }
+/* Stable compositor layers; moving navigation never becomes a scroll anchor. */
+.townwalk-app .app-header,.townwalk-app .app-tabbar { transition:transform .18s cubic-bezier(.22,1,.36,1);will-change:transform;backface-visibility:hidden;overflow-anchor:none; }
+.townwalk-app .app-header { transform:translate3d(0,0,0); }
+.townwalk-app .app-tabbar { transform:translate3d(-50%,0,0);background:#fffef8;backdrop-filter:none;-webkit-backdrop-filter:none; }
+.navigation-concealed .townwalk-app .app-header { transform:translate3d(0,calc(-100% - 10px),0);pointer-events:none; }
+.navigation-concealed .townwalk-app .app-tabbar { transform:translate3d(-50%,calc(100% + 26px + env(safe-area-inset-bottom,0px)),0);pointer-events:none; }
 @media(prefers-reduced-motion:reduce) { .townwalk-app .app-header,.townwalk-app .app-tabbar { transition:none; } }
