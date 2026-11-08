@@ -1,3 +1,4 @@
+import {initQuickNavigation} from './quick-navigation.js';
 import {clearInteractionMotion,revealArtifact,revealAnswer,celebrateStamp} from './interaction-motion.js';
 import {
   HERITAGE_REFERENCE_URL,
@@ -98,6 +99,7 @@ function activateTab(tab, { focus = false } = {}) {
   }
   window.scrollTo({ top: tabScroll[tab] || 0, behavior: "instant" });
   revealView(document.querySelector(`.app-view[data-view="${tab}"]`));
+  window.dispatchEvent(new CustomEvent("oceo-route-change",{detail:{tab}}));
   if (focus)
     document
       .querySelector(`[data-view="${tab}"] h1`)
@@ -1438,3 +1440,4 @@ window.addEventListener('oceo-language-change', () => {
 initI18n();
 initHeader();
 initEffects();
+initQuickNavigation(navigate);

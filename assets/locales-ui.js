@@ -1,5 +1,8 @@
 // [Vietnamese source, English, Simplified Chinese]. User-written reviews and names are never translated.
 export const UI_MESSAGES = [
+ ['Mở điều hướng nhanh','Open quick navigation','打开快捷导航'],
+ ['Đóng điều hướng nhanh','Close quick navigation','关闭快捷导航'],
+ ['Bạn muốn đi đâu?','Where to next?','下一站去哪里？'],
  ['Bỏ qua đến nội dung','Skip to content','跳转到正文'],['ĐI GẦN. CHẠM SÂU.','GO LOCAL. DISCOVER MORE.','走近一点，了解更多。'],
  ['Chọn ngôn ngữ','Choose language','选择语言'],['Ngôn ngữ','Language','语言'],['Bật âm thanh','Enable sounds','开启音效'],['Tắt âm thanh','Mute sounds','关闭音效'],
  ['Đăng nhập hoặc mở tài khoản','Sign in or open account','登录或打开账户'],['Đăng nhập','Sign in','登录'],['Tài khoản','Account','账户'],
