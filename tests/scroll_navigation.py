@@ -3,7 +3,7 @@ origin='http://127.0.0.1:8000'
 with sync_playwright() as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True)
  for motion in ['no-preference','reduce']:
-  c=b.new_context(viewport={'width':390,'height':844},service_workers='block',reduced_motion=motion)
+  c=b.new_context(viewport={'width':390,'height':844},service_workers='block',reduced_motion=motion,has_touch=True)
   c.route('**/*',lambda r:r.continue_() if r.request.url.startswith(origin) else r.abort())
   q=c.new_page();errors=[];q.on('pageerror',lambda e:errors.append(str(e)));q.goto(origin,wait_until='networkidle')
   root=q.locator('html');header=q.locator('.app-header');tabs=q.locator('.app-tabbar')
@@ -16,6 +16,13 @@ with sync_playwright() as p:
   scroll(350);expect(root).to_have_class('navigation-concealed');q.wait_for_timeout(210)
   assert header.bounding_box()['y']+header.bounding_box()['height']<=0
   assert tabs.bounding_box()['y']>=844
+  # Tapping plain content must not reveal chrome or synthesize an upward scroll.
+  for _ in range(3):
+   before=q.evaluate('scrollY');q.touchscreen.tap(5,400);q.wait_for_timeout(50)
+   assert q.evaluate('scrollY')==before
+   expect(root).to_have_class('navigation-concealed')
+  q.locator('#language-trigger').evaluate("e=>e.setAttribute('aria-expanded','false')")
+  q.wait_for_timeout(50);expect(root).to_have_class('navigation-concealed')
   # Tiny reversals must not make either bar flicker.
   scroll(347);expect(root).to_have_class('navigation-concealed')
   scroll(349);scroll(345);expect(root).to_have_class('navigation-concealed')

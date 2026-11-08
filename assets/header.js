@@ -14,7 +14,7 @@ export function initHeader(){
   trigger.setAttribute('aria-label',`${translateText('Chọn ngôn ngữ')}: ${code[getLanguage()]}`);
   options.forEach(option=>option.setAttribute('aria-selected',String(option.dataset.language===getLanguage())));
  }
- function close(focus=false){menu.hidden=true;trigger.setAttribute('aria-expanded','false');if(focus)trigger.focus({preventScroll:true});}
+ function close(focus=false){menu.hidden=true;if(trigger.getAttribute('aria-expanded')!=='false')trigger.setAttribute('aria-expanded','false');if(focus)trigger.focus({preventScroll:true});}
  function open(index=options.findIndex(option=>option.dataset.language===getLanguage())){
   menu.hidden=false;trigger.setAttribute('aria-expanded','true');options[Math.max(0,index)].focus({preventScroll:true});
  }

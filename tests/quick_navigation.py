@@ -8,6 +8,7 @@ with sync_playwright() as p:
   q=c.new_page();errors=[];q.on('pageerror',lambda e:errors.append(str(e)));q.goto(origin,wait_until='networkidle')
   brand=q.locator('.app-header .brand');dialog=q.locator('#quick-navigation')
   def tap_brand():
+   q.evaluate("()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))")
    # Keyboard focus reveals chrome that is intentionally hidden after scrolling.
    if q.locator('html').evaluate("e=>e.classList.contains('navigation-concealed')"):
     brand.evaluate('e=>{e.blur();e.focus({preventScroll:true})}')

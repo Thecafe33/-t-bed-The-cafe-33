@@ -28,7 +28,7 @@ export function initScrollNavigation(){
  // Scroll locking temporarily changes window.scrollY. Rebase on both opening
  // and closing, so a restored page offset is not mistaken for a downward swipe.
  new MutationObserver(records=>{
-  if(records.some(record=>record.target.matches('dialog,#language-trigger')))reset();
- }).observe(document.body,{subtree:true,attributes:true,attributeFilter:['open','aria-expanded']});
+  if(records.some(record=>record.target.matches('dialog,#language-trigger')&&record.oldValue!==record.target.getAttribute(record.attributeName)))reset();
+ }).observe(document.body,{subtree:true,attributes:true,attributeOldValue:true,attributeFilter:['open','aria-expanded']});
  reset();
 }
