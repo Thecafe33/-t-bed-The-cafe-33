@@ -72,6 +72,7 @@ function normalizedTab(hash = location.hash) {
 }
 function activateTab(tab, { focus = false } = {}) {
   if (activeTab === tab) return;
+  window.dispatchEvent(new CustomEvent("oceo-before-route-change",{detail:{tab}}));
   clearInteractionMotion();
   navigationEpoch++;
   if (activeTab) tabScroll[activeTab] = window.scrollY;
