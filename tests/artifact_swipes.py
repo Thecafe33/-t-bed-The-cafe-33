@@ -8,8 +8,8 @@ with sync_playwright() as p:
  page=c.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
  page.add_init_script('window.__audioCreated=0;const Base=window.AudioContext;if(Base)window.AudioContext=class extends Base{constructor(...args){super(...args);window.__audioCreated++}}')
  page.goto(origin,wait_until='networkidle');profile=page.evaluate("localStorage.getItem('oceo-passport-guest')")
- page.locator('.artifact-launch').click();expect(page.locator('.artifact-swipe-card')).to_have_count(3);expect(page.locator('[data-deck-active]')).to_have_count(1)
- expect(page.locator('.artifact-swipe-card[aria-hidden=true][inert]')).to_have_count(2)
+ page.locator('.artifact-launch').click();expect(page.locator('.artifact-swipe-card')).to_have_count(4);expect(page.locator('[data-deck-active]')).to_have_count(1)
+ expect(page.locator('.artifact-swipe-card[aria-hidden=true][inert]')).to_have_count(3)
  expect(page.locator('#artifact-random')).to_have_attribute('aria-pressed','true')
  page.locator('#artifact-random').click();expect(page.locator('[data-deck-active]')).to_have_attribute('data-artifact','nandin-giong-cat')
  def current():return page.locator('[data-deck-active]').get_attribute('data-artifact')
@@ -19,7 +19,9 @@ with sync_playwright() as p:
  drag(20);expect(page.locator('#modal')).to_have_attribute('data-view','artifacts');assert current()=='nandin-giong-cat'
  drag(3,90);expect(page.locator('#modal')).to_have_attribute('data-view','artifacts');assert current()=='nandin-giong-cat'
  drag(-155);expect(page.locator('[data-deck-active]')).to_have_attribute('data-artifact','phat-linh-son-bac')
- drag(150);expect(page.locator('[data-deck-active]')).to_have_attribute('data-artifact','dau-phat-naga')
+ drag(150);expect(page.locator('[data-deck-active]')).to_have_attribute('data-artifact','nandin-giong-cat')
+ drag(-150);expect(page.locator('[data-deck-active]')).to_have_attribute('data-artifact','phat-linh-son-bac')
+ drag(-150);expect(page.locator('[data-deck-active]')).to_have_attribute('data-artifact','dau-phat-naga')
  page.locator('#artifact-open').click();expect(page.locator('.artifact-origin h3')).to_have_text('Linh Sơn Bắc')
  page.locator('#modal [data-action=artifacts]').click();assert current()=='dau-phat-naga';expect(page.locator('#artifact-deck-progress')).to_have_text('Thẻ 3 / 9')
  page.locator('#artifact-previous').click();expect(page.locator('[data-deck-active]')).to_have_attribute('data-artifact','phat-linh-son-bac')
@@ -33,10 +35,10 @@ with sync_playwright() as p:
   if index==8:expect(page.locator('.artifact-deck-end')).to_be_visible()
  assert len(set(seen))==9,seen
  expect(page.locator('#artifact-next')).to_be_disabled();expect(page.locator('[data-deck-active]')).to_have_count(0)
- page.locator('#artifact-previous').click();assert current()==seen[-1]
+ page.locator('#artifact-previous').click();expect(page.locator('[data-deck-active]')).to_have_attribute('data-artifact',seen[-1])
  page.locator('#artifact-next').click();expect(page.locator('.artifact-deck-end')).to_be_visible();page.locator('#artifact-open').click();assert current()!=seen[-1]
  page.locator('#artifact-site-filter').select_option('go-giong-cat');expect(page.locator('.artifact-swipe-card')).to_have_count(1);expect(page.locator('#artifact-random')).to_be_disabled()
- page.locator('#artifact-next').click();expect(page.locator('.artifact-deck-end')).to_be_visible();page.locator('#artifact-previous').click();assert current()=='nandin-giong-cat'
+ page.locator('#artifact-next').click();expect(page.locator('.artifact-deck-end')).to_be_visible();page.locator('#artifact-previous').click();expect(page.locator('[data-deck-active]')).to_have_attribute('data-artifact','nandin-giong-cat')
  page.locator('#artifact-site-filter').select_option('all');old=current();page.locator('#artifact-view-toggle').click();expect(page.locator('.artifact-index .artifact-card')).to_have_count(9)
  page.locator('#artifact-view-toggle').click();assert current()==old
  assert page.evaluate("localStorage.getItem('oceo-passport-guest')")==profile
@@ -80,7 +82,7 @@ with sync_playwright() as p:
  page=c.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.goto(origin,wait_until='networkidle')
  page.evaluate('async()=>{await navigator.serviceWorker.ready}');page.wait_for_function('!!navigator.serviceWorker.controller')
  c.set_offline(True);page.reload(wait_until='domcontentloaded');page.locator('.artifact-launch').click();before_id=current()
- page.locator('#artifact-next').click();assert current()!=before_id;page.locator('#artifact-open').click();expect(page.locator('.artifact-detail')).to_be_visible()
+ page.locator('#artifact-next').click();expect(page.locator('[data-deck-active]')).not_to_have_attribute('data-artifact',before_id);page.locator('#artifact-open').click();expect(page.locator('.artifact-detail')).to_be_visible()
  assert not errors,errors
  b.close()
 print('PASS: layered accessible stack; true mouse/touch swipes; short/vertical/cancel guards; ordered/random finite rounds, replay/history/filter/list; detail return; keyboard; Chinese short-phone fit; muted default and reduced motion. No profile/cloud writes.')

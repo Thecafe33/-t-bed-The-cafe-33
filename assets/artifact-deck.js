@@ -3,16 +3,29 @@ import {artifactsForPlaces} from './artifacts.js';
 import {artifactListHTML,artifactStackHTML} from './artifact-view.js';
 import {reducedMotion,playEffect} from './effects.js';
 
-/** Pointer gestures only affect this finite browsing deck, never GPS/profile data. */
+/** A finite gallery. Browsing never changes GPS stamps or profile data. */
 export function mountArtifactDeck({root,dialog,state,places,onOpen}){
  const abort=new AbortController(),options={signal:abort.signal};
- let disposed=false,busy=false,gesture=null,animation=null,suppressUntil=0;
+ let disposed=false,busy=false,gesture=null,suppressUntil=0,frame=0;
+ const animations=new Set();
  const find=selector=>root.querySelector(selector);
+ const cards=()=>[...root.querySelectorAll('.artifact-swipe-card')];
  const filtered=()=>artifactsForPlaces(places).filter(a=>state.selected==='all'||a.placeId===state.selected);
- function sync(){state.setItems(filtered().map(a=>a.id));}
+ function pose(card,slot){
+  const depth=Math.abs(slot),sign=Math.sign(slot),width=card.offsetWidth;
+  const x=sign*width*(Math.min(depth,1)*.78+Math.max(0,depth-1)*.23);
+  return {transform:`translate3d(${x}px,0,${-Math.min(depth,1)*125-Math.max(0,depth-1)*85}px) rotateY(${-sign*Math.min(depth,1)*46}deg)`,opacity:depth>2?Math.max(0,3-depth):1,zIndex:String(10-Math.round(depth*2))};
+ }
+ function layout(offset=0){
+  for(const card of cards()){
+   const slot=Number(card.dataset.deckLayer)-offset;
+   Object.assign(card.style,pose(card,slot));
+  }
+ }
+ function stop(){cancelAnimationFrame(frame);frame=0;for(const a of animations)a.cancel();animations.clear();for(const card of cards())stopElementMotion(card);}
  function render({focus=null,enter=false}={}){
   if(disposed)return;
-  sync();const list=state.view==='list';
+  stop();state.setItems(filtered().map(a=>a.id));const list=state.view==='list';
   find('#artifact-site-filter').value=state.selected;
   find('#artifact-random').setAttribute('aria-pressed',String(state.random));
   find('#artifact-random').disabled=state.total<2;
@@ -20,33 +33,40 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
   find('#artifact-view-toggle').textContent=list?'Chồng thẻ':'Danh sách';
   find('#artifact-deck-progress').textContent=list?`${state.total} thẻ`:`Thẻ ${state.total?Math.min(state.index+1,state.total):0} / ${state.total}`;
   find('#artifact-presentation').innerHTML=list?artifactListHTML(places,state.selected):artifactStackHTML(state,places);
-  if(focus)find(focus)?.focus({preventScroll:true});
-  const card=find('[data-deck-active]');
-  if(enter&&card)dealCards(root);
+  layout();if(focus)find(focus)?.focus({preventScroll:true});
+  if(enter&&find('[data-deck-active]'))dealCards(root);
  }
- async function next(direction=1,keyboardFocus=false){
-  if(disposed||busy||state.complete||state.view!=='deck')return;
-  busy=true;const card=find('[data-deck-active]');
+ async function settle(offset,duration){
+  cancelAnimationFrame(frame);frame=0;
+  if(reducedMotion()){layout(offset);return;}
+  const batch=cards().map(card=>{
+   stopElementMotion(card);
+   const from={transform:getComputedStyle(card).transform,opacity:getComputedStyle(card).opacity,zIndex:getComputedStyle(card).zIndex};
+   const to=pose(card,Number(card.dataset.deckLayer)-offset);
+   Object.assign(card.style,to);
+   const a=card.animate([from,to],{duration,easing:'cubic-bezier(.22,.7,.18,1)'});
+   animations.add(a);a.finished.then(()=>animations.delete(a),()=>animations.delete(a));return a.finished;
+  });
+  await Promise.all(batch);
+ }
+ async function move(step=1,keyboardFocus=false){
+  if(disposed||busy||state.view!=='deck'||(step>0&&state.complete)||(step<0&&state.index===0))return;
+  busy=true;
   try{
-   if(card&&!reducedMotion()){
-    const distance=Math.max(360,root.clientWidth+70)*direction;
-    animation=card.animate([{transform:card.style.transform||'rotate(-1deg)',opacity:1},{transform:`translate(${distance}px, 20px) rotate(${direction*15}deg)`,opacity:0}],{duration:260,easing:'cubic-bezier(.3,.05,.6,1)',fill:'forwards'});
-    await animation.finished;
-   }
+   await settle(step,620);
    if(disposed)return;
-   state.next();playEffect('paper');render({enter:true,focus:keyboardFocus?(state.complete?'#artifact-open':'#artifact-next'):null});
-  }catch{/* A closing dialog cancels the in-flight discard. */}
-  finally{busy=false;animation=null;}
+   if(step>0)state.next();else state.previous();
+   playEffect('paper');render({focus:keyboardFocus?(state.complete?'#artifact-open':step>0?'#artifact-next':state.index?'#artifact-previous':'#artifact-open'):null});
+  }catch{/* Closing or replacing the gallery cancels its entire transition. */}
+  finally{busy=false;}
  }
- function snap(card){
-  if(!card||disposed)return;
-  card.style.removeProperty('--swipe-strength');
-  if(!reducedMotion())card.animate([{transform:card.style.transform||'rotate(-1deg)'},{transform:'rotate(-1deg)'}],{duration:230,easing:'cubic-bezier(.22,1,.36,1)'});
-  card.style.removeProperty('transform');card.classList.remove('is-dragging');
+ async function snap(){
+  if(disposed)return;
+  try{await settle(0,380);if(!disposed&&!gesture)layout();}catch{}
  }
  root.addEventListener('change',event=>{
   if(event.target.id!=='artifact-site-filter'||busy)return;
-  state.selected=event.target.value;sync();render({focus:'#artifact-site-filter'});
+  state.selected=event.target.value;render({focus:'#artifact-site-filter'});
  },options);
  root.addEventListener('click',event=>{
   const button=event.target.closest('button');if(!button||busy)return;
@@ -54,20 +74,18 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
    case 'artifact-shuffle':state.shuffle();render({focus:'#artifact-shuffle',enter:true});playEffect('paper');break;
    case 'artifact-random':state.setRandom(!state.random);render({focus:'#artifact-random',enter:true});break;
    case 'artifact-view-toggle':state.view=state.view==='deck'?'list':'deck';render({focus:'#artifact-view-toggle'});break;
-   case 'artifact-previous':state.previous();render({focus:state.index?'#artifact-previous':'#artifact-open',enter:true});break;
-   case 'artifact-next':void next(1,true);break;
+   case 'artifact-previous':void move(-1,true);break;
+   case 'artifact-next':void move(1,true);break;
    case 'artifact-open':if(state.current)onOpen(state.current);else if(state.total){state.shuffle();render({enter:true});}break;
   }
  },options);
  root.addEventListener('click',event=>{
-  if(event.target.closest('[data-deck-active]')&&(busy||performance.now()<suppressUntil)){
-   event.preventDefault();event.stopImmediatePropagation();
-  }
+  if(event.target.closest('[data-deck-active]')&&(busy||performance.now()<suppressUntil)){event.preventDefault();event.stopImmediatePropagation();}
  },{...options,capture:true});
  root.addEventListener('pointerdown',event=>{
   const card=event.target.closest('[data-deck-active]');
   if(!card||busy||!event.isPrimary||event.button!==0)return;
-  stopElementMotion(card);
+  stop();layout();
   gesture={id:event.pointerId,card,startX:event.clientX,startY:event.clientY,dx:0,dy:0,axis:null};
  },options);
  root.addEventListener('pointermove',event=>{
@@ -79,30 +97,35 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
   }
   if(g.axis!=='horizontal')return;
   if(event.cancelable)event.preventDefault();
-  const angle=reducedMotion()?0:g.dx/g.card.offsetWidth*12;
-  g.card.style.transform=`translate(${g.dx}px, ${g.dy*.15}px) rotate(${angle}deg)`;
-  g.card.style.setProperty('--swipe-strength',String(Math.min(1,Math.abs(g.dx)/90)));
+  if(frame)return;
+  frame=requestAnimationFrame(()=>{
+   frame=0;if(!gesture)return;
+   let offset=Math.max(-1,Math.min(1,-gesture.dx/(gesture.card.offsetWidth*.78)));
+   if(state.index===0&&offset<0)offset*=.15;
+   if(!reducedMotion())layout(offset);
+  });
  },{...options,passive:false});
  function release(event,cancelled=false){
   if(!gesture||gesture.id!==event.pointerId)return;
-  const g=gesture;gesture=null;
+  const g=gesture;gesture=null;cancelAnimationFrame(frame);frame=0;
   if(g.card.hasPointerCapture(event.pointerId))g.card.releasePointerCapture(event.pointerId);
+  g.card.classList.remove('is-dragging');
   if(g.axis!=='horizontal'){if(g.axis==='vertical')suppressUntil=performance.now()+400;return;}
-  suppressUntil=performance.now()+400;
-  const threshold=Math.max(48,Math.min(85,g.card.offsetWidth*.24));
-  if(!cancelled&&Math.abs(g.dx)>=threshold&&Math.abs(g.dx)>Math.abs(g.dy)*1.2)void next(Math.sign(g.dx));
-  else snap(g.card);
+  suppressUntil=performance.now()+700;
+  const threshold=Math.max(48,Math.min(85,g.card.offsetWidth*.24)),step=g.dx<0?1:-1;
+  if(!cancelled&&Math.abs(g.dx)>=threshold&&Math.abs(g.dx)>Math.abs(g.dy)*1.2&&(step>0||state.index>0))void move(step);
+  else void snap();
  }
  root.addEventListener('pointerup',event=>release(event),options);
  root.addEventListener('pointercancel',event=>release(event,true),options);
- // Touch first captures an inner icon implicitly. Moving capture to the card
- // loses that child capture without ending the swipe.
  root.addEventListener('lostpointercapture',event=>{if(gesture?.id===event.pointerId&&event.target===gesture.card)release(event,true);},options);
  dialog.addEventListener('keydown',event=>{
   if(disposed||state.view!=='deck'||event.target.closest('input,select,textarea')||event.altKey||event.ctrlKey||event.metaKey)return;
-  if(event.key==='ArrowRight'){event.preventDefault();void next(1,true);}
-  if(event.key==='ArrowLeft'&&!busy){event.preventDefault();state.previous();render({enter:true,focus:'#artifact-open'});}
+  if(event.key==='ArrowRight'){event.preventDefault();void move(1,true);}
+  if(event.key==='ArrowLeft'){event.preventDefault();void move(-1,true);}
  },options);
+ const resize=new ResizeObserver(()=>{if(!disposed&&!busy&&!gesture)layout();});resize.observe(root);
+ window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',event=>{if(event.matches){for(const a of animations)a.finish();}},options);
  render({enter:true});
- return {destroy(){disposed=true;gesture=null;animation?.cancel();abort.abort();}};
+ return {destroy(){disposed=true;gesture=null;stop();resize.disconnect();abort.abort();}};
 }

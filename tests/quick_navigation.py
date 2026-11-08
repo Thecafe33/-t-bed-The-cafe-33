@@ -27,6 +27,14 @@ with sync_playwright() as p:
    assert abs(result['from']['width']-result['start']['width'])<2 and result['grown']>result['from']['width']*2,result
    assert abs(result['rotation'])>.1,result
    q.keyboard.press('Escape')
+  if motion=='no-preference':
+   brand.click()
+   assert q.locator('.quick-nav-brand .brand-mark').evaluate('e=>e.getAnimations().some(a=>a.effect.getTiming().iterations===Infinity)')
+   q.wait_for_timeout(900)
+   spin=q.locator('.quick-nav-brand .brand-mark').evaluate('e=>e.getAnimations()[0].currentTime')
+   q.wait_for_timeout(100)
+   assert q.locator('.quick-nav-brand .brand-mark').evaluate('e=>e.getAnimations()[0].currentTime')>spin
+   q.keyboard.press('Escape')
   # Wheel and touch gestures cannot move the background; dismissing restores it.
   q.evaluate('window.scrollTo({top:420,behavior:"instant"})');saved=q.evaluate('scrollY');assert saved>0
   tap_brand();assert q.evaluate('getComputedStyle(document.body).position')=='fixed'
@@ -59,12 +67,16 @@ with sync_playwright() as p:
   if motion=='reduce':brand.click()
   q.evaluate("document.querySelector('[data-quick-route=pass]').click()")
   expect(dialog).to_be_hidden();expect(q.locator('#view-pass')).to_be_visible()
-  q.go_back();expect(q.locator('#view-map')).to_be_visible();expect(dialog).to_be_hidden()
-  # Browser history interrupts an expanding wave without leaving an overlay behind.
-  brand.click();q.evaluate("document.querySelector('[data-quick-route=community]').click()");q.go_back();expect(dialog).to_be_hidden();expect(q.locator('#view-map')).to_be_visible()
-  # Closing during a transition must cancel the wave without undoing the route.
+  q.go_back();expect(q.locator('#view-map' if motion=='reduce' else '#view-explore')).to_be_visible();expect(dialog).to_be_hidden()
+  # The route commits only after coverage; cancelling an early choice is safe.
+  q.locator('.app-tabbar [data-route=explore]').click()
+  q.locator('.app-tabbar [data-route=map]').click()
+  brand.click();q.evaluate("document.querySelector('[data-quick-route=community]').click()")
+  if motion=='no-preference':expect(q.locator('#view-map')).to_be_visible()
+  q.go_back();expect(dialog).to_be_hidden();expect(q.locator('#view-map' if motion=='reduce' else '#view-explore')).to_be_visible()
+  previous=q.evaluate('document.body.dataset.tab')
   brand.click();q.evaluate("document.querySelector('[data-quick-route=pass]').click()")
-  q.keyboard.press('Escape');expect(dialog).to_be_hidden();expect(q.locator('#view-pass')).to_be_visible()
+  q.keyboard.press('Escape');expect(dialog).to_be_hidden();expect(q.locator('#view-pass' if motion=='reduce' else f'#view-{previous}')).to_be_visible()
   if motion=='no-preference':
    brand.click();q.evaluate("document.querySelector('[data-quick-route=day]').click()")
    q.emulate_media(reduced_motion='reduce');expect(dialog).to_be_hidden();expect(q.locator('#view-day')).to_be_visible()

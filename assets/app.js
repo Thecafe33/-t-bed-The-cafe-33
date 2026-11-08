@@ -70,7 +70,7 @@ function normalizedTab(hash = location.hash) {
   const aliases = { home: "explore", memories: "community", passport: "pass" };
   return Object.hasOwn(tabTitles, value) ? value : aliases[value] || "explore";
 }
-function activateTab(tab, { focus = false } = {}) {
+function activateTab(tab, { focus = false, reveal = true } = {}) {
   if (activeTab === tab) return;
   window.dispatchEvent(new CustomEvent("oceo-before-route-change",{detail:{tab}}));
   clearInteractionMotion();
@@ -99,20 +99,20 @@ function activateTab(tab, { focus = false } = {}) {
     loadReviews(true);
   }
   window.scrollTo({ top: tabScroll[tab] || 0, behavior: "instant" });
-  revealView(document.querySelector(`.app-view[data-view="${tab}"]`));
+  if(reveal)revealView(document.querySelector(`.app-view[data-view="${tab}"]`));
   window.dispatchEvent(new CustomEvent("oceo-route-change",{detail:{tab}}));
   if (focus)
     document
       .querySelector(`[data-view="${tab}"] h1`)
       ?.focus({ preventScroll: true });
 }
-function navigate(tab) {
+function navigate(tab, {reveal=true} = {}) {
   if (activeTab === tab) {
     window.scrollTo({ top: 0, behavior: reducedMotion() ? "instant" : "smooth" });
     return;
   }
   history.pushState(null, "", `#${tab}`);
-  activateTab(tab, { focus: true });
+  activateTab(tab, { focus: true, reveal });
 }
 window.addEventListener("popstate", () => activateTab(normalizedTab()));
 window.addEventListener("hashchange", () => activateTab(normalizedTab()));

@@ -162,3 +162,31 @@
  .artifact-swipe-card { padding:16px; }
  .artifact-stack:has(.artifact-photo) { height:640px; }
 }
+
+/* A viewing gallery: the central object is front-facing; neighbours recede. */
+.artifact-stack { height:650px;margin:0 -18px;perspective:1200px;perspective-origin:50% 42%;isolation:auto;overflow:hidden; }
+.artifact-swipe-card { inset:10px auto 24px;left:11%;width:78%;padding:20px;border-radius:22px;transform-origin:50% 50%;backface-visibility:hidden;box-shadow:0 15px 28px #173f3617; }
+.artifact-swipe-card[data-deck-layer] { filter:none; }
+.artifact-swipe-card[aria-hidden="true"]>* { visibility:visible; }
+.artifact-swipe-card[data-deck-layer="0"] { cursor:grab; }
+.artifact-swipe-art { width:112px;height:112px;margin:16px auto 8px;border-radius:28px;transform:none; }
+.artifact-swipe-art>.icon { width:74px;height:74px; }
+.artifact-swipe-art>span { font-size:26px;right:-9px;top:-9px; }
+.artifact-swipe-title { font-size:23px; }
+.artifact-swipe-label { display:none; }
+.artifact-photo img { height:180px; }
+.artifact-stack:has(.artifact-photo) { height:730px; }
+@media(min-width:601px) {
+ .townwalk-app dialog.artifact-deck-dialog { width:calc(100% - 48px);max-width:1000px;height:90dvh;max-height:90dvh; }
+ .artifact-deck-dialog .artifact-browser-tools,.artifact-deck-dialog .artifact-browser-status,.artifact-deck-actions,.artifact-guide { max-width:500px;margin-inline:auto; }
+ .artifact-deck-dialog .artifact-index>h2,.artifact-deck-dialog .artifact-deck-intro { text-align:center; }
+ .artifact-swipe-card { width:390px;left:calc(50% - 195px); }
+ .artifact-stack { height:610px;perspective:1500px; }
+}
+@media(max-width:359px) {
+ .artifact-stack { margin-inline:-12px;height:710px; }
+ .artifact-swipe-card { left:10%;width:80%;padding:16px; }
+ .artifact-swipe-title { font-size:21px; }
+ .artifact-stack:has(.artifact-photo) { height:780px; }
+}
+@media(prefers-reduced-motion:reduce) { .artifact-swipe-card { will-change:auto; } }

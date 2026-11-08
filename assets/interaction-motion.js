@@ -14,11 +14,12 @@ export function motion(element,frames,{duration=360,delay=0}={}){
  return animation;
 }
 export function revealArtifact(element,reverse=false){
- motion(element,[{opacity:.15,transform:`perspective(1000px) rotateY(${reverse?55:-55}deg) scale(.97)`},{opacity:1,transform:'perspective(1000px) rotateY(0deg) scale(1)'}],{duration:430});
+ motion(element,[{opacity:.6,transform:`perspective(1200px) rotateY(${reverse?14:-14}deg) scale(.98)`},{opacity:1,transform:'perspective(1200px) rotateY(0deg) scale(1)'}],{duration:580});
 }
 export function dealCards(root){
- [...root.querySelectorAll('.artifact-swipe-card')].reverse().forEach((card,i)=>{
-  motion(card,[{opacity:0,transform:`translateY(22px) rotate(${8-i*5}deg) scale(.94)`},{opacity:1,transform:getComputedStyle(card).transform}],{duration:360,delay:i*45});
+ [...root.querySelectorAll('.artifact-swipe-card')].reverse().forEach(card=>{
+  const target=getComputedStyle(card);
+  motion(card,[{opacity:0,transform:`${target.transform} translateY(16px) scale(.98)`},{opacity:target.opacity,transform:target.transform}],{duration:480,delay:Math.abs(Number(card.dataset.deckLayer))*35});
  });
 }
 export function revealAnswer(element){motion(element,[{opacity:0,transform:'translateY(9px)'},{opacity:1,transform:'translateY(0)'}],{duration:260});}

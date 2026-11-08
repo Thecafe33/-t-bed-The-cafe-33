@@ -53,9 +53,9 @@ export function initQuickNavigation(navigate){
   const symbol=dialog.querySelector('.quick-nav-brand'),to=symbol.getBoundingClientRect();
   animate(symbol,[
    {transform:`translate(${from.x+from.width/2-to.x-to.width/2}px,${from.y+from.height/2-to.y-to.height/2}px) scale(${from.width/symbol.offsetWidth}) rotate(0deg)`},
-   {offset:.76,transform:'translate(0,-4px) scale(1.06) rotate(28deg)'},
-   {transform:'translate(0,0) scale(1) rotate(14deg)'}
-  ],{duration:620,fill:'both'});
+   {transform:'translate(0,0) scale(1) rotate(60deg)'}
+  ],{duration:800,fill:'both'});
+  animate(symbol.querySelector('.brand-mark'),[{transform:'rotate(0deg)'},{transform:'rotate(360deg)'}],{duration:18000,iterations:Infinity,easing:'linear'});
   animate(dialog.querySelector('.quick-nav-wordmark'),[{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{delay:180,duration:300,fill:'backwards'});
   dialog.querySelectorAll('[data-quick-route]').forEach((button,i)=>animate(button,[{opacity:0,translate:'0 20px',scale:'.92'},{opacity:1,translate:'0 0',scale:'1'}],{delay:160+i*45,duration:380,fill:'backwards'}));
   dialog.querySelector(`[data-quick-route="${current}"]`)?.focus({preventScroll:true});
@@ -66,21 +66,23 @@ export function initQuickNavigation(navigate){
   const rect=button.getBoundingClientRect();
   const x=event?.detail?event.clientX:rect.x+rect.width/2,y=event?.detail?event.clientY:rect.y+rect.height/2;
   const radius=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y))+2;
-  wave.style.cssText=`width:${radius*2}px;height:${radius*2}px;left:${x-radius}px;top:${y-radius}px;background:${getComputedStyle(button).getPropertyValue('--nav-color')};`;
-  // Restore the real offset before the router saves it, then lock the new page.
-  // Route changes are immediate; a cancelled wave cannot apply a stale route later.
-  unlockScroll();
-  if(document.body.dataset.tab===expectedTab)window.scrollTo({top:0,behavior:'instant'});
-  navigate(expectedTab);lockScroll();
-  const expansion=animate(wave,[{opacity:1,transform:'scale(0)'},{opacity:1,transform:'scale(1)'}],{duration:440,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+  const origin=`${x}px ${y}px`;
+  wave.style.background=getComputedStyle(button).getPropertyValue('--nav-color');
+  // Keep the current page untouched until the colour completely covers it.
+  const expansion=animate(wave,[{opacity:1,clipPath:`circle(0px at ${origin})`},{opacity:1,clipPath:`circle(${radius}px at ${origin})`}],{duration:560,easing:'cubic-bezier(.32,0,.12,1)',fill:'forwards'});
   if(expansion){try{await expansion.finished;}catch{return;}}
   if(ticket!==sequence||!dialog.open)return;
-  const tab=expectedTab,view=document.querySelector(`.app-view[data-view="${tab}"]`);
-  // Once covered, remove the menu and mist underneath. Fade the same coloured
-  // surface away over the destination instead of abruptly closing a solid wave.
+  const tab=expectedTab;
+  unlockScroll();
+  if(document.body.dataset.tab===tab)window.scrollTo({top:0,behavior:'instant'});
+  navigate(tab,{reveal:false});lockScroll();
+  // Let layout/map sizing settle behind an opaque viewport-sized colour layer.
+  // No page-wide blur or giant scaled bitmap competes with the reveal.
+  if(!reducedMotion())await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  if(ticket!==sequence||!dialog.open)return;
+  const view=document.querySelector(`.app-view[data-view="${tab}"]`);
   dialog.classList.add('is-revealing');brand.classList.remove('quick-nav-origin-hidden');
-  animate(view,[{opacity:.7,filter:'blur(3px)',translate:'0 6px'},{opacity:1,filter:'blur(0)',translate:'0 0'}],{duration:360});
-  const reveal=animate(wave,[{opacity:1},{opacity:0}],{duration:360,fill:'forwards'});
+  const reveal=animate(wave,[{opacity:1},{opacity:0}],{duration:520,easing:'cubic-bezier(.25,0,.25,1)',fill:'forwards'});
   if(reveal){try{await reveal.finished;}catch{return;}}
   if(ticket!==sequence||!dialog.open)return;
   close(false);view?.querySelector('h1')?.focus({preventScroll:true});
@@ -95,5 +97,5 @@ export function initQuickNavigation(navigate){
  });
  window.addEventListener('oceo-route-change',event=>{if(dialog.open&&expectedTab!==event.detail.tab)close(false);else if(!dialog.open)cancelAnimations();});
  window.addEventListener('oceo-language-change',()=>brand.setAttribute('aria-label',translateText('Mở điều hướng nhanh')));
- window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',event=>{if(event.matches){const selected=expectedTab;cancelAnimations();if(selected){close(false);document.querySelector(`.app-view[data-view="${selected}"] h1`)?.focus({preventScroll:true});}}});
+ window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',event=>{if(event.matches){const selected=expectedTab;cancelAnimations();if(selected){unlockScroll();navigate(selected,{reveal:false});close(false);document.querySelector(`.app-view[data-view="${selected}"] h1`)?.focus({preventScroll:true});}}});
 }
