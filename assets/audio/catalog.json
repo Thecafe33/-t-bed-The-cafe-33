@@ -1,0 +1,716 @@
+{
+  "zh/place-nha-trung-bay-van-hoa-oc-eo": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "48fe8c2038d7ccdff6f5d40832adee9ecf0dbbfc6fa8e0309b0334dba95c1fda",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.36,
+    "bytes": 146396
+  },
+  "vi/place-nha-trung-bay-van-hoa-oc-eo": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "6f040132490212c975bac50d4caec79a97cc06d65ef9fe89f8f32390aa1ec8d9",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 29.57,
+    "bytes": 177644
+  },
+  "en/place-nha-trung-bay-van-hoa-oc-eo": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "facdddf40eb2bed4d3db9f866506fff5f7680a3cc929a3b9472ded76c0dfa9f7",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.3,
+    "bytes": 140060
+  },
+  "zh/place-chua-linh-son": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "ba190d4a6add6e5e91e083ad8f6bc38239e1d3e962f9264324885b883b2fc949",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 27.86,
+    "bytes": 167420
+  },
+  "en/place-chua-linh-son": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "c3fa3eccf6fa82b786a1ac160de5633392ca2a683958c03e0c82140478605606",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 25.08,
+    "bytes": 150716
+  },
+  "vi/place-nha-trung-bay-cu-ba-the": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "41a9242a22ac3caafdb6f2c20d81782289d5f9ac40a36d338f7b0e9a7dfd1f38",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 30.72,
+    "bytes": 184556
+  },
+  "zh/place-nha-trung-bay-cu-ba-the": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "ec2efdb203a623e3705c409bbabfed78d70331a0343f84788c88c17db16073d1",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.52,
+    "bytes": 159356
+  },
+  "en/place-nha-trung-bay-cu-ba-the": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "d4aa8acf33c806fc144e10666e59b705152a69da62032fa5c378ec318d55bdb1",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.88,
+    "bytes": 161516
+  },
+  "vi/place-chua-linh-son": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "efdc7fe0c35a76e744a1e20ec388cdaf09633402a465d3e2c402de2468f70b76",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 31.15,
+    "bytes": 187148
+  },
+  "zh/place-go-sau-thuan": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "e7f79dba210cb8dc315dc2516e918b2dc29a60906e75d4555c2d4b96531380e0",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.62,
+    "bytes": 141932
+  },
+  "vi/place-go-sau-thuan": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "2acbdd7149fe76a06b8b2af6c3cfba6c0a7e11385e1f895dfd19fc52bd101f3e",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 29.02,
+    "bytes": 174332
+  },
+  "en/place-go-sau-thuan": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "9afceee32732c441e14d8d86698f401e642aa5e50494ae56068bfc1b3d4ed75a",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.59,
+    "bytes": 141788
+  },
+  "zh/place-go-ut-trach": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "b0d0075395c6b8a1f5e70f3fc92f52d71f0b8263057e89c1bdd00ce39497060d",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.66,
+    "bytes": 136172
+  },
+  "vi/place-go-ut-trach": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "d91bcfd4b27d55dd68482d773a49bcfabc0c431d01b2d540a465c6bbc7a61960",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 28.1,
+    "bytes": 168860
+  },
+  "en/place-go-ut-trach": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "ecf98c27a6fa09041e57c71c384c81cac59b5e821c696f658937ca5986cb833a",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 21.7,
+    "bytes": 130412
+  },
+  "zh/place-linh-son-bac": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "a25224b2f0493fa2e4c35b9272c7d13f376379d7b918288af633d555b8a09765",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.89,
+    "bytes": 149564
+  },
+  "vi/place-linh-son-bac": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "9b716d7389a63f7f4efc985622e77f8c4639cdea635348deda706c3aae5f92c5",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 30.05,
+    "bytes": 180524
+  },
+  "en/place-linh-son-bac": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "25e48098949eaa47440ee99dee4c7e4c59a8a87c9ad82c86f28674cbe1e302a4",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 25.27,
+    "bytes": 151868
+  },
+  "vi/place-linh-son-nam": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "edc057b5c100f6dffb8d3d6cb6062243b560a55ad111eafad961b4d46dc7954d",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 30.79,
+    "bytes": 184988
+  },
+  "zh/place-linh-son-nam": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "36f68d33b430308143b6c17086a3da07ea80ab91205b79f9a739bad8d5e087bd",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.53,
+    "bytes": 147404
+  },
+  "vi/place-go-cay-thi": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "8858be0000aa416363ca14896e85d6c1e340763b55e40eb6544ce163f79ba875",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 28.15,
+    "bytes": 169148
+  },
+  "zh/place-go-cay-thi": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "bc26117892cd81e6d5edb80c15f398d86385f6bc6f32c6de4940c3eea68ec573",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.98,
+    "bytes": 144092
+  },
+  "en/place-go-cay-thi": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "f5249970b4bcd50cbdb9c2308e9b85660d1dcfc2fe7d36caa91af0adb18db6f0",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.28,
+    "bytes": 139916
+  },
+  "en/place-linh-son-nam": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "bbcaf85561f915e691f00690ca1068f8d08a9a8def509674d35703b9a491a009",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 25.18,
+    "bytes": 151292
+  },
+  "zh/place-go-giong-cat": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "5a785acc55b79035f2e8fb62e1d6f176716796f255971abf255f16c9c367670d",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 25.13,
+    "bytes": 151004
+  },
+  "vi/place-go-giong-cat": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "158a612be34f2aa1ea5c27e35079fb3767c273f71fd5c0115597ca1c91dd3a34",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 29.23,
+    "bytes": 175628
+  },
+  "vi/place-go-giong-trom": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "5d37b4f589dc062b4906b27b9776b34c14221bbf9e693689988197d4a09aa852",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 27.67,
+    "bytes": 166268
+  },
+  "zh/place-go-giong-trom": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "edf64e9dba488c11ad13fb083412e8a9e54d8411d75edc4c7667e96f2a7a2127",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.17,
+    "bytes": 145244
+  },
+  "en/place-go-giong-cat": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "9ed4fdd071bb1c50f1550ff697f3d487b99d45d22c32d4c074588f7c045d0e68",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 25.58,
+    "bytes": 153740
+  },
+  "en/place-go-giong-trom": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "294b8952ccb448c2cc82cde64190e1a0728fe5ec47bc9c52329b9382a2472b46",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.32,
+    "bytes": 134156
+  },
+  "zh/place-go-oc-eo": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "1ee71f99d623aeaee9115eacf7430d1540954394640b386f2fad49befb8e93e8",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.11,
+    "bytes": 156908
+  },
+  "en/place-go-oc-eo": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "5dbd43ae926368711ed9d0a927ccd91d0a0a15d609c7cc298f5599b368126796",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.5,
+    "bytes": 159212
+  },
+  "vi/place-lung-lon": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "e9d8f1548b9efbf143363ad3b4fc2c3c09a3fbf05c863e2a5e51f9c20a68676a",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.9,
+    "bytes": 161660
+  },
+  "zh/place-lung-lon": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "3e52f03934716dad2b1405361c04c68d3915945ced73cfb60bc8c1690e19e068",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.02,
+    "bytes": 144380
+  },
+  "vi/place-go-oc-eo": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "e73aca7902c8e84319406a0e055ca1a471e99475dee5057cd05d5320e804c4cc",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 28.9,
+    "bytes": 173612
+  },
+  "en/place-lung-lon": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "c1950597c0dbab438efa8652fcce78d249e185bca30dde69f15870a41fb800d8",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.14,
+    "bytes": 139052
+  },
+  "zh/place-hao-thanh-co": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "c2e007c87100233fc45846ee330b7b45de6cba555bb27cf1dd5547187939c0d3",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.47,
+    "bytes": 159068
+  },
+  "en/place-hao-thanh-co": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "4c13452310074d6e3aa64a8623f8f230a69b5277c3b49ae13d18dddb54a94690",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.65,
+    "bytes": 148124
+  },
+  "vi/place-hao-thanh-co": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "d48bb315ecb7c8abf180bbfe500bba510822cf677e31cc3f0fe6e050bfcc8a69",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 28.08,
+    "bytes": 168716
+  },
+  "zh/place-go-tu-tram": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "607cedb6e393e9b16fa460db12b25a32b1ff4369e6d1c1ab7917b053f801aa6a",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.78,
+    "bytes": 136892
+  },
+  "en/place-go-tu-tram": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "e847ab51433223451e1284fcfaee2ab069e042c16a4e03d0e709bc54e48249f9",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.03,
+    "bytes": 132428
+  },
+  "vi/place-go-tu-tram": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "e87e3649631261407a8965ed6be4171640d4559b59bfdc60891cc6c8df3dacd8",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.5,
+    "bytes": 159212
+  },
+  "en/place-go-ut-anh": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "8371df68031276f28b91b8f4f2717a658b3ac5aa794e29b32814a04808ee243a",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.92,
+    "bytes": 137756
+  },
+  "vi/place-go-ut-anh": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "3e65268534fe3abcb64ff642339a677d9c4f5ff06065a3fd999db87386704609",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 27.62,
+    "bytes": 165980
+  },
+  "zh/place-go-ut-anh": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "e84fcf6a23692f14cce6856c2cc4080e21b503de441bb98d3f36b5956dc787b3",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.82,
+    "bytes": 137180
+  },
+  "zh/place-go-cay-tram": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "4488d649ea6fb2e1098a762dd9bb9ece2d358cf7aed800f3b234462134fd3f40",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.11,
+    "bytes": 138908
+  },
+  "vi/place-the-cafe-33": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "18f595c3fa386700c11db8fd8ab4fe308be1e0bb21342bd7b102e8071481ae6c",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 28.94,
+    "bytes": 173900
+  },
+  "en/place-go-cay-tram": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "8b24f09b20add8002fe9328caee1ada20cf45bdb54e92449a92093878a380594",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.02,
+    "bytes": 138332
+  },
+  "zh/place-the-cafe-33": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "a17ab11ffded030587a117fb1d11bacc08117b8f91931c3d2167f789b4db745d",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.18,
+    "bytes": 139340
+  },
+  "vi/place-go-cay-tram": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "0f311e5e791809bde499c35bb70d587c4b317b04b771af1686941b6e4aa1ed71",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 28.7,
+    "bytes": 172460
+  },
+  "en/place-the-cafe-33": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "1d183cdba5d7f931f70da6126fabba364e062d7023a879a3354b3c2d80575aa8",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.64,
+    "bytes": 142076
+  },
+  "zh/place-xofa": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "4540608486e8025b4f9aed909d1e0652b962f65a089500b29cb24025d0e198e1",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.14,
+    "bytes": 157052
+  },
+  "vi/place-xofa": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "089d410e5101847f735327f4bce71ad423e75a9e04292650d2ea5984a0c4d62b",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 29.42,
+    "bytes": 176780
+  },
+  "vi/place-phuong-sang": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "5a0dc133b0cd1cfa8ba1d7f4c66ad5bed220332b16be13e94332b77bf380bcca",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.78,
+    "bytes": 160940
+  },
+  "en/place-phuong-sang": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "f4fc6018327ab681f7b8c6c00c2ea54ce6ad2b09818b04ee9e9a7ef59820a0f7",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.26,
+    "bytes": 139772
+  },
+  "zh/place-phuong-sang": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "96bd8a2c10e07c4d44e27fa0a51eb79b60ccc5fa81ddc0d0d6d6c24224b219ee",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.13,
+    "bytes": 133004
+  },
+  "en/place-ut-map": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "369d917d814d26a4e1f60d1e37ac57a481d2e2e448b62e861de8b18f4323f140",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.78,
+    "bytes": 136892
+  },
+  "en/place-xofa": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "3269acee6c00287eb547200c5f8f006f3e0ad948b7de8c0b53c7bce6b103de79",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 25.61,
+    "bytes": 153884
+  },
+  "zh/place-ut-map": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "a6c9d693ea057d7e090ad5dff409971ea78ff1ce7f3f83d94c852dd5311d4baf",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.34,
+    "bytes": 134300
+  },
+  "vi/place-bun-cua-oc-eo": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "5fcaaf8319236017cc370bb2a724145537dfeabf857627ccbeec1071a855d06f",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 29.71,
+    "bytes": 178508
+  },
+  "vi/place-ut-map": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "417664704c442b7f0947450db3b58fffafd691d17c634350731f4aedf54f94e9",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 27.14,
+    "bytes": 163100
+  },
+  "zh/place-bun-cua-oc-eo": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "5c93a0884e32d03a9470a958868f67de51d8e1778267181a291b3e17b788cf5e",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.18,
+    "bytes": 139340
+  },
+  "en/place-bun-cua-oc-eo": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "8d2e331df6f9a4f4937e12eb17b331cab4e72948b84c88f6648350a369003eed",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.64,
+    "bytes": 142076
+  },
+  "zh/place-banh-xeo-oc-eo": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "b2397cb7be5e8b1ffc52c0077a525d15dbdd6c7e7076b402586f41006a8140e3",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.13,
+    "bytes": 133004
+  },
+  "vi/place-du-du-dam-oc-eo": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "0d79701b0e1a1c0dc6d6ede05989d2ca5913f9d1d2402a24329f1925ee57094b",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 25.01,
+    "bytes": 150284
+  },
+  "vi/place-banh-xeo-oc-eo": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "42254961234f5dbf5cc6934d82afead747eaf7d18810f737a5ac359c047356d9",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.64,
+    "bytes": 160076
+  },
+  "zh/place-du-du-dam-oc-eo": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "6b456395688674bc87ed84e07b3de1036c5acfd7f809970ab7445ae50e844ca7",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.03,
+    "bytes": 132428
+  },
+  "vi/place-san-vuon-lieu": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "733e277283a0c5eb2ed86b85c19eb0b0aca389538db9675376fa31089fbd9a8e",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.46,
+    "bytes": 146972
+  },
+  "en/place-banh-xeo-oc-eo": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "a5bbcdccfc87ea7c2e90de81c66915f4cc134b6e158e8c8935a5ce9bd25aee93",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.09,
+    "bytes": 138764
+  },
+  "zh/place-san-vuon-lieu": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "3a09adc77b559e6b0eed81bf2b4dbe1b0781c1a8cb32c23e11916cdf779675a6",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 20.81,
+    "bytes": 125084
+  },
+  "en/place-san-vuon-lieu": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "f179b93079e465672a5f398d6e69e238e49136dede75615337aa8635a03c948f",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 21.14,
+    "bytes": 127100
+  },
+  "en/place-du-du-dam-oc-eo": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "6e4b78ca2af8398815f73060f55f9e6e800154cfb8ecb4c6b1fcb6d8baa41f48",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 21.29,
+    "bytes": 127964
+  },
+  "vi/place-cho-oc-eo": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "b5ddb26b1d301f472a3f4f73941deff1ebd36d86f4e730183019443c15a44546",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.9,
+    "bytes": 161660
+  },
+  "en/place-cho-oc-eo": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "c19a05b8a48705e4e627326d3844bb48a982ca2df329b88e1e6ca985b4c7d1af",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.14,
+    "bytes": 145100
+  },
+  "zh/place-cho-oc-eo": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "f0447b1e669d7e6cec836836714e9a7d9f6e4cf34ac4b7705bff83e22c862fe5",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.38,
+    "bytes": 158492
+  },
+  "zh/artifact-nandin-giong-cat": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "29a38b87fa791336ff7597372c8b5ac73ae1e0f8adf88d78c89793188574123b",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.55,
+    "bytes": 147548
+  },
+  "en/artifact-nandin-giong-cat": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "b9e2d30cb5cdcdec9faf0a1ff77c4b95f532063bf37c15c212f5241a2f4bc857",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.16,
+    "bytes": 139196
+  },
+  "vi/artifact-nandin-giong-cat": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "113699f44a2cffb58fed086329716851eeabdc2a98548fd835bbd3f3a5c9b669",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 30.58,
+    "bytes": 183692
+  },
+  "zh/artifact-phat-linh-son-bac": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "17f60944988d8ff974d94bd160e4215deec92d09b01fa897a66b19525cfe87bf",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.71,
+    "bytes": 160508
+  },
+  "en/artifact-phat-linh-son-bac": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "b5300c284e2abf94c09cffc7d25a76ccfcc8d9be0e5e8de1c7d9da9d09135413",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.52,
+    "bytes": 141356
+  },
+  "vi/artifact-phat-linh-son-bac": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "d7b0a6cebd076632aa10f56cd32fa1757afb67e18dbdee977578d376c537878f",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 30.46,
+    "bytes": 182972
+  },
+  "en/artifact-dau-phat-naga": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "57be2fdc12bae6ea8190cd972274e8a7f70e35ab3e5728b09007845d2b3152e9",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.34,
+    "bytes": 146252
+  },
+  "zh/artifact-dau-phat-naga": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "ea78a86e3a5edcf64062cbbde42d3e6b78a211dfcbbf3cc4f06af38a122a9c47",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.69,
+    "bytes": 142364
+  },
+  "vi/artifact-dau-phat-naga": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "e4553b7e9e7be36a35c2608f9f803507476dc0cf8a1359920a7098d33adb672e",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 29.21,
+    "bytes": 175484
+  },
+  "zh/artifact-mo-vo-cay-tram": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "5cf05a3ef8d790496518a1d6efb74e0d128d905415481a39fceba4b3dd170579",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.46,
+    "bytes": 135020
+  },
+  "vi/artifact-mo-vo-cay-tram": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "b17a08a1a94c1f8cb7b7814b33776b16e9343c993ec10f4183bf92925a355a56",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 30.0,
+    "bytes": 180236
+  },
+  "vi/artifact-hat-chuoi-go-oc-eo": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "e0f5048682fc80e42c1fdfdbee6dc949d93e833cb89f6ef53ec6346594294c96",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 28.44,
+    "bytes": 170876
+  },
+  "zh/artifact-hat-chuoi-go-oc-eo": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "70d6950609033a217733fee30f36524cd2f7db608595c08c31183c9b8068f49e",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.9,
+    "bytes": 143660
+  },
+  "en/artifact-mo-vo-cay-tram": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "7368584adff0572b3c5fa1c04fda9d9809a3d2981c1f0b4ff0c636ec2c194266",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.86,
+    "bytes": 143372
+  },
+  "vi/artifact-hat-chuoi-lung-lon": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "05afc46566afa9307f972de1b2ac8367d8c0ac4d8b19bb8860cdca54656cd099",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 27.05,
+    "bytes": 162524
+  },
+  "en/artifact-hat-chuoi-lung-lon": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "e537389b5e4f9088afa48a427787592278370f093576d7b62e65f3cf3d5aac2a",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.06,
+    "bytes": 138620
+  },
+  "zh/artifact-hat-chuoi-lung-lon": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "de77992ef5f52916cb5327edb0c5d8b117c986b3e4b90e85ae57d5b82a86ebe2",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.14,
+    "bytes": 139052
+  },
+  "en/artifact-hat-chuoi-go-oc-eo": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "676bc1f9a73f66183f39f4425376db913f11023b2a245ce716c72eb7e2d566f4",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.74,
+    "bytes": 142652
+  },
+  "zh/artifact-hat-chuoi-giong-trom": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "d5a15d7fca80965b119cdfa592b811f4bcf025fd03b7ea297e50843da338ce5a",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 24.96,
+    "bytes": 149996
+  },
+  "en/artifact-hat-chuoi-giong-trom": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "1dbb871cd11204234964a30ac92f4e6a9896be2b49eb37d939fcea5b9bd0471f",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 21.24,
+    "bytes": 127676
+  },
+  "en/artifact-mo-vo-linh-son-nam": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "232ffb50fea81507caba5f5402bca62cc095195e5b0bc37cb446f9337d6bb976",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 23.64,
+    "bytes": 142076
+  },
+  "vi/artifact-hat-chuoi-giong-trom": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "48951280ec407abfb4f84c1d8c54a42fe4aea1c9b3342ecf7cf57656a2642831",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 27.22,
+    "bytes": 163532
+  },
+  "zh/artifact-mo-vo-linh-son-nam": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "42f9958fe4a05b869f6aef5f1a4cf85cd05f5363687d842c3dd65c5fe1477ec8",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 22.27,
+    "bytes": 133868
+  },
+  "vi/artifact-mo-vo-linh-son-nam": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "bbbaf252efc61c66b7591d958b291247adf7112e9d9da71ecee71b405d161eab",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 28.61,
+    "bytes": 171884
+  },
+  "zh/artifact-linga-yoni-linh-son": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "eba64afd4ab51db22754561bc33ea92fd0c743411cc61b7de67fe1c66fc94568",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.66,
+    "bytes": 160220
+  },
+  "vi/artifact-linga-yoni-linh-son": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "3fd2e3ff2357acd01a4b086c4502f1c15544e89a790c6cf7909601bd5a007747",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 30.77,
+    "bytes": 184844
+  },
+  "en/artifact-linga-yoni-linh-son": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "10fe485bf18ac8b1dee21cbfa21d7f3c7f92fd19d6eda5279f3b66e111f7d33c",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 26.02,
+    "bytes": 156332
+  }
+}

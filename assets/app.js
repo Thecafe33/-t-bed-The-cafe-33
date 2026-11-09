@@ -1,4 +1,6 @@
 import {initQuickNavigation} from './quick-navigation.js';
+import {mountDiscovery,discoveryEntryHTML} from './discovery.js';
+import {narrationHTML,initNarration,stopNarration} from './narration.js';
 import {clearInteractionMotion,revealArtifact,revealAnswer,celebrateStamp} from './interaction-motion.js';
 import {
   HERITAGE_REFERENCE_URL,
@@ -53,6 +55,7 @@ let activeTab = null,
 history.scrollRestoration = "manual";
 const artifactDeckState=new ArtifactDeckState();
 let artifactPageData="";
+let discoveryUI=null;
 let artifactDeckUI=null,storyCreatorUI=null,storyProfileSignature='',profileEpoch=0,modalEpoch=0,navigationEpoch=0;
 const tabScroll = {};
 const tabTitles = {
@@ -62,6 +65,7 @@ const tabTitles = {
   pass: "Óc Eo Pass",
   community: "Cộng đồng",
   artifacts: "Theo dấu cổ vật",
+  discovery: "Khám phá cổ vật",
 };
 const $ = (s) => document.querySelector(s),
   modal = $("#modal"),
@@ -100,6 +104,7 @@ function activateTab(tab, { focus = false, reveal = true } = {}) {
     showPassport();
   if (tab === "map") showTownMap();
   if (tab === "artifacts") renderArtifactPage();
+  if (tab === "discovery"&&!discoveryUI)discoveryUI=mountDiscovery($("#discovery-content"));
   if (tab === "community" && !reviewsRequested) {
     reviewsRequested = true;
     loadReviews(true);
@@ -180,6 +185,7 @@ async function saveProfile() {
   }
 }
 function openModal(kicker, html, view = "generic") {
+  stopNarration();
   clearInteractionMotion();
   modalEpoch++;
   storyCreatorUI?.destroy();storyCreatorUI=null;storyProfileSignature='';
@@ -199,6 +205,7 @@ function openModal(kicker, html, view = "generic") {
   body.scrollTop = 0;
 }
 function dismissModal(){
+  stopNarration();
   if(modal.dataset.view==="artifact"){showArtifactIndex();return;}
   modal.close();
 }
@@ -220,6 +227,7 @@ modal.addEventListener("click", (ev) => {
   }
 });
 modal.addEventListener("close", () => {
+  stopNarration();
   clearInteractionMotion();
   modalEpoch++;
   storyCreatorUI?.destroy();storyCreatorUI=null;storyProfileSignature='';
@@ -460,11 +468,12 @@ function renderArtifactPage(){
  const root=$("#artifact-page-content");
  artifactPageData=JSON.stringify(site.places);
  artifactDeckUI?.destroy();
- root.innerHTML=artifactIndexHTML(site.places,artifactDeckState.selected,{page:true});
+ root.innerHTML=artifactIndexHTML(site.places,artifactDeckState.selected,{page:true})+discoveryEntryHTML();
  hydrate(root);
  artifactDeckUI=mountArtifactDeck({root,dialog:$("#view-artifacts"),state:artifactDeckState,places:site.places,onOpen:showArtifact});
 }
 function showArtifactIndex(selected=artifactDeckState.selected){
+ stopNarration();
  const returning=modal.open&&modal.dataset.view==="artifact";
  const available=artifactsForPlaces(site.places);
  const next=selected==='all'||available.some(a=>a.placeId===selected)?selected:'all';
@@ -493,6 +502,7 @@ function placeDetail(id) {
       : "ÓC EO / ĐIỂM DỪNG",
     `
  <div class="eyebrow">${e(p.label)}</div><h2>${e(p.name)}</h2>
+ ${narrationHTML('place',p.id)}
  ${p.accessWarning ? `<aside class="access-warning" aria-label="Lưu ý đường đi"><strong>${icon("compass")} Lưu ý đường đi</strong><p>${e(p.accessWarning)}</p>${p.collectible === false ? "<small>Điểm tùy chọn · không cần ghé để hoàn thành Óc Eo Pass.</small>" : ""}</aside>` : ""}
  ${p.bookingNotice ? `<aside class="booking-notice"><strong>${icon("coffee")} Nghỉ đúng lúc. Đặt trước nhé.</strong><p>${e(p.bookingNotice)}</p>${safeURL(p.bookingUrl) ? `<a class="button dark" id="book-stop" href="${e(safeURL(p.bookingUrl))}" target="_blank" rel="noopener noreferrer">${e(p.bookingLabel || "Đặt lịch trước")} ${icon("arrowup")}</a>` : ""}</aside>` : ""}
  ${!p.recordType && p.aliases?.length ? `<p class="detail-alias">Còn tìm thấy bằng: ${e(p.aliases.join(" · "))}</p>` : ""}
@@ -580,7 +590,7 @@ function journeyShareURL(){
 }
 function renderCampaign(){
   const state=journeyState(site,profile.badges),active=journeyIsActive();
-  $('#campaign-home').innerHTML=campaignHomeHTML({active,count:state.count,total:state.total,canStory:state.canStory});
+  $('#campaign-home').innerHTML=campaignHomeHTML({active,count:state.count,total:state.total,canStory:state.canStory})+discoveryEntryHTML();
   $('#campaign-journey').innerHTML=journeyHTML(site,profile.badges,{active});
   $('#journey-map-bar').innerHTML=`<button data-journey-action="${mapJourneyOnly?'all-map':'map'}" aria-pressed="${mapJourneyOnly}">${icon(mapJourneyOnly?'check':'map')}<span>${mapJourneyOnly?'Đang xem ba chặng':'Xem ba chặng theo dấu cổ vật'}</span></button>${mapJourneyOnly?'<button class="text-button" data-journey-action="all-map">Xem toàn bộ địa điểm</button>':''}`;
   if(storyCreatorUI&&storyProfileSignature!==JSON.stringify(state.pass.earned.map(p=>p.id))){
@@ -1329,6 +1339,8 @@ document.addEventListener("click", (ev) => {
   }
   const artifact=ev.target.closest("[data-artifact]");
   if(artifact){showArtifact(artifact.dataset.artifact);return;}
+  const discoveryRecord=ev.target.closest('[data-discovery-record]');
+  if(discoveryRecord){navigate('artifacts');showArtifact(discoveryRecord.dataset.discoveryRecord);return;}
   const mode=ev.target.closest("[data-artifact-mode]");
   if(mode){const a=getArtifact(mode.dataset.id);if(a&&modal.dataset.view==="artifact"){
     body.querySelectorAll("[data-artifact-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b===mode)));
@@ -1455,4 +1467,5 @@ window.addEventListener('oceo-language-change', () => {
 initI18n();
 initHeader();
 initEffects();
+initNarration();
 initQuickNavigation(navigate);

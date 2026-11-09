@@ -3,12 +3,18 @@ const APP_ROOT = new URL('./', self.location.href);
 const INDEX_URL = new URL('index.html', APP_ROOT).href;
 const ASSETS_PATH = new URL('assets/', APP_ROOT).pathname;
 const CACHE_PREFIX = `oceo-townwalk:${encodeURIComponent(APP_ROOT.pathname)}:`;
-const CACHE = CACHE_PREFIX + '2026-11-08-v38';
+const CACHE = CACHE_PREFIX + '2026-11-09-v39';
 const CORE = [
   "index.html",
   "assets/boot.js",
   "assets/header.js",
   "assets/scroll-navigation.js",
+  "assets/discovery.js",
+  "assets/discovery-messages.js",
+  "assets/discovery.css?v=20261109",
+  "assets/narration.js",
+  "assets/narration-scripts.js",
+  "assets/narration.css?v=20261109",
   "assets/header.css?v=20261108-stable",
   "assets/style.css",
   "assets/app-shell.css",
@@ -101,6 +107,33 @@ self.addEventListener("fetch", (event) => {
   const request = event.request,
     u = new URL(request.url);
   if (request.method !== "GET" || u.origin !== self.location.origin) return;
+  // Native audio controls send byte ranges, including after seeking. Cache one
+  // complete first-party track on demand, then serve exact ranges even offline.
+  // Narration is intentionally NOT part of the installation's mandatory download.
+  if(u.pathname.startsWith(ASSETS_PATH+'audio/')&&u.pathname.endsWith('.mp3')){
+    event.respondWith((async()=>{
+      const cache=await caches.open(CACHE);
+      let full=await cache.match(u.href);
+      if(!full){
+        full=await fetch(new Request(u.href,{credentials:'same-origin'}));
+        if(full.status!==200)return full;
+        try{await cache.put(u.href,full.clone());}catch{/* Listening works even if storage is full. */}
+      }
+      const range=request.headers.get('range');
+      if(!range)return full;
+      const bytes=await full.arrayBuffer(),size=bytes.byteLength;
+      const match=/^bytes=(\d*)-(\d*)$/.exec(range);
+      if(!match||(!match[1]&&!match[2]))return new Response(null,{status:416,headers:{'Content-Range':`bytes */${size}`}});
+      const start=match[1]?Number(match[1]):Math.max(0,size-Number(match[2]));
+      const end=match[1]&&match[2]?Math.min(size-1,Number(match[2])):size-1;
+      if(start> end||start>=size)return new Response(null,{status:416,headers:{'Content-Range':`bytes */${size}`}});
+      return new Response(bytes.slice(start,end+1),{status:206,headers:{
+        'Content-Type':'audio/mpeg','Accept-Ranges':'bytes',
+        'Content-Range':`bytes ${start}-${end}/${size}`,'Content-Length':String(end-start+1),
+      }});
+    })());
+    return;
+  }
   if (
     request.mode === "navigate" &&
     (u.pathname === APP_ROOT.pathname || u.pathname === new URL(INDEX_URL).pathname)
