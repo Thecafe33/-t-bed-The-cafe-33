@@ -96,6 +96,7 @@ function activateTab(tab, { focus = false, reveal = true } = {}) {
   $(".header-deck").toggleAttribute("aria-current",tab==="artifacts");
   if(tab==="artifacts")$(".header-deck").setAttribute("aria-current","page");
   document.body.dataset.tab = tab;
+  document.documentElement.classList.toggle("discovery-locked",tab==="discovery");
   document.title = `${tabTitles[tab]} — Óc Eo townwalk`;
   if (
     tab === "pass" &&
@@ -110,7 +111,7 @@ function activateTab(tab, { focus = false, reveal = true } = {}) {
     loadReviews(true);
   }
   window.scrollTo({ top: tabScroll[tab] || 0, behavior: "instant" });
-  if(reveal)revealView(document.querySelector(`.app-view[data-view="${tab}"]`));
+  if(reveal&&tab!=="discovery")revealView(document.querySelector(`.app-view[data-view="${tab}"]`));
   window.dispatchEvent(new CustomEvent("oceo-route-change",{detail:{tab}}));
   if (focus)
     document
