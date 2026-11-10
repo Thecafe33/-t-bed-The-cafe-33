@@ -333,5 +333,14 @@ export const EXTRA_MESSAGES = [
 ["Xem lại", "Previous", "上一张"],
 ["Soi kỹ thẻ này", "Explore this card", "深入了解此卡片"],
 ["Thẻ tiếp", "Next card", "下一张"],
-["Quẹt để đổi thẻ, chạm để mở chi tiết.", "Swipe to change cards. Tap to open the details.", "滑动切换卡片，轻触打开详情。"]
+["Quẹt để đổi thẻ, chạm để mở chi tiết.", "Swipe to change cards. Tap to open the details.", "滑动切换卡片，轻触打开详情。"],
+["Chỉ đường", "Directions", "导航"],
+["Tìm trên Google Maps", "Find on Google Maps", "在Google地图中查找"],
+["Trên bản đồ", "On the map", "在地图上"],
+["Có vị trí trên bản đồ", "On the map", "地图上有位置"],
+["Đang bổ sung vị trí", "Location pending", "位置待补充"],
+["Hidden gem · đường núi", "Hidden gem · mountain path", "隐藏景点 · 山路"],
+["Cà phê · nghỉ chân", "Coffee · rest stops", "咖啡 · 歇脚"],
+["Xem bản đồ toàn màn hình", "Full-screen map", "全屏地图"],
+["Thoát bản đồ toàn màn hình", "Exit full-screen map", "退出全屏地图"],
 ];

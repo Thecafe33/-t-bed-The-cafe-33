@@ -7,6 +7,10 @@ const paths = {
   search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
   locate: '<circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>',
   expand: '<path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/>',
+  fullscreen: '<path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><path d="m4 4 6 6m10-6-6 6m6 10-6-6M4 20l6-6"/>',
+  shrink: '<path d="M10 4v6H4M14 4v6h6M14 20v-6h6M10 20v-6H4"/>',
+  fit: '<path d="M4 8V4h4m8 0h4v4m0 8v4h-4m-8 0H4v-4"/><circle cx="12" cy="12" r="2.5"/>',
+  route: '<path d="M3 11 21 3l-8 18-2-8z"/>',
 
   sound: '<path d="m3 9 5 0 5-5v16l-5-5H3Zm13-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>',
   soundoff: '<path d="m3 9 5 0 5-5v16l-5-5H3Zm14 0 5 6m0-6-5 6"/>',

@@ -6,7 +6,7 @@ const footway=kind=>['path','footway','track','steps','cycleway'].includes(kind)
 const forest=kind=>['wood','forest','scrub','orchard'].includes(kind);
 function addPatterns(svg){
  const defs=document.createElementNS(NS,'defs');
- defs.innerHTML='<pattern id="town-fields" width="17" height="17" patternUnits="userSpaceOnUse"><rect width="17" height="17" fill="#edf0d7"/><path d="m-3 17 20-20m-4 24 12-12" stroke="#dce3bb" stroke-width=".7"/></pattern><pattern id="town-grove" width="23" height="23" patternUnits="userSpaceOnUse"><rect width="23" height="23" fill="#c8d8aa"/><path d="M11 8c-4 0-5 4-2 6-3 2-1 5 2 4 3 1 5-2 2-4 3-2 2-6-2-6Z" fill="#b1c596"/><path d="M11 15v5" stroke="#91ab73" stroke-width=".7"/></pattern>';
+ defs.innerHTML='<pattern id="town-fields" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#eef6d2"/><path d="m-2 16 18-18m-2 22 12-12" stroke="#e1edb8" stroke-width="1"/></pattern><pattern id="town-grove" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#d3ebc4"/><circle cx="10" cy="9" r="4.2" fill="#bfe0aa"/><circle cx="3" cy="17" r="2.4" fill="#c6e4b2"/></pattern>';
  svg.prepend(defs);
 }
 function longestLine(feature){
@@ -25,14 +25,14 @@ export async function mountTownMap(map){
  const renderer=L.svg({pane:'town-cartography',padding:.5});
  const layers=L.layerGroup().addTo(map);
  const geo=(features,style)=>L.geoJSON({type:'FeatureCollection',features},{renderer,interactive:false,style}).addTo(layers);
- const boundary=L.geoJSON({type:'Feature',properties:{},geometry:data.boundary},{renderer,interactive:false,style:{fillColor:'#f4f1df',fillOpacity:1,color:'#b6bea2',weight:1.2,dashArray:'3 5'}}).addTo(layers);
+ const boundary=L.geoJSON({type:'Feature',properties:{},geometry:data.boundary},{renderer,interactive:false,style:{fillColor:'#fdfaf0',fillOpacity:1,color:'#173f36',opacity:.35,weight:1.4,dashArray:'2 6'}}).addTo(layers);
  const land=data.features.filter(f=>f.properties.role==='land');
- geo(land,f=>{const k=f.properties.kind;return {color:forest(k)?'#b5c99a':'#e0e2c9',weight:.6,fillOpacity:1,fillColor:k==='water'?'#bad9db':forest(k)?'url(#town-grove)':k==='farmland'?'url(#town-fields)':k==='residential'?'#ede5d7':'#e6e9ce'};});
+ geo(land,f=>{const k=f.properties.kind;return {color:k==='water'?'#9fd8e6':forest(k)?'#bfe0aa':'#e9eed6',weight:.6,fillOpacity:1,fillColor:k==='water'?'#c9eef6':forest(k)?'url(#town-grove)':k==='farmland'?'url(#town-fields)':k==='residential'?'#fbe9df':'#f1f4e3'};});
  const water=data.features.filter(f=>f.properties.role==='waterway');
- const waterways=geo(water,{color:'#9ac6ce',weight:3,opacity:.9,lineCap:'round'});
+ const waterways=geo(water,{color:'#8fd3e4',weight:3,opacity:1,lineCap:'round'});
  const roads=data.features.filter(f=>f.properties.role==='road');
- const casing=geo(roads,f=>({color:'#fffdf3',weight:mainRoad(f.properties.kind)?7:footway(f.properties.kind)?2:4.5,opacity:1,lineCap:'round',lineJoin:'round'}));
- const ink=geo(roads,f=>({color:mainRoad(f.properties.kind)?'#e3c778':footway(f.properties.kind)?'#b0b98d':'#ded5bb',weight:mainRoad(f.properties.kind)?3.2:footway(f.properties.kind)?1:1.6,opacity:1,dashArray:footway(f.properties.kind)||f.properties.access?'3 4':null,lineCap:'round',lineJoin:'round'}));
+ const casing=geo(roads,f=>({color:'#ffffff',weight:mainRoad(f.properties.kind)?7:footway(f.properties.kind)?2:4.5,opacity:1,lineCap:'round',lineJoin:'round'}));
+ const ink=geo(roads,f=>({color:mainRoad(f.properties.kind)?'#ffc861':footway(f.properties.kind)?'#c4b8e6':'#ecdcb9',weight:mainRoad(f.properties.kind)?3.2:footway(f.properties.kind)?1:1.6,opacity:1,dashArray:footway(f.properties.kind)||f.properties.access?'3 4':null,lineCap:'round',lineJoin:'round'}));
  addPatterns(pane.querySelector('svg'));
  map.attributionControl.setPrefix(false);
  map.attributionControl.addAttribution('&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>');
@@ -49,7 +49,7 @@ export async function mountTownMap(map){
  }
  for(const peak of data.features.filter(f=>f.properties.role==='peak')){
   const [lng,lat]=peak.geometry.coordinates;
-  L.marker([lat,lng],{pane:'town-cartography',interactive:false,keyboard:false,icon:L.divIcon({className:'town-hill-label',html:`<svg viewBox="0 0 100 65" aria-hidden="true"><path d="M5 56 32 17 43 31 60 7 95 56Z" fill="#809b65"/><path d="m32 17 11 14 17-24 9 18-10-5-15 22-12-11-17 25" fill="#b7ca8c"/><path d="M4 57h92" fill="none" stroke="#173f36" stroke-width="1.5"/></svg><span data-no-translate>${e(peak.properties.name||'')}</span>`,iconSize:[100,88],iconAnchor:[50,44]})}).addTo(labels);
+  L.marker([lat,lng],{pane:'town-cartography',interactive:false,keyboard:false,icon:L.divIcon({className:'town-hill-label',html:`<svg viewBox="0 0 100 60" aria-hidden="true"><path d="M8 54 34 20 44 32 60 10 92 54Z" fill="#a9d18e"/><path d="M60 10 92 54H70L52 30Z" fill="#8cc075"/><path d="m60 10-6 9 4-1 3 4 4-3 4 1Z" fill="#fffdf6"/></svg><span data-no-translate>${e(peak.properties.name||'')}</span>`,iconSize:[100,80],iconAnchor:[50,40]})}).addTo(labels);
  }
  function update(){
   const zoom=map.getZoom(), factor=Math.max(.7,Math.min(1.8,1+(zoom-15)*.2));
@@ -58,6 +58,9 @@ export async function mountTownMap(map){
   ink.setStyle(f=>({weight:(mainRoad(f.properties.kind)?3.2:footway(f.properties.kind)?1:1.6)*factor}));
   for(const label of roadLabels){if(zoom>=14){if(!labels.hasLayer(label))labels.addLayer(label);}else labels.removeLayer(label);}
   pane.classList.toggle('town-map-close',zoom>=17);
+  // Hills shrink as you zoom out and become just a name, so they never hide pins.
+  pane.style.setProperty('--hill-scale',String(Math.max(.32,Math.min(.85,.32+(zoom-13)*.18))));
+  pane.classList.toggle('town-map-far',zoom<14);
  }
  map.on('zoomend',update);update();
  return {data,destroy(){map.off('zoomend',update);layers.remove();pane.remove();}};

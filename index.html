@@ -189,7 +189,6 @@
         hidden
       >
         <div class="map-title-row"><div><span class="eyebrow">ÓC EO TRONG TÚI BẠN</span><h1 id="map-heading" tabindex="-1">Bản đồ <span class="serif">Óc Eo.</span></h1></div><button id="toggle-map-search" class="map-search-trigger" aria-label="Tìm điểm đến" aria-expanded="false" aria-controls="map-search-panel"><span data-icon="search"></span><span>Tìm điểm</span></button></div>
-        <div id="journey-map-bar" class="journey-map-bar"></div>
         <div class="map-layout">
           <div class="map-board">
             <div id="osm-map" aria-label="Bản đồ riêng Óc Eo Townwalk, vị trí có nguồn"></div>
@@ -198,6 +197,7 @@
               <div class="map-category-row" role="group" aria-label="Lọc địa điểm trên bản đồ">
                 <button class="chip active" data-map-category="all" aria-pressed="true">Tất cả</button><button class="chip" data-map-category="heritage" aria-pressed="false">Di sản</button><button class="chip" data-map-category="food" aria-pressed="false">Ăn uống</button><button class="chip" data-map-category="rest" aria-pressed="false">Cà phê</button><button class="chip" data-map-category="stay" aria-pressed="false">Lưu trú</button>
               </div>
+              <div id="journey-map-bar" class="journey-map-bar"></div>
             </div>
             <section id="map-search-panel" class="map-search-panel" role="search" aria-label="Tìm điểm đến" hidden>
               <div class="map-search-heading"><strong>Bạn muốn ghé đâu?</strong><button id="close-map-search" class="circle-button" aria-label="Đóng tìm kiếm"><span data-icon="close"></span></button></div>
@@ -207,7 +207,7 @@
             </section>
             <div class="town-map-signature" aria-hidden="true"><b>ÓC EO</b><span>TOWNWALK / LOCAL MAP</span></div><span class="town-map-north" aria-hidden="true">N</span>
             <span id="map-loading" class="map-loading" role="status" hidden>Đang tải bản đồ…</span>
-            <div class="map-utility"><button id="locate-me" class="circle-button" aria-label="Tìm điểm gần vị trí của tôi"><span data-icon="locate"></span></button><button id="fit-map" class="circle-button" aria-label="Xem tất cả pin"><span data-icon="expand"></span></button></div>
+            <div class="map-utility"><button id="locate-me" class="circle-button" aria-label="Tìm điểm gần vị trí của tôi"><span data-icon="locate"></span></button><button id="fit-map" class="circle-button" aria-label="Xem tất cả pin"><span data-icon="fit"></span></button><button id="map-fullscreen" class="circle-button" aria-label="Xem bản đồ toàn màn hình" aria-pressed="false"><span data-icon="fullscreen"></span></button></div>
             <div class="map-network-state" id="map-network-state" role="status" hidden><span data-icon="map"></span><strong>Chưa tải được bản đồ</strong><p>Chưa đọc được dữ liệu bản đồ lưu tại ứng dụng. Thử tải lại hoặc mở danh sách điểm đến.</p><button class="text-button" id="show-map-list">Xem danh sách điểm đến ↓</button><button class="button outline" id="retry-map">Thử kết nối lại</button></div>
             <div id="map-selection" class="map-selection" aria-live="polite"></div>
           </div>

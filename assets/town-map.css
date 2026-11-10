@@ -1,13 +1,15 @@
 /* Townwalk's own cartographic palette and original illustration marks. */
-.townwalk-app #osm-map { background-color:#f7f3e7; background-image:radial-gradient(#b8b89c35 .7px,transparent .7px); background-size:12px 12px; }
+.townwalk-app #osm-map { background-color:#eef3e2; background-image:radial-gradient(#173f3612 .8px,transparent .8px); background-size:14px 14px; }
 .townwalk-cartography { pointer-events:none; }
 .townwalk-cartography .leaflet-interactive { pointer-events:none; }
 .town-road-label { border:0; background:none; text-align:center; pointer-events:none; }
-.town-road-label span { display:inline-block; color:#798165; padding:2px 7px; border-radius:12px; background:#fbf8ecdd; font:500 10px 'Be Vietnam',sans-serif; white-space:nowrap; letter-spacing:.25px; }
+.town-road-label span { display:inline-block; color:#173f36; padding:2px 8px; border-radius:999px; background:#fffdf7e6; box-shadow:0 2px 6px -3px #173f3655; font:700 10px 'Be Vietnam',sans-serif; white-space:nowrap; letter-spacing:.2px; }
 .town-hill-label { text-align:center; pointer-events:none; border:0; background:none; }
-.town-hill-label svg { width:100px; height:65px; display:block; filter:drop-shadow(0 3px 0 #173f360c); }
-.town-hill-label span { display:block; color:#526b3d; font:800 11px 'Be Vietnam',sans-serif; white-space:nowrap; text-shadow:0 1px #fffdf1; }
-.town-map-close .town-hill-label svg { opacity:.65; }
+.town-hill-label svg { width:100px; height:60px; display:block; transform:scale(var(--hill-scale,.6)); transform-origin:50% 100%; opacity:.9; filter:drop-shadow(0 4px 6px #173f3622); transition:transform .2s; }
+.town-hill-label span { display:inline-block; margin-top:2px; color:#3f6a3a; font:700 10.5px 'Be Vietnam',sans-serif; white-space:nowrap; padding:1px 8px; border-radius:999px; background:#fffdf7cc; }
+.town-map-far .town-hill-label svg { opacity:0; transform:scale(.2); }
+.town-map-far .town-hill-label span { font-size:9.5px; transform:translateY(-22px); }
+.town-map-close .town-hill-label svg { opacity:.55; }
 .townwalk-app .leaflet-control-attribution { background:#faf7eae8; padding:2px 5px; font-size:10px; color:#68705c; border-radius:5px 0 0; }
 .townwalk-app .leaflet-control-attribution a { color:#68705c; text-decoration:none; }
 .townwalk-app .leaflet-control-scale { margin:0 0 5px 8px; }
@@ -22,3 +24,73 @@
 .coordinate-details p { font-size:12px; line-height:1.8; }
 .coordinate-details a { font-size:12px; line-height:1.8; text-decoration:underline; }
 @media(max-height:700px) { .town-map-signature { top:78px; left:14px; } .town-map-signature b { font-size:12px; } .town-map-north { display:none; } }
+
+/* ── Map refresh (2026-11-11): journey pill on the map, full screen, directions, directory cards ── */
+.townwalk-app .map-explorer-tools .journey-map-bar { margin:2px 0 0; gap:6px; pointer-events:none; }
+.townwalk-app .map-explorer-tools .journey-map-bar:empty { display:none; }
+.townwalk-app .map-explorer-tools .journey-map-bar>button { pointer-events:auto; min-height:36px; padding:6px 12px 6px 8px; border-radius:999px; font-size:12px; font-weight:700; gap:6px; background:#fffdf7f2; color:#173f36; border:1px solid #173f3614; box-shadow:0 6px 16px -10px #173f3688; }
+.townwalk-app .map-explorer-tools .journey-map-bar>button .icon { width:16px; height:16px; padding:3px; border-radius:50%; background:#d9f27a; box-sizing:content-box; }
+.townwalk-app .map-explorer-tools .journey-map-bar>button[aria-pressed=true] { background:#173f36; color:#d9f27a; }
+.townwalk-app .map-explorer-tools .journey-map-bar>button[aria-pressed=true] .icon { background:#d9f27a; color:#173f36; }
+.townwalk-app .map-explorer-tools .journey-map-bar>.text-button { background:#fffdf7f2; padding:6px 12px; font-size:12px; }
+
+/* Full screen: the board becomes a fixed layer above the app chrome. */
+body.map-is-fullscreen { overflow:hidden; }
+body.map-is-fullscreen .app-main { z-index:1000; }
+body.map-is-fullscreen .app-header, body.map-is-fullscreen .app-tabbar { visibility:hidden; }
+body.map-is-fullscreen .townwalk-app .map-board, body.map-is-fullscreen .map-board { position:fixed!important; inset:0; width:100vw; height:100dvh!important; max-height:none!important; border-radius:0!important; border:0!important; margin:0; z-index:1000; }
+body.map-is-fullscreen .map-explorer-tools { top:calc(12px + env(safe-area-inset-top,0px))!important; }
+body.map-is-fullscreen .map-utility { top:calc(118px + env(safe-area-inset-top,0px))!important; }
+body.map-is-fullscreen .map-selection { bottom:calc(18px + env(safe-area-inset-bottom,0px))!important; }
+#map-fullscreen[aria-pressed=true] { background:#173f36!important; color:#d9f27a; border-color:#173f36!important; }
+
+/* Directions links */
+.directions-link { display:inline-flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; }
+.directions-link .icon { width:16px; height:16px; }
+.map-card-actions .directions-link { flex:1; }
+
+/* Directory: grouped, photo-first cards */
+.townwalk-app .map-aside #map-list { display:grid; gap:18px; }
+.map-list-group { display:grid; gap:10px; }
+.map-list-group>h3 { display:flex; align-items:center; gap:8px; margin:4px 2px 0; font-size:15px; font-weight:800; color:#173f36; }
+.map-list-group>h3 .icon { width:28px; height:28px; padding:6px; box-sizing:border-box; border-radius:10px; background:#e9f7b4; }
+.map-list-group>h3 b { margin-left:auto; font-size:11px; padding:2px 9px; border-radius:999px; background:#173f36; color:#d9f27a; }
+.map-list-card { border-radius:20px; background:#fffdf8; border:1px solid #2327201a; box-shadow:0 2px 0 #23272010,0 10px 22px -16px #173f3666; overflow:hidden; }
+.townwalk-app .map-list-card .map-list-item { display:flex; align-items:center; gap:12px; width:100%; padding:10px 12px 8px 10px; border:0; background:none; text-align:left; border-radius:0; min-height:0; }
+.map-list-item>.icon { width:18px; height:18px; flex:none; color:#7a8371; }
+.map-list-art { width:56px; height:56px; flex:none; border-radius:16px; overflow:hidden; display:grid; place-items:center; background:#eef3d6; color:#173f36; }
+.map-list-card[data-category=food] .map-list-art { background:#ffe9c7; }
+.map-list-card[data-category=rest] .map-list-art { background:#f9dce9; }
+.map-list-card[data-category=stay] .map-list-art { background:#e0d8f7; }
+.map-list-art img { width:100%; height:100%; object-fit:cover; }
+.map-list-art .icon { width:26px; height:26px; }
+.map-list-copy { flex:1; min-width:0; display:grid; gap:3px; }
+.map-list-copy strong { font-size:15px; line-height:1.3; font-weight:800; color:#173f36; }
+.map-list-status { justify-self:start; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; background:#e9f7b4; color:#2f4a22; }
+.map-list-status[data-tone=wait] { background:#efeee6; color:#6b6f62; }
+.map-list-status[data-tone=tip] { background:#ffe9c7; color:#7a4a12; }
+.map-list-status[data-tone=warn] { background:#f9dce9; color:#7b2d50; }
+.map-list-address { font-size:11px; color:#6b6f62; line-height:1.4; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.map-list-actions { display:flex; gap:6px; padding:0 10px 10px 78px; }
+.map-list-actions:empty { display:none; }
+.map-list-action { display:inline-flex; align-items:center; gap:5px; min-height:36px; padding:6px 12px; border-radius:999px; border:1px solid #173f361f; background:#fff; color:#173f36; font:inherit; font-size:12px; font-weight:700; text-decoration:none; cursor:pointer; }
+.map-list-action .icon { width:15px; height:15px; }
+.map-list-action.is-route { background:#173f36; color:#d9f27a; border-color:#173f36; }
+.map-list-card .map-list-art { flex:0 0 56px; }
+.townwalk-app .map-list-card .map-list-copy { flex:1; font-size:inherit; }
+.townwalk-app .map-list-card .map-list-item { border-bottom:0; }
+/* Three utility buttons now: keep Leaflet's zoom below them, also in full screen. */
+.townwalk-app .leaflet-top.leaflet-right { top:236px; }
+body.map-is-fullscreen .townwalk-app .leaflet-top.leaflet-right, body.map-is-fullscreen .leaflet-top.leaflet-right { top:calc(280px + env(safe-area-inset-top,0px)); }
+@media(max-height:700px) { .townwalk-app .leaflet-top.leaflet-right { top:179px; } body.map-is-fullscreen .leaflet-top.leaflet-right { top:calc(170px + env(safe-area-inset-top,0px)); } }
+/* The decorative map signature competed with the journey pill; the north arrow stays. */
+.town-map-signature { display:none; }
+.town-map-north { top:120px; }
+body.map-is-fullscreen .town-map-north { top:calc(118px + env(safe-area-inset-top,0px)); }
+/* A compact "where next" card so more of the map stays visible. */
+.townwalk-app .map-selection:has(.map-selection-empty) { padding:12px 14px; }
+.townwalk-app .map-selection-empty h2 { font-size:16px; margin:0 0 2px; }
+.townwalk-app .map-selection-empty>p { font-size:11.5px; line-height:1.5; }
+.map-selection-empty .map-quick-jumps { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; margin-top:8px; }
+.map-selection-empty .map-quick-jumps::-webkit-scrollbar { display:none; }
+.map-selection-empty .map-quick-jumps button { flex:0 0 auto; white-space:nowrap; min-height:40px; font-weight:600; }
