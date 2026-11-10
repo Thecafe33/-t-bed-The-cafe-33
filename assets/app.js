@@ -373,6 +373,7 @@ $("#surprise-me").onclick=()=>{
 function renderMapSelection() {
   const visible=mapPlaces(), located=visible.filter(eligible);
   const p=visible.find(p=>p.id===mapSelectedId && eligible(p)) || ($("#map-search").value.trim() && located.length===1?located[0]:null);
+  if(p)$("#map-suggestions").innerHTML="";
   if(p){
     const distance=userPoint?Math.round(distanceMeters(userPoint,p)):null;
     const detail=distance===null?`${p.duration} phút gợi ý`:`${distance} m · đường chim bay`;
@@ -380,7 +381,9 @@ function renderMapSelection() {
   }else{
     const preferred=["chua-linh-son","go-cay-thi","xofa"].map(findPlace).filter(p=>p && located.some(v=>v.id===p.id));
     const jumps=(preferred.length?preferred:located).slice(0,3);
-    $("#map-selection").innerHTML=`<div class="map-selection-empty"><h2>${located.length?"Đi đâu tiếp nhỉ?":"Có câu chuyện, chưa có pin."}</h2><p>${located.length?"Chạm pin để xem điểm đến. Cụm số chứa các điểm gần nhau.":"Xem mô tả và mốc địa phương trong danh sách bên dưới."}</p><div class="map-quick-jumps">${jumps.length?jumps.map(p=>`<button data-map-jump="${e(p.id)}">${e(p.name)}</button>`).join(""):'<button data-open-map-directory>Danh sách điểm đến ↓</button>'}</div></div>`;
+    // Nothing selected: keep the map clear and offer suggestions below it instead.
+    $("#map-selection").innerHTML="";
+    $("#map-suggestions").innerHTML=`<div class="map-selection-empty"><h2>${located.length?"Đi đâu tiếp nhỉ?":"Có câu chuyện, chưa có pin."}</h2><p>${located.length?"Chạm pin để xem điểm đến. Cụm số chứa các điểm gần nhau.":"Xem mô tả và mốc địa phương trong danh sách bên dưới."}</p><div class="map-quick-jumps">${jumps.length?jumps.map(p=>`<button data-map-jump="${e(p.id)}">${e(p.name)}</button>`).join(""):'<button data-open-map-directory>Danh sách điểm đến ↓</button>'}</div></div>`;
   }
 }
 function selectMapPlace(id) {
@@ -751,7 +754,8 @@ function showTownMap() {
       [10.2557721, 105.1534925],
       13,
     );
-    map.zoomControl.setPosition("topright");
+    // Zoom lives in our own utility column, so no separately positioned control can cover it.
+    map.zoomControl.remove();
     markerLayer = L.markerClusterGroup({animate:false,showCoverageOnHover:false,maxClusterRadius:40,disableClusteringAtZoom:18,spiderfyOnMaxZoom:true,iconCreateFunction:cluster=>L.divIcon({className:"map-cluster",html:`<span data-cluster-count="${cluster.getChildCount()}" aria-label="${cluster.getChildCount()} điểm gần nhau, chạm để phóng to">${cluster.getChildCount()}</span>`,iconSize:[46,46]})}).addTo(map);
     loadTownCartography();
   }
@@ -782,6 +786,8 @@ function setMapFullscreen(on){
   button.innerHTML=icon(on?"shrink":"fullscreen");
   if(map)requestAnimationFrame(()=>{map.invalidateSize();if(on&&!mapSelectedId)fitMapPoints();});
 }
+$("#map-zoom-in").onclick=()=>map?.zoomIn();
+$("#map-zoom-out").onclick=()=>map?.zoomOut();
 $("#map-fullscreen").onclick=()=>setMapFullscreen(!document.body.classList.contains("map-is-fullscreen"));
 document.addEventListener("keydown",ev=>{if(ev.key==="Escape"&&document.body.classList.contains("map-is-fullscreen")&&$("#map-search-panel").hidden){setMapFullscreen(false);$("#map-fullscreen").focus();}});
 window.addEventListener("oceo-before-route-change",()=>{if(document.body.classList.contains("map-is-fullscreen"))setMapFullscreen(false);});

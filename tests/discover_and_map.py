@@ -36,7 +36,7 @@ with sync_playwright() as p:
  # Pending coordinates are searchable in the directory; no made-up pin or external directions.
  fill_map_search(page,'go 6 thuan');expect(page.locator('.map-list-item')).to_have_count(1)
  expect(page.locator('#map-directory')).to_have_attribute('open','');expect(page.locator('.osm-pin')).to_have_count(0)
- expect(page.locator('#map-selection')).to_contain_text('chưa có pin')
+ expect(page.locator('#map-suggestions')).to_contain_text('chưa có pin');expect(page.locator('#map-selection')).to_be_empty()
  page.locator('.map-list-item').click();expect(page.locator('#checkin')).to_be_disabled();expect(page.locator('#focus-on-map')).to_have_count(0);page.locator('#close-modal').click()
  fill_map_search(page,'');page.keyboard.press('Escape');page.evaluate('scrollTo(0,0)');page.locator('#fit-map').click()
  # A selected point at any phone width stays above the nav; controls do not overflow the map.
