@@ -48,7 +48,7 @@ export function discoveryEntryHTML() {
 
 // The game's stylesheet is pinned to this module's version, so a cached module and a fresh
 // stylesheet (or the reverse) can never be combined.
-export const DISCOVERY_STYLE = 'assets/discovery.css?v=20261111-dig5';
+export const DISCOVERY_STYLE = 'assets/discovery.css?v=20261111-dig6';
 function ensureStyle() {
   const href = appURL(DISCOVERY_STYLE);
   for (const link of document.querySelectorAll('link[rel=stylesheet][href*="discovery.css"]')) if (link.href !== href) link.remove();
@@ -94,7 +94,8 @@ export function mountDiscovery(root) {
    <details><summary>Bàn phím và hỗ trợ thao tác</summary><p>Chọn dụng cụ. Kéo để dùng; hai ngón để di chuyển và phóng to. Bàn phím: mũi tên di chuyển, phím cách để thao tác, dấu cộng và trừ để phóng to.</p><button type="button" class="button outline" data-game-assist>Thao tác tại vị trí đang chọn</button></details>
    <hr><p>Trò chơi mô phỏng. Các lớp đất không tái hiện địa tầng thật. Chơi không cấp tem check-in Óc Eo Pass.</p><p>Ngoài di tích: chỉ quan sát theo hướng dẫn, không đào hoặc tự làm sạch hiện vật.</p></dialog>
   <dialog class="discovery-panel discovery-sites"><button type="button" data-close-panel aria-label="Trở lại hiện trường">←</button><small class="sites-kicker" data-no-translate>ÓC EO / FIELD LAB</small><h2>Chọn bãi khai quật.</h2><p class="sites-intro">Mỗi bãi giấu những cổ vật khác nhau. Bạn có thể đổi bãi bất cứ lúc nào từ nút Bãi đào.</p><div class="discovery-site-list"></div></dialog>
-  <dialog class="discovery-panel discovery-notebook"><button type="button" data-close-panel aria-label="Trở lại hiện trường">←</button><div class="notebook-head"></div><div class="notebook-track" tabindex="0" aria-label="Các trang trong sổ hiện trường"></div><div class="notebook-nav"><button type="button" data-notebook-step="-1" aria-label="Trang trước">←</button><span class="notebook-count" data-no-translate></span><button type="button" data-notebook-step="1" aria-label="Trang sau">→</button></div></dialog>
+  <dialog class="discovery-panel discovery-notebook"><button type="button" data-close-panel aria-label="Trở lại hiện trường">←</button><div class="notebook-head"></div><div class="notebook-track" tabindex="0" aria-label="Các trang trong sổ hiện trường"></div><div class="notebook-nav"><button type="button" data-notebook-step="-1" aria-label="Trang trước">←</button><span class="notebook-count" data-no-translate></span><button type="button" data-notebook-step="1" aria-label="Trang sau">→</button></div>
+   <div class="notebook-zoom" role="dialog" aria-modal="true" aria-label="Ảnh lớn" hidden><button type="button" class="notebook-zoom-close" data-close-zoom aria-label="Đóng ảnh lớn">×</button><img alt=""><p data-no-translate></p></div></dialog>
   <dialog class="discovery-panel discovery-sieve"><button type="button" data-close-panel aria-label="Trở lại hiện trường">←</button><h2>Rây đất.</h2><p class="sieve-intro">Đất từ hố được đổ vào rây. Kéo qua lại trên rây hoặc bấm nút để lắc.</p>
    <div class="sieve-stage" aria-hidden="true"><div class="sieve-ring"><div class="sieve-mesh"></div><div class="sieve-heap"></div><div class="sieve-finds"></div></div><div class="sieve-fall"></div></div>
    <p class="sieve-status" role="status"></p><button type="button" class="button dark" data-sieve-shake>Lắc rây</button><div class="sieve-results"></div></dialog>
@@ -313,7 +314,7 @@ export function mountDiscovery(root) {
   }
   function cardHTML(find) {
     const a = artifact(find.id), i = lang(), temp = !FINDS[find.id]?.image;
-    return `<article class="notebook-card" data-card="${e(find.id)}"><div class="notebook-art" data-thumb="${e(find.id)}"></div>
+    return `<article class="notebook-card" data-card="${e(find.id)}"><button type="button" class="notebook-art-button" data-zoom-find="${e(find.id)}" aria-label="${e(t('Xem ảnh lớn'))}: ${e(a.name[i])}"><span class="notebook-art" data-thumb="${e(find.id)}"></span><span class="art-zoom-chip">⤢ <span>${e(t('Xem ảnh lớn'))}</span></span></button>
      <p class="notebook-art-note">${e(t(temp ? 'Hình tạm · ảnh sẽ được cập nhật' : 'Minh hoạ hiện vật · không phải ảnh tư liệu'))}</p>
      <div class="notebook-tags"><span><span>${e(t('Ô'))}</span> <b data-no-translate>${e(find.origin || squareName(find.x, find.y))}</b></span><span>${e(t(find.small ? 'Tìm qua rây' : 'Lộ ra ở tầng văn hoá'))}</span></div>
      <h3 data-no-translate>${e(a.name[i])}</h3><dl data-no-translate><dt>${e(t('Niên đại'))}</dt><dd>${e(a.period[i])}</dd><dt>${e(t('Chất liệu'))}</dt><dd>${e(a.material[i])}</dd></dl>
@@ -339,6 +340,13 @@ export function mountDiscovery(root) {
     const track = $('.notebook-track'); track.scrollTo({ left: cards[notebookIndex].offsetLeft - track.offsetLeft, behavior: smooth && !reducedMotion() ? 'smooth' : 'auto' });
     updateNotebookCount();
   }
+  // Full picture viewer so children can see the whole find.
+  function openZoom(button) {
+    const img = button.querySelector('img'); if (!img) return;
+    const zoom = $('.notebook-zoom'); zoom.querySelector('img').src = img.src; zoom.querySelector('img').alt = artifactName(button.dataset.zoomFind);
+    zoom.querySelector('p').textContent = artifactName(button.dataset.zoomFind); zoom.hidden = false; zoom.querySelector('[data-close-zoom]').focus();
+  }
+  function closeZoom() { const zoom = $('.notebook-zoom'); if (zoom.hidden) return false; zoom.hidden = true; root.querySelectorAll('.notebook-card')[notebookIndex]?.querySelector('[data-zoom-find]')?.focus(); return true; }
   function openNotebook() {
     release(); renderNotebook(); const dialog = $('.discovery-notebook'); if (!dialog.open) dialog.showModal();
     requestAnimationFrame(() => showCard(notebookIndex < 0 ? 0 : notebookIndex, false));
@@ -378,7 +386,7 @@ export function mountDiscovery(root) {
   }
 
   // ── Lifecycle ──────────────────────────────────────────
-  function closePanels() { root.querySelectorAll('dialog[open]').forEach(d => d.close()); stopNarration(); }
+  function closePanels() { $('.notebook-zoom').hidden = true; root.querySelectorAll('dialog[open]').forEach(d => d.close()); stopNarration(); }
   function release() { gesture = null; last = null; for (const id of pointers.keys()) if (scene.hasPointerCapture(id)) scene.releasePointerCapture(id); pointers.clear(); cursor.classList.remove('is-visible'); }
   function reset(nextSite = site) {
     closePanels(); release(); cancelAnimationFrame(frame); frame = 0; particles = []; flashes = []; ready = false; hints = 0; said = new Set(); notebookIndex = 0;
@@ -482,6 +490,8 @@ export function mountDiscovery(root) {
     if (button.matches('[data-sieve-shake]')) shake(1);
     if (button.matches('[data-sieve-record]')) { const i = Number(button.dataset.sieveRecord); flashes.push({ x: view.width / 2, y: view.height / 2, at: performance.now() }); record(i); renderSieve(); }
     if (button.matches('[data-notebook-step]')) showCard(notebookIndex + Number(button.dataset.notebookStep));
+    if (button.matches('[data-zoom-find]')) openZoom(button);
+    if (button.matches('[data-close-zoom]')) closeZoom();
     if (button.matches('[data-close-panel]')) { closePanels(); scene.focus({ preventScroll: true }); }
     if (button.matches('[data-request-hint]')) $('.discovery-hint').textContent = t(['Bóc lớp đất mặt bằng xẻng trên một vùng rộng, rồi đổi sang bay khi đất chuyển sẫm màu.', 'Soi kính lúp ở tầng văn hoá: điểm lấp lánh có thể là hạt chuỗi. Đào chỗ đó rồi mang xô ra rây.', 'Hiện vật lộ ra sẽ có vòng sáng nhấp nháy. Chọn máy ảnh rồi chạm vào để ghi chép.'][hints++ % 3]);
     if (button.matches('[data-game-assist]')) { closePanels(); scene.focus({ preventScroll: true }); if (tool === 'camera') photograph(view.pointer); else stroke(view.pointer, { x: view.pointer.x + 6, y: view.pointer.y }); }
@@ -498,7 +508,8 @@ export function mountDiscovery(root) {
   on(stage, 'pointerdown', event => { sieveLast = event.clientX; sieveTravel = 0; stage.setPointerCapture(event.pointerId); });
   on(stage, 'pointermove', event => { if (sieveLast === null || !stage.hasPointerCapture(event.pointerId)) return; sieveTravel += Math.abs(event.clientX - sieveLast); sieveLast = event.clientX; if (sieveTravel > 70) { sieveTravel = 0; shake(0.8); } });
   on(stage, 'pointerup', () => { sieveLast = null; });
-  for (const panel of root.querySelectorAll('dialog')) { on(panel, 'cancel', ev => { ev.preventDefault(); closePanels(); scene.focus({ preventScroll: true }); }); on(panel, 'close', stopNarration); }
+  on($('.notebook-zoom'), 'click', ev => { if (!ev.target.closest('button')) closeZoom(); });
+  for (const panel of root.querySelectorAll('dialog')) { on(panel, 'cancel', ev => { ev.preventDefault(); if (closeZoom()) return; closePanels(); scene.focus({ preventScroll: true }); }); on(panel, 'close', stopNarration); }
   const observer = new ResizeObserver(() => { const r = scene.getBoundingClientRect(); if (r.width > 0 && r.height > 0 && (r.width !== view.width || r.height !== view.height)) { const cx = view.camera.x + view.width / view.scale / 2, cy = view.camera.y + view.height / view.scale / 2; view.width = r.width; view.height = r.height; if (field) { view.scale = clamp(view.scale, minScale(), 320); centreOn(cx, cy); } } });
   observer.observe(scene);
   on(window, 'oceo-before-route-change', () => { release(); closePanels(); active = false; cancelAnimationFrame(frame); frame = 0; particles = []; });

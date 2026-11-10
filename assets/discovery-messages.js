@@ -168,4 +168,5 @@ export const discoveryMessages = [
  ['Que tre chỉ dùng khi đã đào sát hiện vật. Dùng bay trước.','The bamboo pick is for work right beside a find. Use the trowel first.','竹签用于紧贴文物处，先用手铲。'],
  ['Đất còn dày quá. Cọ chỉ phủi lớp mỏng cuối cùng.','The soil is too thick. The brush only sweeps the last thin layer.','土还太厚，刷子只能刷最后一薄层。'],
  ['Bãi đào đã hoàn tất! Còn những bãi khác đang chờ ở nút Bãi đào.','Site complete! More sites are waiting under the Sites button.','发掘完成！“发掘点”按钮里还有其他地点等着你。'],
+ ['Xem ảnh lớn','View full picture','查看大图'],['Ảnh lớn','Full picture','大图'],['Đóng ảnh lớn','Close picture','关闭大图'],
 ];
