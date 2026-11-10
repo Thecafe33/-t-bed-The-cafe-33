@@ -1,0 +1,52 @@
+"""Revised guides: real mobile playback, sources, locale changes and offline byte ranges."""
+from playwright.sync_api import sync_playwright, expect
+ORIGIN='http://127.0.0.1:8000'
+with sync_playwright() as p:
+ b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True)
+ c=b.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True,reduced_motion='reduce',service_workers='block')
+ c.route('**/*',lambda r:r.continue_() if r.request.url.startswith(ORIGIN) else r.abort())
+ q=c.new_page();errors=[];q.on('pageerror',lambda e:errors.append(str(e)))
+ q.goto(ORIGIN+'/#artifacts',wait_until='networkidle')
+ q.locator('#artifact-site-filter').select_option('go-giong-cat')
+ q.locator('#artifact-open').click()
+ player=q.locator('#modal .narration-player');expect(player).to_be_visible()
+ player.locator('summary').click()
+ expect(player.locator('.narration-transcript')).to_contain_text('8,7 gram')
+ expect(player.locator('.narration-sources a')).to_have_count(1)
+ expect(player.locator('.narration-sources a')).to_have_attribute('href','https://vanhoaoceo.angiang.gov.vn/chiec-nhan-vang-nandin-giong-cat-bao-vat-quoc-gia-cua-van-hoa-oc-eo')
+ for lang,label in [('vi','Tư liệu cho bài thuyết minh'),('en','Sources for this audio guide'),('zh','讲解资料来源')]:
+  q.evaluate("async(lang)=>(await import('/assets/i18n.js')).setLanguage(lang)",lang)
+  expect(player.locator('.narration-transcript')).to_have_attribute('lang',lang)
+  expect(player.locator('.narration-sources strong')).to_have_text(label)
+  a=player.locator('audio');assert '/'+lang+'/artifact-nandin-giong-cat.mp3' in a.get_attribute('src')
+  assert a.evaluate('(a)=>a.paused')
+  a.evaluate('(a)=>a.play()');q.wait_for_function('document.querySelector("#modal audio").currentTime>.2')
+  assert a.evaluate('(a)=>a.duration')>40
+  player.locator('[data-narration-rate]').select_option('1.15');assert a.evaluate('(a)=>a.playbackRate')==1.15
+  a.evaluate('(a)=>{a.pause();a.currentTime=20}')
+  q.wait_for_function('Math.abs(document.querySelector("#modal audio").currentTime-20)<.5')
+  for width in [320,390]:
+   q.set_viewport_size({'width':width,'height':844})
+   assert q.evaluate('document.documentElement.scrollWidth<=innerWidth')
+ q.evaluate("async()=>(await import('/assets/i18n.js')).setLanguage('vi')")
+ q.locator('#modal [data-place="go-giong-cat"]').click()
+ expect(q.locator('#modal .narration-player')).to_have_attribute('data-narration-id','go-giong-cat')
+ q.locator('#modal .narration-player summary').click()
+ expect(q.locator('#modal .narration-transcript')).to_contain_text('Louis Malleret')
+ expect(q.locator('#modal .narration-sources a')).to_have_count(2)
+ q.locator('#modal .narration-player').scroll_into_view_if_needed()
+ q.screenshot(path='/workspace/outputs/narration-revised-mobile.png')
+ assert not errors,errors;c.close()
+ c=b.new_context(viewport={'width':390,'height':844},reduced_motion='reduce')
+ c.route('**/*',lambda r:r.continue_() if r.request.url.startswith(ORIGIN) else r.abort())
+ q=c.new_page();q.goto(ORIGIN+'/#artifacts',wait_until='networkidle')
+ q.evaluate('async()=>{await navigator.serviceWorker.ready}');q.wait_for_function('!!navigator.serviceWorker.controller')
+ path='/assets/audio/vi/artifact-nandin-giong-cat.mp3?v=20261110'
+ assert q.evaluate("async(path)=>{const r=await fetch(path,{headers:{Range:'bytes=0-1023'}});return r.status===206&&(await r.arrayBuffer()).byteLength===1024}",path)
+ c.set_offline(True);q.reload(wait_until='domcontentloaded')
+ q.locator('#artifact-site-filter').select_option('go-giong-cat');q.locator('#artifact-open').click();q.locator('#modal .narration-player summary').click()
+ expect(q.locator('#modal .narration-sources a')).to_have_count(1)
+ expect(q.locator('#modal .narration-transcript')).to_contain_text('8,7 gram')
+ assert q.evaluate("async(path)=>{const r=await fetch(path,{headers:{Range:'bytes=1024-2047'}});return r.status===206&&(await r.arrayBuffer()).byteLength===1024}",path)
+ b.close()
+print('PASS: updated mobile transcripts and sources, 3-language playback and seeking, narrow layouts, place detail and offline audio ranges.')

@@ -29,11 +29,11 @@ test('finds stay attached to their documented origins rather than a nearby templ
  assert.equal(origins['hat-chuoi-giong-trom'],'go-giong-trom');
  assert.match(ARTIFACTS.find(a=>a.id==='mo-vo-cay-tram').discovered[0],/2018–2019/);
 });
-test('the exhibition house only claims the two displays explicitly shown by the source',()=>{
+test('the exhibition house only claims displays explicitly documented by the sources',()=>{
  const museum=CURATED.places.find(p=>p.recordType==='museum');
  const html=artifactSection(museum,CURATED.places);
  assert.match(html,/data-artifact="phat-linh-son-bac"/);assert.match(html,/data-artifact="mo-vo-cay-tram"/);
- assert.doesNotMatch(html,/data-artifact="nandin-giong-cat"/);assert.doesNotMatch(html,/data-artifact="dau-phat-naga"/);
+ assert.doesNotMatch(html,/data-artifact="nandin-giong-cat"/);assert.match(html,/data-artifact="dau-phat-naga"/);
  const filtered=artifactListHTML(CURATED.places,'go-giong-cat');
  assert.match(filtered,/data-artifact="nandin-giong-cat"/);assert.doesNotMatch(filtered,/data-artifact="hat-chuoi-giong-trom"/);
 });

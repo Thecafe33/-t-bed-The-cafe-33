@@ -4,6 +4,7 @@ import {readFileSync,statSync} from 'node:fs';
 import {CURATED} from '../assets/content.js';
 import {ARTIFACTS} from '../assets/artifacts.js';
 import {NARRATION_SCRIPTS,narrationFor} from '../assets/narration-scripts.js';
+import {NARRATION_SOURCES} from '../assets/narration-sources.js';
 import {createHash} from 'node:crypto';
 const root=new URL('../',import.meta.url);
 const catalogue=JSON.parse(readFileSync(new URL('assets/audio/catalog.json',root)));
@@ -22,4 +23,20 @@ test('every curated place and artifact has distinct authored narration in all th
 test('unknown remote/admin records never receive another place’s narration',()=>{
  assert.equal(narrationFor('place','not-a-curated-record'),'');
  assert.equal(narrationFor('artifact','go-giong-cat'),'');
+});
+test('heritage narration has per-record evidence without borrowing another find location',()=>{
+ const records=[...CURATED.places.map(p=>['place',p.id]),...ARTIFACTS.map(a=>['artifact',a.id])];
+ for(const [kind,id] of records){
+  const sources=NARRATION_SOURCES[`${kind}/${id}`];
+  assert.ok(sources?.length,`${kind}/${id} has no evidence links`);
+  for(const source of sources){
+   assert.ok(source.title);
+   assert.equal(new URL(source.url).origin,'https://vanhoaoceo.angiang.gov.vn');
+  }
+ }
+ const ring=narrationFor('artifact','nandin-giong-cat');
+ assert.match(ring,/Giồng Cát năm 2018/);
+ assert.match(ring,/thế kỷ thứ năm/);
+ assert.match(ring,/chưa xác nhận vị trí trưng bày/);
+ assert.equal(NARRATION_SOURCES['artifact/not-a-record'],undefined);
 });

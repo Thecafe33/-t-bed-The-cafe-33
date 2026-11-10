@@ -157,6 +157,7 @@ export const ARTIFACTS = [
   {
     "id": "dau-phat-naga",
     "placeId": "linh-son-bac",
+    "displayPlaceId": "nha-trung-bay-van-hoa-oc-eo",
     "symbol": "temple",
     "color": "peach",
     "name": [
@@ -185,9 +186,9 @@ export const ARTIFACTS = [
       "同一遗址出土了材料与造型均不同的作品。来源特别强调头像后的Naga蛇神华盖。"
     ],
     "holding": [
-      "Bài tổng hợp chưa xác định rõ vị trí trưng bày hiện tại của riêng đầu tượng này. Hỏi Ban Quản lý; không tự gán cho một tủ hoặc bảo tàng.",
-      "The overview does not establish this object’s current display location. Ask the heritage authority; no particular case or museum is assumed.",
-      "综述未明确此头像目前的展出地点。请询问管理机构，不预设具体展柜或博物馆。"
+      "Ban Quản lý lưu giữ; bài giới thiệu riêng có ảnh đầu tượng tại Nhà trưng bày Văn hóa Óc Eo. Hỏi nhà trưng bày về lịch xem hiện tại.",
+      "Held by the heritage authority; its dedicated article shows the head at the Óc Eo Culture Exhibition House. Check current viewing arrangements.",
+      "由遗址管理机构保管；专题文章展示了头像在Óc Eo文化展馆内的照片，请确认目前的参观安排。"
     ],
     "onSite": [
       "Tại Linh Sơn Bắc, thử kể hai phát hiện khác nhau: một phù điêu đá và một đầu tượng đất nung. Hỏi người hướng dẫn chúng có cùng bối cảnh kiến trúc hay không.",
@@ -227,8 +228,8 @@ export const ARTIFACTS = [
       "The overview describes five Naga heads spreading behind the Buddha head.",
       "综述描述五个Naga蛇头在佛头像后展开。"
     ],
-    "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/10-bao-vat-quoc-gia-thuoc-van-hoa-oc-eo-o-an-giang",
-    "reviewedAt": "2026-11-05"
+    "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/dau-tuong-phat-linh-son-bac-bao-vat-quoc-gia-doc-dao-cua-van-hoa-oc-eo",
+    "reviewedAt": "2026-11-10"
   },
   {
     "id": "mo-vo-cay-tram",

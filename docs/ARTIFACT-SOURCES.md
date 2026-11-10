@@ -16,7 +16,7 @@
 | --- | --- | --- |
 | Nhẫn Nandin | Gò Giồng Cát | Chỉ xác định đơn vị lưu giữ, chưa xác nhận điểm trưng bày |
 | Phù điêu Phật đá | Linh Sơn Bắc | Có ảnh nguồn tại Nhà trưng bày; phải hỏi lịch hiện tại |
-| Đầu tượng Phật đất nung | Linh Sơn Bắc | Chưa xác nhận vị trí trưng bày riêng |
+| Đầu tượng Phật đất nung | Linh Sơn Bắc | Bài riêng về đầu tượng có ảnh tại Nhà trưng bày (đối chiếu bổ sung 10/11/2026) |
 | Mộ vò Gò Cây Trâm | Gò Cây Trâm | Có ảnh nguồn tại Nhà trưng bày; phải hỏi lịch hiện tại |
 | Hạt chuỗi Gò Óc Eo | Gò Óc Eo | Chưa xác nhận bộ sưu tập đang trưng bày |
 | Hạt chuỗi Lung Lớn | Lung Lớn, gộp A/B trong app | Chưa xác nhận bộ sưu tập đang trưng bày |

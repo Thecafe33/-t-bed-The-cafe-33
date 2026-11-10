@@ -4,3 +4,7 @@
 .narration-player audio{display:block;width:100%;height:48px}.narration-settings{display:flex;justify-content:flex-end;margin:10px 0}.narration-settings label{font-size:13px;display:flex;align-items:center;gap:8px}.narration-settings select{min-height:44px;border:1px solid #b9c5ae;border-radius:12px;padding:6px 12px;background:#fffdf7;color:inherit;font:inherit;width:auto}
 .narration-player summary{padding:10px 0;cursor:pointer;font-size:14px;font-weight:700}.narration-player .narration-transcript{font-size:15px;line-height:1.85;margin:10px 0}.narration-player details small{display:block;font-size:12px;line-height:1.7}.narration-error{font-size:14px!important;line-height:1.6}.narration-error button{min-height:44px;border:0;text-decoration:underline;background:transparent;color:inherit;font:inherit}
 @media(prefers-reduced-motion:no-preference){.narration-player.is-playing .narration-wave i{animation:narration-wave .8s ease-in-out infinite alternate}.narration-player.is-playing .narration-wave i:nth-child(2n){animation-delay:-.3s}@keyframes narration-wave{to{transform:scaleY(.4)}}}
+.narration-player .narration-transcript{white-space:pre-line}
+.narration-sources{margin:18px 0;font-size:14px;line-height:1.6}
+.narration-sources ul{padding-left:20px;margin:8px 0}
+.narration-sources a{display:inline-block;padding:10px 0;color:inherit;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
