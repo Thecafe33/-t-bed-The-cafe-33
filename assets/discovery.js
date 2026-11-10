@@ -29,6 +29,7 @@ export const TOOLS = [
 ];
 const SIEVE_ICON = svg('<ellipse cx="12" cy="10" rx="9" ry="3.5"/><path d="M3 10v2c0 1.9 4 3.5 9 3.5s9-1.6 9-3.5v-2"/><path d="M7 11.5v2.5M12 12v3M17 11.5v2.5" stroke-width="1.3"/><path d="M10 19.5v.01M14 18.5v.01M12 22v.01" stroke-width="2.4"/>');
 const BOOK_ICON = svg('<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>');
+const BASKET_ICON = svg('<path d="M7 10a5 5 0 0 1 10 0"/><path d="M3 10h18l-2 9.2a2 2 0 0 1-2 1.8H7a2 2 0 0 1-2-1.8z"/><path d="M8.5 14v3.5M12 14v3.5M15.5 14v3.5M4 13.5h16"/>');
 const MAP_ICON = svg('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>');
 const HELP_ICON = svg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><path d="M12 17v.01" stroke-width="2.4"/>');
 const SOUND_ON = svg('<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>');
@@ -47,7 +48,7 @@ export function discoveryEntryHTML() {
 
 // The game's stylesheet is pinned to this module's version, so a cached module and a fresh
 // stylesheet (or the reverse) can never be combined.
-export const DISCOVERY_STYLE = 'assets/discovery.css?v=20261111-dig4';
+export const DISCOVERY_STYLE = 'assets/discovery.css?v=20261111-dig5';
 function ensureStyle() {
   const href = appURL(DISCOVERY_STYLE);
   for (const link of document.querySelectorAll('link[rel=stylesheet][href*="discovery.css"]')) if (link.href !== href) link.remove();
@@ -80,7 +81,7 @@ export function mountDiscovery(root) {
    <nav class="dig-bar" aria-label="Công trường">
     <button type="button" data-open-sites><i class="dig-icon">${MAP_ICON}</i><span>Bãi đào</span><b class="dig-badge" data-no-translate>${SITES.length}</b></button>
     <button type="button" class="discovery-notebook-button" data-open-notebook><i class="dig-icon">${BOOK_ICON}</i><span>Sổ</span><b class="dig-badge" data-no-translate>0</b></button>
-    <button type="button" class="dig-fab" data-open-basket aria-expanded="false" aria-controls="dig-basket"><i class="dig-icon dig-fab-icon"></i><span class="dig-fab-label">Giỏ dụng cụ</span></button>
+    <button type="button" class="dig-fab" data-open-basket aria-expanded="false" aria-controls="dig-basket"><i class="dig-icon dig-fab-icon">${BASKET_ICON}<b class="dig-fab-tool" aria-hidden="true"></b></i><span class="dig-fab-label">Giỏ dụng cụ</span></button>
     <button type="button" class="discovery-sieve-button" data-open-sieve><i class="dig-icon">${SIEVE_ICON}</i><span>Rây</span><b class="dig-badge" data-no-translate>0 L</b></button>
     <button type="button" data-game-help><i class="dig-icon">${HELP_ICON}</i><span>Hướng dẫn</span></button>
    </nav>
@@ -212,8 +213,8 @@ export function mountDiscovery(root) {
   }
   function renderFab() {
     const current = TOOLS.find(x => x.id === tool);
-    $('.dig-fab-icon').innerHTML = current.svg;
-    $('.dig-fab-label').textContent = t(current.label);
+    // The button is always the basket; the tool in hand rides on it as a small badge.
+    $('.dig-fab-tool').innerHTML = current.svg; $('.dig-fab-tool').title = t(current.label);
     $('[data-open-basket]').setAttribute('aria-label', `${t('Giỏ dụng cụ')}: ${t(current.label)}`);
   }
   function openBasket(open) {

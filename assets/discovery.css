@@ -189,3 +189,9 @@ body.townwalk-app[data-tab=discovery]>.app-header,body.townwalk-app[data-tab=dis
 /* Home and artifact page entry card */
 .discovery-entry{display:flex;align-items:center;gap:18px;background:#e8edda;color:#263d30;text-decoration:none;padding:18px;border:1px solid #d2d9be;border-radius:23px;margin:20px 0;text-align:left}.discovery-entry-art{position:relative;display:block;flex:0 0 80px;height:110px;border-radius:40% 60% 55% 45%;background:#d2ba85;transform:rotate(-7deg)}.discovery-entry-art img{position:absolute;inset:5%;height:90%;width:90%;object-fit:contain;filter:drop-shadow(4px 4px 3px #59441544)}.discovery-entry>span:last-child{display:grid;gap:7px}.discovery-entry small{font-size:9px;letter-spacing:.12em}.discovery-entry strong{font-size:20px;line-height:1.2}.discovery-entry span>span{font-size:13px;line-height:1.5}.discovery-entry b{font-size:13px;color:#435d36}.home-action-hub>.discovery-entry{margin-top:16px}
 @supports(padding:max(0px)){.discovery-hud{padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}.discovery-panel{padding-left:max(22px,env(safe-area-inset-left,0px))!important;padding-right:max(22px,env(safe-area-inset-right,0px))!important}}
+
+/* Basket button: fixed basket icon and name, current tool as a badge */
+.dig-fab .dig-fab-icon{background:linear-gradient(#e8bf86,#d4a163)!important;color:#4b3115!important}
+.dig-fab[aria-expanded=true] .dig-fab-icon{background:var(--dig-lime)!important;color:var(--dig-deep)!important}
+.dig-fab-tool{position:absolute;right:-6px;bottom:-4px;width:28px;height:28px;padding:5px;box-sizing:border-box;border-radius:50%;background:var(--dig-deep);color:var(--dig-lime);box-shadow:0 0 0 3px #fffdf7;display:grid;place-items:center}
+.dig-fab-tool svg{width:100%;height:100%}
