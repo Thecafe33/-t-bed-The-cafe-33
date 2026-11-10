@@ -2,24 +2,49 @@
 
 Implemented 2026-11-09. Open `index.html#discovery` from the home discovery card or the artifact collection page.
 
-## Two playable discoveries
+## Excavation field (10/11/2026 revision)
 
-- **Nandin ring — Gò Giồng Cát:** discovery year 2018, as recorded in the [heritage authority's article](https://vanhoaoceo.angiang.gov.vn/chiec-nhan-vang-nandin-giong-cat-bao-vat-quoc-gia-cua-van-hoa-oc-eo).
-- **Buddha relief — Linh Sơn Bắc:** discovery year 2019, as recorded in the [heritage authority's article](https://vanhoaoceo.angiang.gov.vn/bao-vat-quoc-gia-phu-dieu-phat-linh-son-bac-dau-an-phat-giao-thoi-ky-som-trong-van-hoa-oc-eo).
+`index.html#discovery` is now a wide simulated trench instead of one object per screen. It still runs entirely in the browser, writes nothing to Firebase and never awards Pass stamps.
 
-The existing generated object illustrations are reused unchanged. See `PASS-ART-DIRECTION.md` for provenance. They are labelled illustrations, not documentary photographs, scans, or scientifically accurate reconstructions. The soil texture and depth model are fictitious, not the stratigraphy of either site.
+**Sites** (`assets/excavation-sites.js`):
 
-### Free exploration (09/11/2026 revision)
+| Site | Size | Finds |
+| --- | --- | --- |
+| Đô thị cổ Óc Eo | 7 × 9 m | Nandin ring, Gò Cây Trâm jar burial, glass beads from Gò Óc Eo, Lung Lớn and Gò Giồng Trôm |
+| Núi Ba Thê – Linh Sơn | 7 × 9 m | Linh Sơn Bắc relief, terracotta Buddha head, Linh Sơn Nam jar burial, Linh Sơn Linga–Yoni |
+| Bãi luyện tập tổng hợp | 10 × 12 m | All nine finds; labelled as a practice trench, not a real location |
 
-The field fills the browser viewport, including on mobile. App header and bottom navigation are hidden only on this route; an explicit exit returns to the artifact page. Browser Back, route exit, orientation changes and native dialog dismissal are covered by tests. Body scrolling is locked during play and restored on exit. Help and the discovered-object record open only when requested.
+Every find is one of the nine sourced cards in `artifacts.js`. Positions, depths, sizes and soil layers are simulated and random per run. Nothing on screen marks where a find is: there are no grid strings, coordinates or silhouettes. Players search freely. The field notebook keeps a square reference as a field-note detail only.
 
-The player starts with no selected tool. Trowel, brush and magnifier are available throughout the session; none is locked behind a prescribed global stage. Every patch has its own remaining soil depth and dust. A trowel loosens soil but stops short of a buried object's surface; a brush clears a thin covering once exposed. A wrong tool produces a physical response without automatically switching tools or presenting the answer. The magnifier enlarges the visible surface; it does not see through soil. Keyboard arrows and Space use the currently selected tool at the current cursor. The assist action never auto-targets an object or chooses the correct tool. Optional hints are inside Help and require a separate click.
+**Camera and navigation:** the trench is larger than the screen. Drag with the move tool or two fingers, pinch or scroll to zoom, or tap the minimap. The minimap shows only dug ground, the visible area and finds that are already exposed or recorded.
 
-A new run chooses a hidden artifact and a different off-centre location, size and rotation. No object selector, name, silhouette marker or progress bar reveals the answer in advance. Discovery requires cleaning at least 88% of the object's alpha-mask area, not the entire field or a count of clicks. Dirt outside the object cannot earn a find. Work can continue after discovery; no automatic scene wipe removes the remaining ground. Reload begins a new run; only previously discovered IDs are retained under `oceo-discoveries-v1`. They never write to Firebase or Pass/check-in state.
+**Tools** (`assets/excavation-field.js`):
 
-The main renderer uses a GPU-lit height field: local surface normals, recessed edges, directional shadows, pebbles, illustration shadows, and a movable magnifier. Object textures use mipmaps to reduce shimmer. Only changed terrain data is uploaded, the render resolution is capped, and animation stops when idle/hidden. The artifact itself is still a 2D illustration, not a rotating 3D scan. A CPU canvas renderer keeps the same gameplay available without WebGL or after context loss. Rotation reprojects worked ground and the collision mask together. Reduced motion disables flying particles, and brush sounds retain the existing opt-in sound setting.
+- **Shovel:** strips topsoil fast and stops at the dark culture layer. Shovelling on that floor over a buried find scratches it and costs care points.
+- **Trowel:** scrapes thin layers. It stops just above a find's surface. On fragile finds (the gold ring), it scratches near the surface.
+- **Bamboo pick:** small radius. Clears soil right against a find without damage.
+- **Brush:** removes thin cover and dust only where the surface is already low.
+- **Blower:** removes dust from exposed surfaces only.
+- **Magnifier:** observes and never digs. Glass-bead glints show in the culture layer and are clearer under the lens.
+- **Camera with scale bar:** records an exposed find (85% of its outline cleaned) into the notebook.
+- **Sieve:** excavated soil fills a bucket. Beads leave the trench inside that soil and appear only after the bucket has been shaken through the sieve.
 
-Images that fail to load expose a retry state instead of awarding a discovery. Outside the simulation, the app continues to advise following site instructions and not digging or cleaning objects independently.
+Care points start at 100%. Each find can cost at most 12 points, so one slip does not end a run.
+
+**Field notebook:** recorded finds become swipeable pages with the illustration, square, date, material, story, source note and the existing narration. A locked page counts finds still underground without naming them. Completing a site opens the notebook at the first page.
+
+### Images
+
+Four finds use the existing illustrations. `dau-phat-naga`, `mo-vo-linh-son-nam` and the three bead groups use drawn placeholders labelled "Hình tạm · ảnh sẽ được cập nhật". To add a picture:
+
+1. Put a transparent WebP in `assets/heritage-art/`.
+2. Set `image` for that find in `assets/excavation-sites.js`.
+
+Missing or failed images fall back to the placeholder, so the game keeps working. To add more finds, add a sourced card to `artifacts.js`, then list it in `FINDS` and in a site.
+
+### Rendering
+
+`assets/excavation-renderer.js` draws the soil height field, up to 12 objects from one texture atlas, bead glints, scratches and the magnifier with WebGL. A Canvas 2D fallback keeps the game playable without WebGL. Objects are 2D illustrations, not 3D scans.
 
 ## Original narration
 
@@ -44,8 +69,8 @@ Edit the corresponding script, then run `tools/generate_narration.py` in a virtu
 ### Verification
 
 - `node --test tests/narration.test.mjs`: catalogue coverage, unique IDs, all three languages, script hashes and MP3 file completeness.
-- `node --test tests/discovery-field.test.mjs`: tool suitability, spatial excavation, discovery thresholds, changing placement and rotation reprojection.
-- `python3 tests/discovery_audio.py`: full-screen mobile touch, freely chosen tools, optional hints, unchanged canvas DOM, isolated Pass state, actual narration, navigation/rotation cleanup, three languages, canvas fallback, retry and offline caching.
+- `node --test tests/excavation-field.test.mjs`: sourced configuration, non-overlapping placement, tool limits and damage, fragile finds, beads through the sieve, recording.
+- `python3 tests/excavation_field.py`: full-viewport trench, pan/zoom/minimap, real touch digging, eight tools, sieve, camera records, notebook paging with narration, site switching, three languages, canvas fallback and placeholder images, offline route.
 - Existing collection, gallery motion, directional header/bottom-bar, browser smoke and cache-upgrade checks remain relevant.
 
 Browser tests block all non-local requests, including Firebase, and do not submit live visitor data. These checks do not replace testing the tactile experience and voice quality on physical iOS/Android devices.
