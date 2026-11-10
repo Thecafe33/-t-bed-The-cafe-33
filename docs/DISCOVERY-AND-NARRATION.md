@@ -20,16 +20,32 @@ Every find is one of the nine sourced cards in `artifacts.js`. Positions, depths
 
 **Camera and navigation:** the trench is larger than the screen. Drag with the move tool or two fingers, pinch or scroll to zoom, or tap the minimap. The minimap shows only dug ground, the visible area and finds that are already exposed or recorded.
 
-**Tools** (`assets/excavation-field.js`):
+**Screen:** soil fills the whole screen. The camera is clamped inside the trench and the widest zoom still shows only soil. A bottom bar matches the app's tab bar: Sites (with a count badge), Notebook, a raised tool-basket button showing the current tool, Sieve and Guide. The header shows "Site 1/3". On a first visit, the site picker opens on its own, so players see every site before they start.
 
-- **Shovel:** strips topsoil fast and stops at the dark culture layer. Shovelling on that floor over a buried find scratches it and costs care points.
-- **Trowel:** scrapes thin layers. It stops just above a find's surface. On fragile finds (the gold ring), it scratches near the surface.
-- **Bamboo pick:** small radius. Clears soil right against a find without damage.
-- **Brush:** removes thin cover and dust only where the surface is already low.
-- **Blower:** removes dust from exposed surfaces only.
-- **Magnifier:** observes and never digs. Glass-bead glints show in the culture layer and are clearer under the lens.
-- **Camera with scale bar:** records an exposed find (85% of its outline cleaned) into the notebook.
-- **Sieve:** excavated soil fills a bucket. Beads leave the trench inside that soil and appear only after the bucket has been shaken through the sieve.
+**Tool basket:** the basket button opens a woven basket of eight tools. Each tool shows the layer it works on. Picking a tool closes the basket. Tapping the field closes it too.
+
+**Tools are limited to their soil band** (`TOOLS` in `assets/excavation-field.js`), so the kit must be used in order:
+
+- **Shovel:** works only on the pale topsoil (depth 1 → 0.62) and stops at the dark layer.
+- **Trowel:** works only on the dark culture layer (0.66 → 0.2). It cannot cut untouched topsoil and stops just above a find. On fragile gold it scratches near the surface.
+- **Bamboo pick:** works only once you are near a find (≤ 0.4). It reaches the bottom without scratching.
+- **Brush:** works only on the last thin layer (≤ 0.26).
+- **Blower:** clears only dust on exposed surfaces (≤ 0.12).
+- **Magnifier:** observes and never digs. Glass-bead glints are clearer under the lens.
+- **Camera with scale bar:** records an exposed find (85% of its outline cleaned).
+- **Sieve:** beads leave the trench in trowelled culture-layer soil and appear only after sieving.
+
+A tool used in the wrong layer does nothing, gives a dull knock and shows a short hint about which tool to use.
+
+**Sound** (`assets/dig-sound.js`): sounds are synthesised locally with Web Audio. They are on by default inside the game, with a mute button in the header (`oceo-dig-sound`). Nothing is created before the player touches the field. Sounds:
+
+- different scrapes for shovel, trowel, pick, brush and blower;
+- a dull knock for the wrong layer;
+- a scratch;
+- a rising marimba arpeggio with sparkle when a find appears, plus lime confetti;
+- a shutter and chime when recording;
+- glass twinkles for beads;
+- a short fanfare when a site is complete.
 
 Care points start at 100%. Each find can cost at most 12 points, so one slip does not end a run.
 

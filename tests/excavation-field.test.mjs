@@ -24,40 +24,44 @@ test('sites hold several finds, placed apart and inside the trench',()=>{
   for(let i=0;i<finds.length;i++)for(let j=i+1;j<finds.length;j++)assert.ok(Math.hypot(finds[i].x-finds[j].x,finds[i].y-finds[j].y)>.5);
  }
 });
-test('shovel only strips topsoil and scratches a find it reaches; trowel and brush reveal without damage',()=>{
+test('each tool works only in its own soil band, so the kit is used in order',()=>{
  const jar={id:'jar',kind:'jar',size:1,x:3,y:4,angle:0};let f=field([jar]);
- sweep(f,'shovel',jar,8);assert.equal(f.finds[0].status,'buried');assert.ok(f.depth.reduce((m,v)=>Math.min(m,v),1)>=.449);
- assert.equal(f.damageEvents>0,true);assert.ok(f.conservation<100);
- f=field([jar]);f.apply('shovel',{x:2,y:4},{x:4,y:4});assert.equal(f.damageEvents,0);sweep(f,'trowel',jar,8);assert.equal(f.finds[0].status,'buried');
+ // Trowel, pick, brush and blower cannot break untouched topsoil.
+ for(const tool of ['trowel','pick','brush','blower']){const r=f.apply(tool,{x:2,y:4},{x:4,y:4});assert.equal(r.changed,false,tool);assert.equal(r.blocked,'firm',tool);}
+ // The shovel stops at the culture layer and never reaches a find.
+ sweep(f,'shovel',jar,8);assert.ok(f.depth.reduce((m,v)=>Math.min(m,v),1)>=.619);assert.equal(f.finds[0].status,'buried');
+ assert.equal(f.apply('shovel',{x:2.8,y:4},{x:3.2,y:4}).blocked,'floor');
+ // Trowel through the culture layer, then brush: exposed without damage.
+ sweep(f,'trowel',jar,8);assert.equal(f.finds[0].status,'buried');assert.ok(f.depth.reduce((m,v)=>Math.min(m,v),1)>=.199);
  sweep(f,'brush',jar,10);assert.equal(f.finds[0].status,'exposed');assert.equal(f.conservation,100);
  assert.equal(f.finds[0].origin,squareName(3,4));
 });
-test('fragile gold needs the bamboo pick: trowel near the surface scratches it',()=>{
+test('fragile gold needs the bamboo pick: the trowel scratches it near the surface',()=>{
  const ring={id:'ring',kind:'ring',size:.6,x:2.5,y:3.5,angle:.3,fragile:true};
- let f=field([ring]);sweep(f,'trowel',ring,12,.4);assert.ok(f.damageEvents>0);
- f=field([ring]);sweep(f,'trowel',ring,4,.4);const before=f.damageEvents;sweep(f,'pick',ring,10,.4);sweep(f,'brush',ring,6,.4);
+ let f=field([ring]);sweep(f,'shovel',ring,5,.5);sweep(f,'trowel',ring,12,.4);assert.ok(f.damageEvents>0);assert.ok(f.conservation<100);
+ f=field([ring]);sweep(f,'shovel',ring,5,.5);sweep(f,'trowel',ring,3,.4);const before=f.damageEvents;sweep(f,'pick',ring,12,.4);sweep(f,'brush',ring,8,.4);
  assert.equal(f.damageEvents,before);assert.equal(f.finds[0].status,'exposed');
 });
-test('blower and lens never dig; brush cannot move firm soil',()=>{
- const f=field([]);const p={x:2,y:2};f.apply('blower',p,{x:3,y:3});f.apply('lens',p,{x:3,y:3});f.apply('brush',p,{x:3,y:3});
- assert.ok(f.depth.every(v=>v===1));
+test('blower and lens never dig',()=>{
+ const f=field([]);sweep(f,'shovel',{x:3,y:3},5,.5);sweep(f,'trowel',{x:3,y:3},8,.4);const before=f.depth.slice();
+ f.apply('blower',{x:2.8,y:3},{x:3.2,y:3});f.apply('lens',{x:2.8,y:3},{x:3.2,y:3});assert.deepEqual(f.depth,before);
 });
 test('glass beads travel in the excavated soil and only appear after sieving',()=>{
  const beads={id:'beads',kind:'beads',small:true,x:3,y:3,angle:0};const f=field([beads]);
- sweep(f,'shovel',beads,5,.5);assert.equal(f.finds[0].status,'bucket');assert.ok(f.bucket.soil>0);
+ sweep(f,'shovel',beads,5,.5);assert.equal(f.finds[0].status,'buried');sweep(f,'trowel',beads,4,.5);assert.equal(f.finds[0].status,'bucket');assert.ok(f.bucket.soil>0);
  assert.equal(f.record(0),null);
  let r;do{r=f.sieve(5);}while(r.soil>0);assert.deepEqual(r.revealed,[0]);assert.equal(f.finds[0].status,'sieved');
  assert.deepEqual(f.record(0),{id:'beads',square:'D4',small:true});assert.equal(f.complete,true);
 });
 test('a long stroke passing over beads still sends them to the bucket',()=>{
  const f=field([{id:'beads',kind:'beads',small:true,x:3,y:3,angle:0}]);
- for(let k=0;k<4;k++)for(let y=2.5;y<3.5;y+=.1)f.apply('shovel',{x:.5,y},{x:5.5,y});
+ for(const tool of ['shovel','trowel'])for(let k=0;k<4;k++)for(let y=2.5;y<3.5;y+=.1)f.apply(tool,{x:.5,y},{x:5.5,y});
  assert.equal(f.finds[0].status,'bucket');
 });
 test('recording requires an exposed find and is counted once',()=>{
  const jar={id:'jar',kind:'jar',size:1,x:3,y:4,angle:0};const f=field([jar]);
  assert.equal(f.findAt(3,4,['buried']),0);assert.equal(f.record(0),null);
- sweep(f,'trowel',jar,8);sweep(f,'brush',jar,10);assert.equal(f.findAt(3.1,4.1),0);
+ sweep(f,'shovel',jar,6);sweep(f,'trowel',jar,8);sweep(f,'brush',jar,10);assert.equal(f.findAt(3.1,4.1),0);
  assert.ok(f.record(0));assert.equal(f.record(0),null);assert.equal(f.recorded,1);
 });
 test('field resolution matches the simulated trench in metres',()=>{

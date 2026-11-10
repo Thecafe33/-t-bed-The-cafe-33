@@ -3,12 +3,15 @@
 export const CELLS_PER_METER = 56;
 // depth 1 = untouched surface, 0 = bottom of the trench.
 export const LAYER = { topsoil: 0.62, find: 0.3 };
+// Each tool only works in its own band of the soil, so the kit has to be used in order:
+// shovel (topsoil) → trowel (culture layer) → bamboo pick / brush (around a find) → blower (dust).
+// `from` is the depth a tool can start working at, `floor` the deepest it reaches.
 export const TOOLS = {
-  shovel: { radius: 0.3, rate: 0.3, floor: 0.45 },
-  trowel: { radius: 0.17, rate: 0.2, floorOnFind: 0.17 },
-  pick: { radius: 0.075, rate: 0.17, floorOnFind: 0.03 },
-  brush: { radius: 0.18 },
-  blower: { radius: 0.26 },
+  shovel: { radius: 0.3, rate: 0.3, from: 1, floor: 0.62 },
+  trowel: { radius: 0.17, rate: 0.2, from: 0.66, floor: 0.2 },
+  pick: { radius: 0.075, rate: 0.17, from: 0.4, floor: 0 },
+  brush: { radius: 0.18, from: 0.26 },
+  blower: { radius: 0.26, from: 0.12 },
 };
 export const DIGGING_TOOLS = Object.keys(TOOLS);
 const BEAD_LEVEL = 0.5, BEAD_RADIUS = 0.32, EXPOSED = 0.85;
@@ -111,7 +114,7 @@ export class ExcavationField {
   }
   // Applies one stroke between two points (metres). Returns what happened for feedback.
   apply(tool, from, to) {
-    const spec = TOOLS[tool], result = { changed: false, contact: false, damaged: false, removed: 0, exposed: [], bucketed: [] };
+    const spec = TOOLS[tool], result = { changed: false, contact: false, damaged: false, blocked: null, removed: 0, exposed: [], bucketed: [] };
     if (!spec) return result;
     const radius = spec.radius, step = radius * 0.45;
     const distance = Math.hypot(to.x - from.x, to.y - from.y), steps = Math.max(1, Math.ceil(distance / step));
@@ -133,24 +136,21 @@ export class ExcavationField {
         const find = owner ? this.finds[owner - 1] : null, oldDepth = this.depth[i], oldDust = this.dust[i];
         // Damage depends on the ground before this stroke, not on overlapping steps within it.
         const first = this.stamp[i] !== stroke; if (first) this.stamp[i] = stroke;
-        if (tool === 'shovel') {
-          if (find && first && oldDepth <= spec.floor + 0.002) { this.damage[i] = Math.min(1, this.damage[i] + 0.5 * weight); result.damaged = true; result.contact = true; scratched.add(owner - 1); }
-          if (oldDepth > spec.floor) this.depth[i] = Math.max(spec.floor, oldDepth - spec.rate * weight);
-        } else if (tool === 'trowel' || tool === 'pick') {
-          const floor = find ? spec.floorOnFind : 0;
-          if (oldDepth > floor) this.depth[i] = Math.max(floor, oldDepth - spec.rate * weight);
+        if (oldDepth > spec.from + 0.001) { result.blocked = 'firm'; }
+        else if (tool === 'shovel' || tool === 'trowel' || tool === 'pick') {
+          if (oldDepth <= spec.floor + 0.001) result.blocked = result.blocked || 'floor';
+          else this.depth[i] = Math.max(spec.floor, oldDepth - spec.rate * weight);
           if (find && this.depth[i] < LAYER.find) {
             result.contact = true;
-            if (tool === 'trowel' && find.fragile && first && oldDepth <= 0.2) { this.damage[i] = Math.min(1, this.damage[i] + 0.35 * weight); result.damaged = true; scratched.add(owner - 1); }
+            // The trowel's steel edge scratches soft gold; the bamboo pick does not.
+            if (tool === 'trowel' && find.fragile && first && oldDepth <= spec.floor + 0.04) { this.damage[i] = Math.min(1, this.damage[i] + 0.35 * weight); result.damaged = true; scratched.add(owner - 1); }
             if (tool === 'pick') this.dust[i] = Math.max(0, this.dust[i] - 0.05 * weight);
           }
         } else if (tool === 'brush') {
-          if (oldDepth < 0.32) {
-            this.depth[i] = Math.max(0, oldDepth - 0.1 * weight);
-            this.dust[i] = Math.max(0, oldDust - 0.24 * weight);
-          }
+          this.depth[i] = Math.max(0, oldDepth - 0.1 * weight);
+          this.dust[i] = Math.max(0, oldDust - 0.24 * weight);
         } else if (tool === 'blower') {
-          if (oldDepth < 0.24) this.dust[i] = Math.max(0, oldDust - 0.2 * weight);
+          this.dust[i] = Math.max(0, oldDust - 0.2 * weight);
         }
         const removed = oldDepth - this.depth[i];
         if (removed > 0.0001 || oldDust - this.dust[i] > 0.0001) {

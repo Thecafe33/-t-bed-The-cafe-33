@@ -13,7 +13,9 @@ uniform vec4 findBox[${MAX_FINDS}];uniform vec4 findSlot[${MAX_FINDS}];uniform v
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7))+seed)*43758.5453);}
 float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
 vec4 state(vec2 w){return texture2D(field,clamp(w/worldSize,vec2(0.),vec2(1.)));}
-float height(vec2 w){return state(w).r;}
+uniform vec2 cellSize;
+// Four-tap smoothing removes the stair-step look of the soil grid at cut edges.
+float height(vec2 w){vec2 o=cellSize*.6;return (state(w+vec2(o.x,o.y)).r+state(w+vec2(-o.x,o.y)).r+state(w+vec2(o.x,-o.y)).r+state(w+vec2(-o.x,-o.y)).r)*.25;}
 vec4 artifact(vec2 w){
  vec4 best=vec4(0.);
  for(int i=0;i<${MAX_FINDS};i++){
@@ -48,7 +50,7 @@ void main(){
   color=mix(lip,grass,smoothstep(.18,.22,edge));
   color*=1.-.12*(1.-smoothstep(0.,.06,edge));
  }else{
-  vec4 st=state(w);float h=st.r;
+  vec4 st=state(w);float h=height(w);
   vec2 cellStep=1./grid,m=cellStep*worldSize*1.6;
   float hl=height(w-vec2(m.x,0.)),hr=height(w+vec2(m.x,0.)),hu=height(w-vec2(0.,m.y)),hd=height(w+vec2(0.,m.y));
   // Pebbles and clods give the surface relief that reacts to light.
@@ -126,7 +128,7 @@ export function createExcavationRenderer(canvas, fallback, art, field) {
     buffer = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
     const position = gl.getAttribLocation(program, 'position'); gl.enableVertexAttribArray(position); gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-    for (const name of ['field', 'atlas', 'resolution', 'grid', 'worldSize', 'camera', 'scale', 'pointer', 'lens', 'seed', 'findBox', 'findSlot', 'beads']) locations[name] = gl.getUniformLocation(program, name);
+    for (const name of ['cellSize', 'field', 'atlas', 'resolution', 'grid', 'worldSize', 'camera', 'scale', 'pointer', 'lens', 'seed', 'findBox', 'findSlot', 'beads']) locations[name] = gl.getUniformLocation(program, name);
     const texture = unit => { const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); return t; };
     fieldTexture = texture(0);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, field.cols, field.rows, 0, gl.RGBA, gl.UNSIGNED_BYTE, field.pixels); uploaded = field.revision;
@@ -138,7 +140,7 @@ export function createExcavationRenderer(canvas, fallback, art, field) {
     big.forEach(({ f, i }, k) => { box.set([f.x, f.y, f.size, f.angle], k * 4); slot.set([art.slots[i][0], art.slots[i][1], 0, 1], k * 4); });
     small.forEach((f, k) => beads.set([f.x, f.y, 0.34, 1], k * 4));
     gl.uniform4fv(locations.findBox, box); gl.uniform4fv(locations.findSlot, slot); gl.uniform4fv(locations.beads, beads);
-    gl.uniform2f(locations.grid, field.cols, field.rows); gl.uniform2f(locations.worldSize, field.widthM, field.heightM);
+    gl.uniform2f(locations.grid, field.cols, field.rows); gl.uniform2f(locations.worldSize, field.widthM, field.heightM); gl.uniform2f(locations.cellSize, field.widthM / field.cols, field.heightM / field.rows);
   } catch (error) { lost = true; canvas.dataset.rendererError = error.message; }
 
   // CPU fallback: same camera, flatter lighting.
