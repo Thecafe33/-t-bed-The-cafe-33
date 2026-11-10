@@ -104,7 +104,7 @@ with sync_playwright() as p:
  # Every panel translates fully in three languages and the field fills each viewport.
  for lang in ['en','zh','vi']:
   q.evaluate("async(lang)=>(await import('/assets/i18n.js')).setLanguage(lang)",lang)
-  q.locator('[data-open-basket]').click();assert not q.evaluate("async()=>(await import('/assets/i18n.js')).untranslatedUI(document.querySelector('#view-discovery'))");q.locator('[data-open-basket]').click()
+  q.locator('[data-open-basket]').click();pending=q.evaluate("async()=>(await import('/assets/i18n.js')).untranslatedUI(document.querySelector('#view-discovery'))");assert not pending,(lang,'basket',pending);q.locator('[data-open-basket]').click()
   for opener,panel in [('[data-game-help]','.discovery-help'),('.discovery-notebook-button','.discovery-notebook'),('[data-open-sieve]','.discovery-sieve'),('.discovery-site','.discovery-sites')]:
    q.locator(opener).click();expect(q.locator(panel)).to_be_visible()
    pending=q.evaluate("async()=>(await import('/assets/i18n.js')).untranslatedUI(document.querySelector('#view-discovery'))")
