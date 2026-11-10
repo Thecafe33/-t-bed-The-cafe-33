@@ -16,6 +16,8 @@ Implemented 2026-11-09. Open `index.html#discovery` from the home discovery card
 
 Every find is one of the nine sourced cards in `artifacts.js`. Positions, depths, sizes and soil layers are simulated and random per run. Nothing on screen marks where a find is: there are no grid strings, coordinates or silhouettes. Players search freely. The field notebook keeps a square reference as a field-note detail only.
 
+**Digging feel:** strokes follow the hand. Each stamp's edge wobbles with ground noise and per-stroke jitter, and removal is lumpy, so no two marks look alike. The renderer lights the height field from a direction that leans toward the finger. Pebbles, dark cavities at the foot of cuts and bright crumbly rims make depth readable. Clods in the colour of the layer being dug fly away from the stroke. The selected tool follows the finger and jerks with each scrape.
+
 **Camera and navigation:** the trench is larger than the screen. Drag with the move tool or two fingers, pinch or scroll to zoom, or tap the minimap. The minimap shows only dug ground, the visible area and finds that are already exposed or recorded.
 
 **Tools** (`assets/excavation-field.js`):

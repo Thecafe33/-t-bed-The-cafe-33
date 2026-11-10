@@ -1,6 +1,6 @@
 // Simulated excavation trench. Soil layers, depths and scale are a teaching model,
 // not the stratigraphy of any real Óc Eo site. Units are simulated metres.
-export const CELLS_PER_METER = 40;
+export const CELLS_PER_METER = 56;
 // depth 1 = untouched surface, 0 = bottom of the trench.
 export const LAYER = { topsoil: 0.62, find: 0.3 };
 export const TOOLS = {
@@ -13,6 +13,13 @@ export const TOOLS = {
 export const DIGGING_TOOLS = Object.keys(TOOLS);
 const BEAD_LEVEL = 0.5, BEAD_RADIUS = 0.32, EXPOSED = 0.85;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+// Value noise: ragged, lumpy edges so every stroke leaves its own irregular mark.
+const hash2 = (x, y, s = 0) => { const h = Math.sin(x * 127.1 + y * 311.7 + s * 74.7) * 43758.5453; return h - Math.floor(h); };
+function valueNoise(x, y, s) {
+  const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+  const a = hash2(xi, yi, s), b = hash2(xi + 1, yi, s), c = hash2(xi, yi + 1, s), d = hash2(xi + 1, yi + 1, s);
+  return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+}
 function segmentDistance(p, a, b) {
   const dx = b.x - a.x, dy = b.y - a.y, length = dx * dx + dy * dy;
   const k = length ? clamp(((p.x - a.x) * dx + (p.y - a.y) * dy) / length, 0, 1) : 0;
@@ -113,12 +120,16 @@ export class ExcavationField {
     const touched = new Set(), scratched = new Set(), stroke = ++this.stroke;
     for (let s = 1; s <= steps; s++) {
       const px = from.x + (to.x - from.x) * s / steps, py = from.y + (to.y - from.y) * s / steps;
-      const x0 = clamp(Math.floor((px - radius) * CELLS_PER_METER), 0, this.cols - 1), x1 = clamp(Math.ceil((px + radius) * CELLS_PER_METER), 0, this.cols - 1);
-      const y0 = clamp(Math.floor((py - radius) * CELLS_PER_METER), 0, this.rows - 1), y1 = clamp(Math.ceil((py + radius) * CELLS_PER_METER), 0, this.rows - 1);
+      const reach = radius * 1.32;
+      const x0 = clamp(Math.floor((px - reach) * CELLS_PER_METER), 0, this.cols - 1), x1 = clamp(Math.ceil((px + reach) * CELLS_PER_METER), 0, this.cols - 1);
+      const y0 = clamp(Math.floor((py - reach) * CELLS_PER_METER), 0, this.rows - 1), y1 = clamp(Math.ceil((py + reach) * CELLS_PER_METER), 0, this.rows - 1);
       for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
-        const d = Math.hypot((x + 0.5) / CELLS_PER_METER - px, (y + 0.5) / CELLS_PER_METER - py) / radius;
+        // Edge radius wobbles with ground noise and per-stroke jitter, so marks follow the hand, not a stamp.
+        const wobble = 0.72 + 0.5 * valueNoise(x * 0.16, y * 0.16, 1) + 0.18 * (valueNoise(x * 0.45, y * 0.45, stroke % 97) - 0.5);
+        const d = Math.hypot((x + 0.5) / CELLS_PER_METER - px, (y + 0.5) / CELLS_PER_METER - py) / (radius * wobble);
         if (d >= 1) continue;
-        const i = y * this.cols + x, weight = (1 - d * d) * strength, owner = this.owner[i];
+        const clump = 0.6 + 0.8 * valueNoise(x * 0.22, y * 0.22, stroke % 13);
+        const i = y * this.cols + x, weight = (1 - d * d) * strength * clump, owner = this.owner[i];
         const find = owner ? this.finds[owner - 1] : null, oldDepth = this.depth[i], oldDust = this.dust[i];
         // Damage depends on the ground before this stroke, not on overlapping steps within it.
         const first = this.stamp[i] !== stroke; if (first) this.stamp[i] = stroke;

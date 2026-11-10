@@ -26,7 +26,7 @@ test('sites hold several finds, placed apart and inside the trench',()=>{
 });
 test('shovel only strips topsoil and scratches a find it reaches; trowel and brush reveal without damage',()=>{
  const jar={id:'jar',kind:'jar',size:1,x:3,y:4,angle:0};let f=field([jar]);
- sweep(f,'shovel',jar,8);assert.equal(f.finds[0].status,'buried');assert.ok(Math.min(...f.depth)>=.449);
+ sweep(f,'shovel',jar,8);assert.equal(f.finds[0].status,'buried');assert.ok(f.depth.reduce((m,v)=>Math.min(m,v),1)>=.449);
  assert.equal(f.damageEvents>0,true);assert.ok(f.conservation<100);
  f=field([jar]);f.apply('shovel',{x:2,y:4},{x:4,y:4});assert.equal(f.damageEvents,0);sweep(f,'trowel',jar,8);assert.equal(f.finds[0].status,'buried');
  sweep(f,'brush',jar,10);assert.equal(f.finds[0].status,'exposed');assert.equal(f.conservation,100);

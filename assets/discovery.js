@@ -114,7 +114,7 @@ export function mountDiscovery(root) {
       octx.beginPath(); octx.arc(p.x, p.y, r * 0.94, 0, Math.PI * 2); octx.stroke(); octx.setLineDash([]);
     });
     particles = particles.filter(p => p.life > 0);
-    for (const p of particles) { p.x += p.vx; p.y += p.vy; p.vy += p.g; p.life -= 0.045; octx.fillStyle = `rgba(${p.c},${Math.max(0, p.life) * 0.75})`; octx.beginPath(); octx.ellipse(p.x, p.y, p.r, p.r * 0.7, 0, 0, Math.PI * 2); octx.fill(); }
+    for (const p of particles) { p.x += p.vx; p.y += p.vy; p.vy += p.g; p.life -= 0.045; octx.fillStyle = `rgba(${p.c},${Math.min(1, Math.max(0, p.life)) * 0.9})`; octx.beginPath(); octx.ellipse(p.x, p.y, p.r, p.r * 0.72, p.spin || 0, 0, Math.PI * 2); octx.fill(); octx.fillStyle = `rgba(60,40,28,${Math.max(0, p.life) * 0.18})`; octx.beginPath(); octx.ellipse(p.x + p.r * 0.3, p.y + p.r * 0.4, p.r * 0.7, p.r * 0.4, p.spin || 0, 0, Math.PI * 2); octx.fill(); }
     flashes = flashes.filter(f => now - f.at < 600);
     for (const f of flashes) {
       const k = (now - f.at) / 600;
@@ -157,11 +157,17 @@ export function mountDiscovery(root) {
     messageTimer = setTimeout(() => el.classList.remove('is-visible'), 3000);
   }
   const once = (key, text) => { if (said.has(key)) return; said.add(key); message(text, true); };
-  function burst(screen, colour, count = 6, spread = 4) {
+  // Clods fly away from the direction of the stroke; dust drifts and fades.
+  function burst(screen, colour, count = 6, spread = 4, dir = { x: 0, y: 0 }, size = 3) {
     if (reducedMotion()) return;
-    for (let i = 0; i < count; i++) particles.push({ x: screen.x, y: screen.y, r: 0.8 + Math.random() * 3, vx: (Math.random() - 0.5) * spread, vy: -Math.random() * 3, g: 0.12, life: 0.7, c: colour });
-    if (particles.length > 90) particles.splice(0, particles.length - 90);
+    const len = Math.hypot(dir.x, dir.y) || 1, ux = dir.x / len, uy = dir.y / len;
+    for (let i = 0; i < count; i++) {
+      const throwBack = 1.5 + Math.random() * spread;
+      particles.push({ x: screen.x + (Math.random() - 0.5) * 10, y: screen.y + (Math.random() - 0.5) * 10, r: 0.8 + Math.random() * size, vx: -ux * throwBack + (Math.random() - 0.5) * spread, vy: -uy * throwBack - Math.random() * 2.5, g: 0.16, life: 0.75 + Math.random() * 0.3, c: colour, spin: Math.random() * 6 });
+    }
+    if (particles.length > 140) particles.splice(0, particles.length - 140);
   }
+  const soilColour = w => { const h = field.depthAt(w.x, w.y); return h > 0.6 ? '196,160,120' : h > 0.3 ? '142,104,86' : '238,204,140'; };
   function updateStats() {
     if (!field) return;
     $('[data-stat-finds] b').textContent = `${field.recorded}/${field.finds.length}`;
@@ -189,8 +195,10 @@ export function mountDiscovery(root) {
     if (!inField(to)) { if (DIG_TOOLS.has(tool)) message('Ngoài mép hố là vùng không đào.'); return; }
     const result = field.apply(tool, from, to);
     if (result.changed) {
-      const dirt = tool === 'blower' || tool === 'brush' ? '250,236,205' : '214,176,134';
-      burst(toScreenPoint, dirt, tool === 'shovel' ? 9 : 5, tool === 'blower' ? 9 : 4);
+      const dir = { x: toScreenPoint.x - fromScreen.x, y: toScreenPoint.y - fromScreen.y };
+      if (tool === 'blower' || tool === 'brush') burst(toScreenPoint, '250,236,205', tool === 'blower' ? 10 : 6, tool === 'blower' ? 7 : 4, dir, 2);
+      else burst(toScreenPoint, soilColour(to), tool === 'shovel' ? 10 : tool === 'pick' ? 3 : 6, tool === 'shovel' ? 5 : 3, dir, tool === 'shovel' ? 5 : 3);
+      cursor.classList.remove('is-scraping'); void cursor.offsetWidth; cursor.classList.add('is-scraping');
       if (performance.now() - lastSound > 170) { playEffect('brush'); lastSound = performance.now(); }
     }
     if (result.damaged) message(tool === 'shovel' ? 'Xẻng chạm vào vật cứng! Đổi sang bay để đào nhẹ hơn.' : 'Bề mặt kim loại rất dễ xước. Thử que tre.', true);
