@@ -3,7 +3,7 @@ const APP_ROOT = new URL('./', self.location.href);
 const INDEX_URL = new URL('index.html', APP_ROOT).href;
 const ASSETS_PATH = new URL('assets/', APP_ROOT).pathname;
 const CACHE_PREFIX = `oceo-townwalk:${encodeURIComponent(APP_ROOT.pathname)}:`;
-const CACHE = CACHE_PREFIX + '2026-11-11-v45';
+const CACHE = CACHE_PREFIX + '2026-11-11-v46';
 const CORE = [
   "index.html",
   "assets/boot.js",
@@ -16,7 +16,7 @@ const CORE = [
   "assets/excavation-renderer.js",
   "assets/dig-sound.js",
   "assets/discovery-messages.js",
-  "assets/discovery.css?v=20261110-dig3",
+  "assets/discovery.css?v=20261111-dig4",
   "assets/narration.js",
   "assets/narration-scripts.js",
   "assets/narration-sources.js",
@@ -91,8 +91,10 @@ const CORE = [
   "assets/fonts/lora-latin-ext-500-italic.woff2",
   "assets/fonts/lora-vietnamese-500-italic.woff2",
 ].map(path => new URL(path, APP_ROOT).href);
+// Bypass the browser's HTTP cache when installing: GitHub Pages lets files live there for
+// minutes, and an install mixing a fresh stylesheet with a stale module breaks the layout.
 self.addEventListener("install", (event) =>
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(CORE).then(() => self.skipWaiting()))),
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(CORE.map((url) => new Request(url, { cache: "reload" })))).then(() => self.skipWaiting())),
 );
 self.addEventListener("activate", (event) =>
   event.waitUntil(

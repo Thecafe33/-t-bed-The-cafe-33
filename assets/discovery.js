@@ -9,11 +9,13 @@ import { SITES, FINDS } from './excavation-sites.js';
 import { ExcavationField, placeFinds, squareName } from './excavation-field.js';
 import { buildAtlas, findPicture, imageURL } from './excavation-art.js';
 import { createExcavationRenderer } from './excavation-renderer.js';
+import { appURL } from './app-paths.js';
 
 const STORE = 'oceo-discoveries-v1', SITE_STORE = 'oceo-dig-site';
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 // Modern line icons (24px grid, round caps) in the app's soft-pop style.
-const svg = body => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+// width/height keep icons small even if a stylesheet arrives late or stale.
+const svg = body => `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
 // Field kit. Order follows a real dig: move, strip topsoil, excavate, clean, observe, record, sieve.
 export const TOOLS = [
   { id: 'hand', note: 'Kéo để đi quanh hố', label: 'Di chuyển', tint: '#e0d8f7', svg: svg('<path d="M18 11V6a2 2 0 0 0-4 0v1M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>') },
@@ -43,7 +45,18 @@ export function discoveryEntryHTML() {
   return `<a class="discovery-entry" href="#discovery" data-route="discovery"><span class="discovery-entry-art" aria-hidden="true"><img src="${imageURL('nandin-giong-cat')}" alt="" loading="lazy"></span><span><small data-no-translate>ÓC EO / FIELD LAB</small><strong>Công trường khai quật</strong><span>Chia ô, bóc đất, rây tìm hạt chuỗi. Ghi chép từng cổ vật Óc Eo.</span><b>Vào hố đào ↗</b></span></a>`;
 }
 
+// The game's stylesheet is pinned to this module's version, so a cached module and a fresh
+// stylesheet (or the reverse) can never be combined.
+export const DISCOVERY_STYLE = 'assets/discovery.css?v=20261111-dig4';
+function ensureStyle() {
+  const href = appURL(DISCOVERY_STYLE);
+  for (const link of document.querySelectorAll('link[rel=stylesheet][href*="discovery.css"]')) if (link.href !== href) link.remove();
+  if (![...document.querySelectorAll('link[rel=stylesheet]')].some(link => link.href === href)) {
+    const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = href; document.head.append(link);
+  }
+}
 export function mountDiscovery(root) {
+  ensureStyle();
   root.innerHTML = `<div class="discovery-page">
   <div class="discovery-scene" tabindex="0" role="group" aria-label="Công trường khai quật mô phỏng" aria-describedby="discovery-accessibility">
    <canvas class="discovery-terrain" aria-hidden="true"></canvas><canvas class="discovery-fallback" aria-hidden="true" hidden></canvas><canvas class="discovery-overlay" aria-hidden="true"></canvas>
