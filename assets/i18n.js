@@ -4,6 +4,7 @@ import {artifactMessageRows} from './artifacts.js';
 import { POLICY_MESSAGES } from './locales-policy.js';
 import { contentMessageRows } from './locales-content.js';
 import { CURATED } from './content.js';
+import {researchMessageRows} from './heritage-research.js';
 import { EXTRA_MESSAGES } from './locales-extra.js';
 import {homeMessages} from './campaign-home.js';
 import {journeyMessages} from './journey.js';
@@ -11,7 +12,7 @@ import {storyMessages} from './story-creator.js';
 import {campaignMessages} from './campaign-messages.js';
 import {placeFeedMessages} from './place-feed.js';
 const normal=value=>String(value).normalize('NFC').replace(/\s+/g,' ').trim();
-const messages=new Map([...UI_MESSAGES,...discoveryMessages,...POLICY_MESSAGES,...EXTRA_MESSAGES,...contentMessageRows(),...artifactMessageRows(),...homeMessages,...journeyMessages,...storyMessages,...campaignMessages,...placeFeedMessages].map(([vi,en,zh])=>[normal(vi),{en,zh}]));
+const messages=new Map([...UI_MESSAGES,...discoveryMessages,...POLICY_MESSAGES,...EXTRA_MESSAGES,...contentMessageRows(),...researchMessageRows(),...artifactMessageRows(),...homeMessages,...journeyMessages,...storyMessages,...campaignMessages,...placeFeedMessages].map(([vi,en,zh])=>[normal(vi),{en,zh}]));
 const names=new Set([...CURATED.places,...CURATED.stops].flatMap(p=>[p.name,p.address,...(p.aliases||[])]).filter(Boolean).concat(['Óc Eo','Óc Eo.','óc eo','ÓC EO','Óc Eo Pass','ÓC EO TOWNWALK','Óc Eo, An Giang','Óc Eo, An Giang, Việt Nam']).map(v=>normal(v).toLowerCase()));
 let language='vi';try{const saved=localStorage.getItem('oceo-language');if(['vi','en','zh'].includes(saved))language=saved;}catch{}
 export const getLanguage=()=>language;

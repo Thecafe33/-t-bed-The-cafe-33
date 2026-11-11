@@ -1,6 +1,7 @@
 import {initQuickNavigation} from './quick-navigation.js';
 import {mountDiscovery,discoveryEntryHTML} from './discovery.js';
 import {narrationHTML,initNarration,stopNarration} from './narration.js';
+import {heritageResearchHTML} from './heritage-research-view.js';
 import {clearInteractionMotion,revealArtifact,revealAnswer,celebrateStamp} from './interaction-motion.js';
 import {
   HERITAGE_REFERENCE_URL,
@@ -523,6 +524,7 @@ function placeDetail(id) {
  ${p.imageCredit ? `<p class="photo-credit">Ảnh: ${e(p.imageCredit)} ${safeURL(p.imageSource) ? `<a href="${e(safeURL(p.imageSource))}" target="_blank" rel="noopener noreferrer">Nguồn ảnh ↗</a>` : ""}</p>` : ""}
  ${p.hook ? `<h3 class="detail-hook">${e(p.hook)}</h3>` : ""}<p class="detail-description">${e(p.description)}</p>
  ${p.lookFor ? `<div class="look-for">${icon("compass")}<div><strong>Thử nhìn kỹ hơn</strong><p>${e(p.lookFor)}</p></div></div>` : ""}
+ ${heritageResearchHTML(p)}
  ${artifactSection(p,site.places)}
  <div class="visit-facts"><span>${icon("clock")} ${e(p.duration)} phút gợi ý</span><span>${icon("sun")} ${e(p.hours || "Hỏi giờ đón khách")}</span></div>
  ${p.category !== "heritage" ? `<div class="stop-facts">${p.address ? `<p>${icon("pin")} ${e(p.address)}</p>` : ""}${p.price ? `<p>${icon("coffee")} ${e(p.price)}</p>` : ""}</div>` : ""}

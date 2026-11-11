@@ -41,7 +41,7 @@ with sync_playwright() as p:
  c.route('**/*',lambda r:r.continue_() if r.request.url.startswith(ORIGIN) else r.abort())
  q=c.new_page();q.goto(ORIGIN+'/#artifacts',wait_until='networkidle')
  q.evaluate('async()=>{await navigator.serviceWorker.ready}');q.wait_for_function('!!navigator.serviceWorker.controller')
- path='/assets/audio/vi/artifact-nandin-giong-cat.mp3?v=20261110'
+ path='/assets/audio/vi/artifact-nandin-giong-cat.mp3?v=20261111'
  assert q.evaluate("async(path)=>{const r=await fetch(path,{headers:{Range:'bytes=0-1023'}});return r.status===206&&(await r.arrayBuffer()).byteLength===1024}",path)
  c.set_offline(True);q.reload(wait_until='domcontentloaded')
  q.locator('#artifact-site-filter').select_option('go-giong-cat');q.locator('#artifact-open').click();q.locator('#modal .narration-player summary').click()

@@ -7,8 +7,8 @@ Thay 25 bài về 16 điểm di sản/nhà trưng bày và 9 thẻ cổ vật, �
 - Kể rõ đối tượng trước, rồi phát hiện/nghiên cứu, niên đại, bối cảnh văn hóa, chi tiết quan sát và nơi lưu giữ/trưng bày khi nguồn có dữ liệu.
 - Phân biệt niên đại cổ vật với năm khai quật; đơn vị chủ trì đề án với người trực tiếp phát hiện; nơi phát hiện với nơi bảo quản và nơi có ảnh trưng bày. Không suy tên người khai quật từ tác giả ảnh.
 - Ảnh hiện vật trong nhà trưng bày xác nhận một điểm trưng bày đã được ghi nhận, không bảo đảm lịch mở cửa hoặc hiện vật luôn có mặt hôm nay.
-- Gò Tư Trâm, Gò Út Ảnh, Gò Út Trạnh và Gò Sáu Thuận chỉ có đoạn giới thiệu giới hạn theo thông tin đã kiểm chứng. Chưa có đủ lịch sử khai quật, người chủ trì, niên đại từng kiến trúc và danh sách hiện vật. Các đoạn nói rõ thiếu dữ liệu, không dùng câu hỏi quan sát để thay cho dữ kiện.
-- Chưa xác minh được năm hoàn thành/khánh thành Nhà trưng bày Văn hóa Óc Eo, năm xây chùa Linh Sơn, năm hoàn thành/đóng cửa nhà trưng bày cũ trên Ba Thê. Không suy năm hoàn thành từ cụm “hơn 7 năm xây dựng và phát triển” trong một bài có nhắc hoạt động năm 2023 nhưng được đăng trên website năm 2026.
+- Tại bản 10/11, Gò Tư Trâm, Gò Út Ảnh, Gò Út Trạnh và Gò Sáu Thuận chỉ có đoạn giới thiệu giới hạn theo thông tin đã kiểm chứng. Út Trạnh và Sáu Thuận đã được bổ sung ngày 11/11 theo hồ sơ đối chiếu bên dưới. Chưa có đủ lịch sử khai quật, người chủ trì, niên đại từng kiến trúc và danh sách hiện vật. Các đoạn nói rõ thiếu dữ liệu, không dùng câu hỏi quan sát để thay cho dữ kiện.
+- Chưa xác minh được năm hoàn thành/khánh thành Nhà trưng bày Văn hóa Óc Eo, năm hoàn thành/đóng cửa nhà trưng bày cũ trên Ba Thê. Riêng năm lập Chùa Linh Sơn, đối chiếu 11/11 tìm được hai mốc khác nhau: 1912 và 1913, đã nêu rõ nguồn trong bài mới. Không suy năm hoàn thành từ cụm “hơn 7 năm xây dựng và phát triển” trong một bài có nhắc hoạt động năm 2023 nhưng được đăng trên website năm 2026.
 - Không tự gán niên đại toàn nền văn hóa cho từng gò. Không coi bản đồ hoặc pin tham khảo là hố khai quật.
 
 ## Dữ kiện dùng trong lời kể
@@ -31,3 +31,7 @@ Thay 25 bài về 16 điểm di sản/nhà trưng bày và 9 thẻ cổ vật, �
 ## Kiểm tra bản thu
 
 `tools/generate_narration.py` chỉ tái tạo các track có thay đổi hash lời/giọng. Từng MP3 được remux có seek table và kiểm tra bằng ffprobe; `tests/narration.test.mjs` đối chiếu hash, kích thước, thời lượng và độ phủ 3 ngôn ngữ. Bản lời có đoạn ngắt, nguồn riêng từng bài và giữ nguyên ngôn ngữ khi dịch giao diện. Cache dịch vụ được tăng phiên bản để không tiếp tục phát bài cũ.
+
+## Bổ sung ngày 11/11/2026
+
+Đã đối chiếu website người dùng cung cấp và các hồ sơ iSpace liên kết: [bảng dữ kiện, khác biệt và giới hạn](HERITAGE-CROSSCHECK-2026-11-11.md). Cập nhật năm bài về Út Trạnh, Cây Thị A–B, Chùa Linh Sơn, Sáu Thuận và Linh Sơn Nam ở ba ngôn ngữ, tái tạo 15 MP3 tương ứng. Bổ sung nguồn trực tiếp cho từng bài; giữ các bài hiện vật đã có nguồn chuyên biệt của Ban Quản lý. Niên đại được đọc thành lời trong bản tiếng Việt. Các thông tin trong bản đối chiếu mới thay thế giới hạn tương ứng được ghi tại phiên bản 10/11 ở trên.

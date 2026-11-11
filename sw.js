@@ -3,7 +3,7 @@ const APP_ROOT = new URL('./', self.location.href);
 const INDEX_URL = new URL('index.html', APP_ROOT).href;
 const ASSETS_PATH = new URL('assets/', APP_ROOT).pathname;
 const CACHE_PREFIX = `oceo-townwalk:${encodeURIComponent(APP_ROOT.pathname)}:`;
-const CACHE = CACHE_PREFIX + '2026-11-11-v54';
+const CACHE = CACHE_PREFIX + '2026-11-11-v55';
 const CORE = [
   "index.html",
   "assets/boot.js",
@@ -19,6 +19,9 @@ const CORE = [
   "assets/discovery-messages.js",
   "assets/discovery.css?v=20261111-dig9",
   "assets/narration.js",
+  "assets/heritage-research.js",
+  "assets/heritage-research-view.js",
+  "assets/heritage-research.css?v=20261111",
   "assets/narration-scripts.js",
   "assets/narration-sources.js",
   "assets/narration.css?v=20261109",

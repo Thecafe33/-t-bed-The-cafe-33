@@ -6,7 +6,7 @@ import {appURL} from './app-paths.js';
 
 // Changed spoken content needs a new URL as well as a new service-worker cache:
 // native media and CDN HTTP caches can otherwise retain the previous recording.
-const AUDIO_REVISION='20261110';
+const AUDIO_REVISION='20261111';
 const narrationURL=(kind,id)=>appURL(`assets/audio/${getLanguage()}/${kind}-${id}.mp3?v=${AUDIO_REVISION}`);
 
 function sourcesHTML(kind,id){

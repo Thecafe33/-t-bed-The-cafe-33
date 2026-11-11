@@ -1,4 +1,4 @@
-// Sources supporting the editorial narration; article titles retain their original language.
+// Public sources supporting each guide.
 export const NARRATION_SOURCES = {
   "artifact/nandin-giong-cat": [
     {
@@ -180,6 +180,18 @@ export const NARRATION_SOURCES = {
     {
       "title": "Thuyết minh và trưng bày năm 2023",
       "url": "https://vanhoaoceo.angiang.gov.vn/cong-tac-thuyet-minh-huong-dan-tham-quan-tai-khu-di-tich-quoc-gia-dac-biet-oc-eo-ba-nam-2023"
+    },
+    {
+      "title": "Óc Eo Heritage · hồ sơ di tích",
+      "url": "https://www.khuditichoceo.com/"
+    },
+    {
+      "title": "iSpace An Giang · Cây Thị A",
+      "url": "https://ispace.angiang.vn/qr_info/oc-eo/go-cay-thi-a/"
+    },
+    {
+      "title": "iSpace An Giang · Cây Thị B",
+      "url": "https://ispace.angiang.vn/qr_info/oc-eo/go-cay-thi-b/"
     }
   ],
   "place/linh-son-nam": [
@@ -190,6 +202,14 @@ export const NARRATION_SOURCES = {
     {
       "title": "Núi Ba Thê và các di tích",
       "url": "https://vanhoaoceo.angiang.gov.vn/nui-ba-dau-an-van-hoa-oc-eo-giua-long-an-giang"
+    },
+    {
+      "title": "Óc Eo Heritage · hồ sơ di tích",
+      "url": "https://www.khuditichoceo.com/"
+    },
+    {
+      "title": "iSpace An Giang · Linh Sơn Nam",
+      "url": "https://ispace.angiang.vn/qr_info/oc-eo/linh-son-nam/"
     }
   ],
   "place/chua-linh-son": [
@@ -204,6 +224,14 @@ export const NARRATION_SOURCES = {
     {
       "title": "Phù điêu Phật Linh Sơn Bắc",
       "url": "https://vanhoaoceo.angiang.gov.vn/bao-vat-quoc-gia-phu-dieu-phat-linh-son-bac-dau-an-phat-giao-thoi-ky-som-trong-van-hoa-oc-eo"
+    },
+    {
+      "title": "Óc Eo Heritage · hồ sơ di tích",
+      "url": "https://www.khuditichoceo.com/"
+    },
+    {
+      "title": "iSpace An Giang · Chùa Linh Sơn",
+      "url": "https://ispace.angiang.vn/qr_info/oc-eo/chua-linh-son/"
     }
   ],
   "place/go-giong-trom": [
@@ -244,6 +272,14 @@ export const NARRATION_SOURCES = {
     {
       "title": "Thuyết minh và trưng bày năm 2023",
       "url": "https://vanhoaoceo.angiang.gov.vn/cong-tac-thuyet-minh-huong-dan-tham-quan-tai-khu-di-tich-quoc-gia-dac-biet-oc-eo-ba-nam-2023"
+    },
+    {
+      "title": "Óc Eo Heritage · hồ sơ di tích",
+      "url": "https://www.khuditichoceo.com/"
+    },
+    {
+      "title": "iSpace An Giang · Gò Út Trạnh",
+      "url": "https://ispace.angiang.vn/qr_info/oc-eo/go-ut-tranh/"
     }
   ],
   "place/go-sau-thuan": [
@@ -254,6 +290,14 @@ export const NARRATION_SOURCES = {
     {
       "title": "Những cuộc khảo sát quốc tế tại Óc Eo – Ba Thê",
       "url": "https://vanhoaoceo.angiang.gov.vn/nhung-cuoc-khao-sat-quoc-te-tai-oc-eo-ba"
+    },
+    {
+      "title": "Óc Eo Heritage · hồ sơ di tích",
+      "url": "https://www.khuditichoceo.com/"
+    },
+    {
+      "title": "iSpace An Giang · Chùa Linh Sơn – Gò Sáu Thuận",
+      "url": "https://ispace.angiang.vn/qr_info/oc-eo/chua-linh-son/"
     }
   ],
   "place/nha-trung-bay-cu-ba-the": [

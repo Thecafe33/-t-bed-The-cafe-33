@@ -31,7 +31,7 @@ test('heritage narration has per-record evidence without borrowing another find 
   assert.ok(sources?.length,`${kind}/${id} has no evidence links`);
   for(const source of sources){
    assert.ok(source.title);
-   assert.equal(new URL(source.url).origin,'https://vanhoaoceo.angiang.gov.vn');
+   assert.ok(['https://vanhoaoceo.angiang.gov.vn','https://ispace.angiang.vn','https://www.khuditichoceo.com'].includes(new URL(source.url).origin));
   }
  }
  const ring=narrationFor('artifact','nandin-giong-cat');
