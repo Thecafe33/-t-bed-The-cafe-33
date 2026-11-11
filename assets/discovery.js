@@ -10,6 +10,7 @@ import { ExcavationField, placeFinds, squareName } from './excavation-field.js';
 import { buildAtlas, findPicture, imageURL } from './excavation-art.js';
 import { createExcavationRenderer } from './excavation-renderer.js';
 import { appURL } from './app-paths.js';
+import { streamAvailability, loadThree, createStreamSieve } from './stream-sieve.js';
 
 const STORE = 'oceo-discoveries-v1', SITE_STORE = 'oceo-dig-site';
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -48,7 +49,7 @@ export function discoveryEntryHTML() {
 
 // The game's stylesheet is pinned to this module's version, so a cached module and a fresh
 // stylesheet (or the reverse) can never be combined.
-export const DISCOVERY_STYLE = 'assets/discovery.css?v=20261111-dig6';
+export const DISCOVERY_STYLE = 'assets/discovery.css?v=20261111-dig7';
 function ensureStyle() {
   const href = appURL(DISCOVERY_STYLE);
   for (const link of document.querySelectorAll('link[rel=stylesheet][href*="discovery.css"]')) if (link.href !== href) link.remove();
@@ -97,6 +98,8 @@ export function mountDiscovery(root) {
   <dialog class="discovery-panel discovery-notebook"><button type="button" data-close-panel aria-label="Trở lại hiện trường">←</button><div class="notebook-head"></div><div class="notebook-track" tabindex="0" aria-label="Các trang trong sổ hiện trường"></div><div class="notebook-nav"><button type="button" data-notebook-step="-1" aria-label="Trang trước">←</button><span class="notebook-count" data-no-translate></span><button type="button" data-notebook-step="1" aria-label="Trang sau">→</button></div>
    <div class="notebook-zoom" role="dialog" aria-modal="true" aria-label="Ảnh lớn" hidden><button type="button" class="notebook-zoom-close" data-close-zoom aria-label="Đóng ảnh lớn"><span aria-hidden="true" data-no-translate>×</span></button><img alt=""><p data-no-translate></p></div></dialog>
   <dialog class="discovery-panel discovery-sieve"><button type="button" data-close-panel aria-label="Trở lại hiện trường">←</button><h2>Rây đất.</h2><p class="sieve-intro">Đất từ hố được đổ vào rây. Kéo qua lại trên rây hoặc bấm nút để lắc.</p>
+   <div class="sieve-net-note" role="status" hidden></div>
+   <div class="sieve-stream" hidden><span class="sieve-stream-loading">Đang tải cảnh suối…</span><small class="sieve-stream-credit">Cảnh 3D · three.js tải từ cdnjs</small></div>
    <div class="sieve-stage" aria-hidden="true"><div class="sieve-ring"><div class="sieve-mesh"></div><div class="sieve-heap"></div><div class="sieve-finds"></div></div><div class="sieve-fall"></div></div>
    <p class="sieve-status" role="status"></p><button type="button" class="button dark" data-sieve-shake>Lắc rây</button><div class="sieve-results"></div></dialog>
  </div>`;
@@ -363,15 +366,49 @@ export function mountDiscovery(root) {
     fillThumbs($('.discovery-sieve'));
     $('.sieve-status').innerHTML = soil > 0 ? `<span>${e(t('Trong rây còn khoảng'))}</span> <b data-no-translate>${Math.ceil(soil)} L</b>` : `<span>${e(t(waiting.length ? 'Rây đã sạch. Có hạt chuỗi nằm lại trên mắt lưới!' : 'Xô đang trống. Đào đất bằng xẻng, bay hoặc que tre rồi quay lại.'))}</span>`;
     $('[data-sieve-shake]').disabled = soil <= 0;
-    if (revealed.length) { digSound('beads'); digSound('found'); message('Hạt chuỗi thuỷ tinh nằm lại trên rây!', true); }
+    stream?.setSoil(soilFraction());
+    if (revealed.length) { stream?.revealBeads(revealed.length); digSound('beads'); digSound('found'); message('Hạt chuỗi thuỷ tinh nằm lại trên rây!', true); }
+  }
+  // Wet sieving in a forest stream. three.js comes from a CDN only when online; otherwise the dry sieve stays.
+  let stream = null, streamPending = false, cellularOK = false;
+  const soilFraction = () => { const start = Math.max(field.bucket.soil, field.bucket.start || 0); return start ? clamp(field.bucket.soil / start, 0, 1) : 0; };
+  function streamNote(kind) {
+    const note = $('.sieve-net-note');
+    if (!kind) { note.hidden = true; note.innerHTML = ''; return; }
+    const text = { offline: 'Tính năng cảnh suối cần mạng để tải tài nguyên. Bạn vẫn rây khô được bên dưới.', cellular: 'Cảnh suối 3D tải khoảng 600 KB, nên dùng khi có Wi-Fi.', failed: 'Chưa tải được cảnh suối. Bạn vẫn rây khô được bên dưới.' }[kind];
+    note.dataset.kind = kind; note.hidden = false;
+    note.innerHTML = `<span>${e(t(text))}</span>${kind === 'cellular' ? `<button type="button" class="text-button" data-stream-anyway>${e(t('Vẫn tải cảnh suối'))}</button>` : kind === 'failed' ? `<button type="button" class="text-button" data-stream-retry>${e(t('Thử lại'))}</button>` : ''}`;
+  }
+  async function startStream() {
+    if (stream || streamPending || !$('.discovery-sieve').open) return;
+    const availability = streamAvailability();
+    if (availability === 'offline') { streamNote('offline'); return; }
+    if ((availability === 'cellular' || availability === 'savedata') && !cellularOK) { streamNote('cellular'); return; }
+    streamNote(null); streamPending = true;
+    const box = $('.sieve-stream'); box.hidden = false; box.dataset.state = 'loading';
+    try {
+      await loadThree();
+      if (!$('.discovery-sieve').open) return;
+      stream = createStreamSieve(box, { onShake: power => shake(power), reducedMotion: reducedMotion() });
+      box.dataset.state = 'ready'; $('.sieve-stage').hidden = true; scene.dataset.stream = 'on';
+      stream.setSoil(soilFraction());
+      const waiting = field.finds.filter(f => f.small && f.status === 'sieved').length; if (waiting) stream.revealBeads(waiting);
+    } catch {
+      box.hidden = true; delete box.dataset.state; $('.sieve-stage').hidden = false; streamNote(navigator.onLine === false ? 'offline' : 'failed');
+    } finally { streamPending = false; }
+  }
+  function stopStream() {
+    stream?.destroy(); stream = null; delete scene.dataset.stream;
+    const box = $('.sieve-stream'); box.hidden = true; delete box.dataset.state; $('.sieve-stage').hidden = false;
   }
   function openSieve() {
-    release(); field.bucket.start = field.bucket.soil; renderSieve(); $('.discovery-sieve').showModal();
+    release(); field.bucket.start = field.bucket.soil; renderSieve(); $('.discovery-sieve').showModal(); startStream();
   }
   function shake(power = 1) {
     if (field.bucket.soil <= 0) return;
     const amount = (5 + field.bucket.soil * 0.25) * power;
     const { revealed } = field.sieve(amount);
+    stream?.shake(power);
     const ring = $('.sieve-ring'); if (!reducedMotion()) { ring.classList.remove('is-shaking'); void ring.offsetWidth; ring.classList.add('is-shaking'); }
     if (performance.now() - lastSound > 150) { digSound('scrape', 'brush'); lastSound = performance.now(); }
     renderSieve(revealed); updateStats();
@@ -488,6 +525,8 @@ export function mountDiscovery(root) {
     if (button.matches('[data-open-notebook]') && ready) openNotebook();
     if (button.matches('[data-open-sieve]') && ready) openSieve();
     if (button.matches('[data-sieve-shake]')) shake(1);
+    if (button.matches('[data-stream-anyway]')) { cellularOK = true; startStream(); }
+    if (button.matches('[data-stream-retry]')) startStream();
     if (button.matches('[data-sieve-record]')) { const i = Number(button.dataset.sieveRecord); flashes.push({ x: view.width / 2, y: view.height / 2, at: performance.now() }); record(i); renderSieve(); }
     if (button.matches('[data-notebook-step]')) showCard(notebookIndex + Number(button.dataset.notebookStep));
     if (button.matches('[data-zoom-find]')) openZoom(button);
@@ -504,6 +543,9 @@ export function mountDiscovery(root) {
   }, { passive: true });
   on($('.notebook-track'), 'keydown', event => { if (event.key === 'ArrowRight') { event.preventDefault(); showCard(notebookIndex + 1); } if (event.key === 'ArrowLeft') { event.preventDefault(); showCard(notebookIndex - 1); } });
   // Drag across the sieve to shake it.
+  on($('.discovery-sieve'), 'close', stopStream);
+  on(window, 'online', () => { if ($('.discovery-sieve').open && !stream) startStream(); });
+  on(window, 'offline', () => { if ($('.discovery-sieve').open && !stream) streamNote('offline'); });
   const stage = $('.sieve-stage');
   on(stage, 'pointerdown', event => { sieveLast = event.clientX; sieveTravel = 0; stage.setPointerCapture(event.pointerId); });
   on(stage, 'pointermove', event => { if (sieveLast === null || !stage.hasPointerCapture(event.pointerId)) return; sieveTravel += Math.abs(event.clientX - sieveLast); sieveLast = event.clientX; if (sieveTravel > 70) { sieveTravel = 0; shake(0.8); } });
@@ -519,5 +561,5 @@ export function mountDiscovery(root) {
   renderSound();
   on(document, 'keydown', event => { if (event.key === 'Escape' && !$('.dig-basket').hidden) { openBasket(false); $('[data-open-basket]').focus(); } }, { capture: true });
   reset(site);
-  return { destroy() { disposed = true; version++; release(); closePanels(); cancelAnimationFrame(frame); clearTimeout(messageTimer); clearTimeout(recordTimer); observer.disconnect(); renderer?.destroy(); ac.abort(); } };
+  return { destroy() { stopStream(); disposed = true; version++; release(); closePanels(); cancelAnimationFrame(frame); clearTimeout(messageTimer); clearTimeout(recordTimer); observer.disconnect(); renderer?.destroy(); ac.abort(); } };
 }

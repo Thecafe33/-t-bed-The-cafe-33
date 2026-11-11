@@ -51,6 +51,21 @@ Care points start at 100%. Each find can cost at most 12 points, so one slip doe
 
 **Field notebook:** recorded finds become swipeable pages with the illustration, square, date, material, story, source note and the existing narration. A locked page counts finds still underground without naming them. Completing a site opens the notebook at the first page.
 
+### Ground light and pebbles
+
+The trench shader adds sunlight through the canopy: soft warm and cool patches fixed to the ground, seeded per run. It also scatters Voronoi pebbles, irregular rounded stones in a few cells with their own colours and domed lighting. The dappling is static so the field still redraws only on demand. The Canvas 2D fallback does not draw either effect.
+
+### Wet sieving stream (online only)
+
+Opening the sieve shows a forest stream where the sieve floats in the current. Shaking it, by dragging across the picture or pressing the button, jolts the frame, sends ripples across the water and washes a plume of silt downstream. Beads pop up on the mesh. A tap on the water drops a ripple. The scene lives in `assets/stream-sieve.js`. It is adapted, with phone-sized reductions, from a three.js "Forest Stream" scene supplied by the project owner.
+
+- **three.js is not stored in this repository.** r128 (MIT) is loaded from `cdnjs.cloudflare.com` the first time the sieve opens. The service worker does not cache it, but the browser's HTTP cache may.
+- **Offline:** the panel says "Tính năng cảnh suối cần mạng để tải tài nguyên" and the dry sieve works as before.
+- **Mobile data or Data Saver** (`navigator.connection`, where the browser reports it): the scene asks before downloading (~600 KB), recommending Wi-Fi.
+- **Load failure or missing WebGL features:** a retry note appears and the dry sieve stays. Without half-float render targets, the ripples are skipped.
+- The scene renders only while the sieve panel is open and is destroyed on close. Reduced motion stops the butterfly, sway and camera drift.
+- Loading from cdnjs exposes the visitor's IP address and user agent to Cloudflare. Mention this in the privacy page before production.
+
 ### Images
 
 Four finds use the existing illustrations. `dau-phat-naga`, `mo-vo-linh-son-nam` and the three bead groups use drawn placeholders labelled "Hình tạm · ảnh sẽ được cập nhật". To add a picture:

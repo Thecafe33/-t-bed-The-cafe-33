@@ -12,6 +12,9 @@ uniform vec2 camera;uniform float scale;uniform vec2 pointer;uniform float lens;
 uniform vec4 findBox[${MAX_FINDS}];uniform vec4 findSlot[${MAX_FINDS}];uniform vec4 beads[${MAX_BEADS}];
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7))+seed)*43758.5453);}
 float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
+vec2 hash2(vec2 p){return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)))+seed)*43758.5453);}
+// Sunlight through the canopy: soft layered blobs fixed to the ground, like shade under a tree on Ba Thê.
+float dapple(vec2 w){float a=noise(w*.55+seed*.013),b=noise(w*1.35+vec2(3.7,7.1)),c=noise(w*3.1+vec2(1.3,5.7));return smoothstep(.47,.6,a*.55+b*.3+c*.15);}
 vec4 state(vec2 w){return texture2D(field,clamp(w/worldSize,vec2(0.),vec2(1.)));}
 uniform vec2 cellSize;
 // Four-tap smoothing removes the stair-step look of the soil grid at cut edges.
@@ -53,11 +56,18 @@ void main(){
   vec4 st=state(w);float h=height(w);
   vec2 cellStep=1./grid,m=cellStep*worldSize*1.6;
   float hl=height(w-vec2(m.x,0.)),hr=height(w+vec2(m.x,0.)),hu=height(w-vec2(0.,m.y)),hd=height(w+vec2(0.,m.y));
-  // Pebbles and clods give the surface relief that reacts to light.
-  vec2 stoneGrid=w*7.,stoneCell=floor(stoneGrid),jitter=vec2(hash(stoneCell),hash(stoneCell+39.));
-  vec2 stoneDelta=fract(stoneGrid)-(.25+jitter*.5);
-  float stoneR=.07+hash(stoneCell+7.)*.13,stone=(1.-smoothstep(stoneR*.55,stoneR,length(stoneDelta)))*step(.45,hash(stoneCell+3.));
-  vec3 normal=normalize(vec3((hl-hr)*6.-stoneDelta.x*stone*1.6,(hu-hd)*6.-stoneDelta.y*stone*1.6,.62));
+  // Voronoi pebbles: irregular stones with soil in the cracks, each with its own colour and a domed top.
+  vec2 gp=w*6.5+(vec2(noise(w*1.3),noise(w*1.3+5.))-.5)*.6,ci=floor(gp),cf=fract(gp);
+  float d1=9.,d2=9.;vec2 id=vec2(0.),toC=vec2(0.);
+  for(int j=-1;j<=1;j++)for(int i=-1;i<=1;i++){vec2 g=vec2(float(i),float(j)),r=g+hash2(ci+g)-cf;float d=dot(r,r);if(d<d1){d2=d1;d1=d;id=ci+g;toC=r;}else if(d<d2){d2=d;}}
+  vec2 rid=hash2(id+3.7);
+  // Only a few cells hold a stone, and each is a rounded, irregular pebble inside its cell.
+  float present=step(.8,rid.y)*(.4+.6*smoothstep(.2,.4,h));
+  float stone=smoothstep(.03,.1,sqrt(d2)-sqrt(d1))*(1.-smoothstep(.26+.12*rid.x,.36+.12*rid.x,sqrt(d1)))*present;
+  vec3 stoneC=mix(vec3(.66,.62,.55),vec3(.9,.86,.78),rid.x);
+  stoneC=mix(stoneC,vec3(.8,.6,.46),step(.95,rid.y));stoneC=mix(stoneC,vec3(.64,.67,.7),step(.92,rid.x));
+  vec2 stoneDelta=-toC*1.8;
+  vec3 normal=normalize(vec3((hl-hr)*6.-stoneDelta.x*stone*1.4,(hu-hd)*6.-stoneDelta.y*stone*1.4,.62));
   // The light leans toward the finger, so freshly cut walls catch and lose the sun as you work.
   vec2 lp=pointer/resolution;
   vec3 light=normalize(vec3(-.55+lp.x*.35,-.8+lp.y*.3,.85));
@@ -73,7 +83,7 @@ void main(){
   vec3 clay=mix(vec3(.95,.80,.53),vec3(1.,.88,.64),patch);
   vec3 soil=mix(clay,culture,smoothstep(.14,.36,h));soil=mix(soil,topsoil,smoothstep(.56,.7,h));
   soil*=.9+n*.16;
-  soil=mix(soil,soil*vec3(.86,.82,.8),stone*.55);
+  soil=mix(soil,stoneC*(.9+n*.12),stone*.85);
   // Grass flecks on the untouched surface; sherds and charcoal in the culture layer.
   float fleck=step(.985,hash(floor(px*1.1)));
   soil=mix(soil,vec3(.96,.9,.78),fleck*smoothstep(.85,1.,h)*.6);
@@ -105,6 +115,8 @@ void main(){
  }
  float ring=abs(toPointer-shortSide*.168);
  color=mix(color,vec3(.85,.95,.48),lens*(1.-smoothstep(2.,4.,ring)));
+ // Dappled light: warm sun patches and cool leaf shade over everything, objects included.
+ color*=mix(vec3(.74,.8,.88),vec3(1.14,1.07,.92),dapple(w));
  gl_FragColor=vec4(color,1.);
 }`;
 

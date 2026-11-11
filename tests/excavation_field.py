@@ -79,6 +79,8 @@ with sync_playwright() as p:
  q.screenshot(path=str(OUT/'excavation-recorded.png'))
  # The sieve turns bucket soil into glass-bead finds.
  q.locator('[data-open-sieve]').click();expect(q.locator('.discovery-sieve')).to_be_visible()
+ # External hosts are blocked in tests: the stream scene cannot load, so the dry sieve stays with a clear note.
+ expect(q.locator('.sieve-net-note')).to_have_attribute('data-kind','failed');expect(q.locator('.sieve-stage')).to_be_visible();expect(q.locator('.sieve-stream')).to_be_hidden()
  for _ in range(60):
   if q.locator('[data-sieve-shake]').is_disabled():break
   q.locator('[data-sieve-shake]').click()
@@ -146,6 +148,9 @@ with sync_playwright() as p:
  path='/assets/audio/vi/artifact-nandin-giong-cat.mp3'
  assert q.evaluate("async(path)=>{const r=await fetch(path,{headers:{Range:'bytes=0-1023'}});return r.status===206&&(await r.arrayBuffer()).byteLength===1024}",path)
  c.set_offline(True);q.reload(wait_until='domcontentloaded');expect(q.locator('#view-discovery')).to_be_visible();expect(q.locator('.discovery-scene-note')).to_be_hidden(timeout=15000)
+ # Offline: opening the sieve explains that the stream needs a connection; the dry sieve still works.
+ if q.locator('.discovery-sites').is_visible():q.locator('.discovery-sites [data-close-panel]').click()
+ q.locator('[data-open-sieve]').click();expect(q.locator('.sieve-net-note')).to_have_attribute('data-kind','offline');expect(q.locator('.sieve-net-note')).to_contain_text('cần mạng để tải tài nguyên');expect(q.locator('.sieve-stage')).to_be_visible();q.locator('.discovery-sieve [data-close-panel]').click()
  assert q.evaluate("async(path)=>{const r=await fetch(path,{headers:{Range:'bytes=1024-2047'}});return r.status===206&&(await r.arrayBuffer()).byteLength===1024}",path)
  b.close()
 print('PASS: full-screen soil, bottom bar with sites/notebook/basket/sieve/help, first-visit site picker, tool basket, pan/zoom/minimap, eight tools limited to their soil bands, bucket and sieve for beads, camera records, swipeable field notebook with narration, three sites, three languages, no Pass writes, WebGL/canvas and placeholder images, offline route.')

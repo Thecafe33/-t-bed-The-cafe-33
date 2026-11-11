@@ -169,4 +169,9 @@ export const discoveryMessages = [
  ['Đất còn dày quá. Cọ chỉ phủi lớp mỏng cuối cùng.','The soil is too thick. The brush only sweeps the last thin layer.','土还太厚，刷子只能刷最后一薄层。'],
  ['Bãi đào đã hoàn tất! Còn những bãi khác đang chờ ở nút Bãi đào.','Site complete! More sites are waiting under the Sites button.','发掘完成！“发掘点”按钮里还有其他地点等着你。'],
  ['Xem ảnh lớn','View full picture','查看大图'],['Ảnh lớn','Full picture','大图'],['Đóng ảnh lớn','Close picture','关闭大图'],
+ ['Đang tải cảnh suối…','Loading the stream…','正在加载溪流场景…'],['Cảnh 3D · three.js tải từ cdnjs','3D scene · three.js loaded from cdnjs','3D场景 · three.js 由 cdnjs 加载'],
+ ['Tính năng cảnh suối cần mạng để tải tài nguyên. Bạn vẫn rây khô được bên dưới.','The stream scene needs a connection to load its resources. You can still dry-sieve below.','溪流场景需要联网加载资源。你仍可在下方干筛。'],
+ ['Cảnh suối 3D tải khoảng 600 KB, nên dùng khi có Wi-Fi.','The 3D stream downloads about 600 KB; Wi-Fi is recommended.','3D溪流约需下载600 KB，建议使用Wi-Fi。'],
+ ['Chưa tải được cảnh suối. Bạn vẫn rây khô được bên dưới.','The stream scene could not load. You can still dry-sieve below.','溪流场景未能加载，你仍可在下方干筛。'],
+ ['Vẫn tải cảnh suối','Load the stream anyway','仍然加载溪流'],['Thử lại','Try again','重试'],
 ];
