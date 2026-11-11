@@ -210,9 +210,23 @@ body.townwalk-app[data-tab=discovery]>.app-header,body.townwalk-app[data-tab=dis
 .sieve-stream canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:ew-resize}
 .sieve-stream-loading{position:absolute;inset:0;display:grid;place-items:center;color:#d8e6dc;font-size:13px;font-weight:600}
 .sieve-stream[data-state=ready] .sieve-stream-loading{display:none}
-.sieve-stream-credit{position:absolute;left:12px;bottom:8px;z-index:1;font-size:10px;color:rgba(255,255,255,.75);text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none}
 .sieve-stream::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 46%,transparent 56%,rgba(5,20,14,.45) 100%)}
 .sieve-net-note{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:4px 0 10px;padding:10px 14px;border-radius:16px;background:#fff4dc;color:#6a4a12;font-size:13px;font-weight:600;line-height:1.5}
 .sieve-net-note[hidden]{display:none}
 .sieve-net-note[data-kind=cellular]{background:#eef3d6;color:#2f4a22}
 .sieve-net-note .text-button{font-weight:800;text-decoration:underline}
+
+/* Stream sieve fills the screen; controls float over the water. */
+.discovery-sieve.is-stream{width:100%!important;max-width:none!important;padding:0!important;border-radius:0!important;background:#14261b!important;overflow:hidden!important;animation:none}
+.discovery-sieve.is-stream .sieve-stream{position:absolute;inset:0;height:auto;margin:0;border-radius:0;box-shadow:none}
+.discovery-sieve.is-stream>[data-close-panel]{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));left:12px;z-index:3;margin:0;background:rgba(255,253,247,.9);border-color:transparent;box-shadow:0 8px 20px -10px rgba(0,0,0,.6)}
+.discovery-sieve.is-stream h2{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:70px;right:12px;z-index:3;margin:0;font-size:20px;color:#fbf8f0;text-shadow:0 2px 8px rgba(0,0,0,.55);pointer-events:none;line-height:42px}
+.discovery-sieve.is-stream .sieve-intro,.discovery-sieve.is-stream .sieve-net-note{display:none}
+.discovery-sieve.is-stream .sieve-status{position:absolute;top:calc(66px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:3;width:max-content;max-width:calc(100% - 24px);margin:0;padding:8px 16px;border-radius:999px;background:rgba(20,30,22,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#f4f1e4!important;font-size:13px!important;text-align:center}
+.discovery-sieve.is-stream [data-sieve-shake]{position:absolute;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:3;width:auto!important;margin:0!important;min-height:56px!important;border-radius:999px;background:#d9f27a!important;color:#173f36!important;font-size:16px!important;font-weight:800;border:0;box-shadow:0 14px 30px -12px rgba(0,0,0,.7)}
+.discovery-sieve.is-stream [data-sieve-shake]:disabled{background:rgba(255,253,247,.75)!important;color:#5a5f52!important}
+.discovery-sieve.is-stream .sieve-results{position:absolute;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:3;max-height:42vh;overflow-y:auto;display:grid;gap:8px}
+.discovery-sieve.is-stream .sieve-result{margin:0;background:rgba(255,253,247,.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 10px 24px -14px rgba(0,0,0,.7)}
+@media(min-width:850px){.discovery-sieve.is-stream [data-sieve-shake]{left:50%;right:auto;width:420px!important;transform:translateX(-50%)}.discovery-sieve.is-stream .sieve-results{left:50%;right:auto;width:420px;transform:translateX(-50%)}}
+.discovery-sieve.is-stream [data-sieve-shake]:disabled{display:none}
+.discovery-sieve.is-stream:has([data-sieve-shake]:disabled) .sieve-results{bottom:calc(16px + env(safe-area-inset-bottom,0px))}

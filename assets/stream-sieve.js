@@ -383,7 +383,8 @@ export function createStreamSieve(container, { onShake = () => {}, reducedMotion
   const gl2 = renderer.capabilities.isWebGL2;
   if (!gl2 && !renderer.extensions.has('WEBGL_depth_texture')) { renderer.dispose(); canvas.remove(); throw new Error('depth textures unsupported'); }
   const ripplesOK = gl2 || (renderer.extensions.has('OES_texture_half_float') && renderer.extensions.has('EXT_color_buffer_half_float'));
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+  // Full-screen scene: keep the pixel count phone-friendly.
+  { const r = container.getBoundingClientRect(); renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, r.width * r.height > 300000 ? 1 : 1.25)); }
   renderer.setClearColor(0x14261b, 1);
   const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(35, 1, 0.5, 60);
   const disposables = [];
