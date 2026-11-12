@@ -8,7 +8,7 @@ with sync_playwright() as p:
  q=c.new_page();errors=[];q.on('pageerror',lambda e:errors.append(str(e)));q.goto(origin,wait_until='networkidle')
  q.locator('.header-deck').click();expect(q).to_have_url(origin+'/#artifacts');expect(q.locator('#view-artifacts')).to_be_visible();expect(q.locator('#modal')).to_be_hidden()
  expect(q.locator('.app-view:visible')).to_have_count(1);expect(q.locator('#artifacts-heading')).to_be_focused();expect(q.locator('.header-deck')).to_have_attribute('aria-current','page')
- q.locator('#artifact-random').click();q.locator('[data-deck-active]').press('ArrowRight');expect(q.locator('[data-deck-active]')).to_have_attribute('data-gallery-index','1')
+ q.locator('#artifact-shuffle').click();q.locator('[data-deck-active]').press('ArrowRight');expect(q.locator('[data-deck-active]')).to_have_attribute('data-gallery-index','1')
  q.locator('[data-deck-active]').scroll_into_view_if_needed();q.evaluate('window.cardBefore=document.querySelector("[data-deck-active]");window.offsetBefore=scrollY')
  q.locator('[data-deck-active]').click();expect(q.locator('#modal')).to_be_visible();q.locator('#artifact-back').click();expect(q.locator('#modal')).to_be_hidden()
  assert q.evaluate('cardBefore===document.querySelector("[data-deck-active]")')

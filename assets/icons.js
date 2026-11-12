@@ -1,4 +1,5 @@
 const paths = {
+  list: '<path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>',
   cards: '<rect x="6" y="3" width="12" height="17" rx="2" transform="rotate(-12 12 12)"/><rect x="8" y="4" width="12" height="17" rx="2" fill="var(--header-surface,#fffdf7)"/><path d="m14 9 3 3-3 3-3-3Z"/>',
   chevrondown: '<path d="m7 10 5 5 5-5"/>',
   shuffle: '<path d="M3 6h3c5 0 7 12 12 12h3m-4-4 4 4-4 4M3 18h3c2 0 3-2 4-4m4-4c1-2 2-4 4-4h3m-4-4 4 4-4 4"/>',

@@ -1,3 +1,4 @@
+import {icon} from './icons.js';
 import {stopElementMotion} from './interaction-motion.js';
 import {artifactsForPlaces} from './artifacts.js';
 import {artifactListHTML,artifactStackHTML} from './artifact-view.js';
@@ -52,11 +53,12 @@ export function mountArtifactDeck({root,dialog,state,places}){
   stop();gesture=null;state.setItems(filtered().map(a=>a.id));state.index=clamp(state.index);
   const list=state.view==='list';
   find('#artifact-site-filter').value=state.selected;
-  find('#artifact-random').setAttribute('aria-pressed',String(state.random));
-  find('#artifact-random').disabled=state.total<2;find('#artifact-shuffle').disabled=state.total<1;
-  find('#artifact-view-toggle').textContent=translateText(list?'Chồng thẻ':'Danh sách');
+  find('#artifact-shuffle').disabled=state.total<2;
+  const toggle=find('#artifact-view-toggle'),label=translateText(list?'Chồng thẻ':'Danh sách');
+  toggle.innerHTML=icon(list?'cards':'list');
+  toggle.setAttribute('aria-label',label);toggle.title=label;
   // Rebuild only when the collection/order or presentation changes, never on drag.
-  find('#artifact-presentation').innerHTML=list?artifactListHTML(places,state.selected):artifactStackHTML(state,places);
+  find('#artifact-presentation').innerHTML=list?artifactListHTML(places,state.selected,state.order):artifactStackHTML(state,places);
   stack=find('.artifact-stack');
   entries=[...root.querySelectorAll('.artifact-swipe-card')].map(element=>({element,index:Number(element.dataset.galleryIndex),width:0}));
   position=target=state.index;velocity=0;measure();commit(state.index);
@@ -92,7 +94,6 @@ export function mountArtifactDeck({root,dialog,state,places}){
   const button=event.target.closest('button');if(!button)return;
   switch(button.id){
    case 'artifact-shuffle':state.shuffle();render({focus:'#artifact-shuffle'});playEffect('paper');break;
-   case 'artifact-random':state.setRandom(!state.random);render({focus:'#artifact-random'});break;
    case 'artifact-view-toggle':state.view=state.view==='deck'?'list':'deck';render({focus:'#artifact-view-toggle'});break;
   }
  },options);
