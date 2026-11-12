@@ -32,8 +32,10 @@
 .pack-choice legend { padding:0; margin-bottom:8px; font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:#173f36; }
 .pack-choice { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
 .pack-choice legend { grid-column:1/-1; float:left; width:100%; }
-.pack-choice label { position:relative; display:block; cursor:pointer; }
-.pack-choice input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+.pack-choice label { position:relative; display:block; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+/* The label is the whole tap target; the radio itself stays out of the way so touch feedback matches the card. */
+.pack-choice input { position:absolute; width:1px; height:1px; min-height:0; padding:0; border:0; margin:0; opacity:0; pointer-events:none; }
+.pack-choice label:active > span { transform:scale(.97); }
 .pack-choice label > span { display:flex; flex-direction:column; align-items:center; gap:6px; min-height:84px; justify-content:center; padding:10px 6px; border-radius:20px; border:1.5px solid #1d2a2426; background:#fff; color:#173f36; text-align:center; transition:background .2s, color .2s; }
 .pack-choice b { font-size:12.5px; line-height:1.2; }
 .pack-choice .icon { width:22px; height:22px; }
@@ -42,3 +44,22 @@
 @media (prefers-reduced-motion: reduce) { .desk-stamp, .desk-stamp.lifted, .stamp-desk.settling .desk-stamp { transition:none; } }
 #view-pass .pass-toolbar { flex-wrap:wrap; }
 #view-pass .pass-toolbar .pack-choice { flex:1 0 100%; width:100%; }
+
+/* One Pass: the owner page and the stamp desk live in the same opened book. */
+#view-pass .passport-page.pass-owner { display:block; }
+.owner-field { display:block; margin:6px 0 2px; }
+.owner-field span { display:block; font-size:12px; font-weight:700; color:#4a5142; margin-bottom:4px; }
+.owner-field input { width:100%; min-height:48px; padding:4px 2px; border:0; border-bottom:2px dashed #53784d66; border-radius:0; background:transparent; font-family:Lora,TownwalkSC,Georgia,serif; font-style:italic; font-size:28px; color:#173f36; }
+.owner-field input:focus { outline:none; border-bottom-color:#173f36; background:#ffffff80; }
+.owner-field input::placeholder { color:#173f3666; }
+#view-pass .pass-owner #save-name { margin-top:4px; }
+.owner-progress { display:flex; gap:16px; align-items:center; margin-top:14px; }
+#view-pass .owner-progress .pass-total-display { margin:0; flex:none; }
+.owner-progress > div:last-child { flex:1; min-width:0; }
+.owner-progress p { margin:6px 0 2px; font-size:13px; font-weight:700; }
+.owner-progress small { font-size:11px; color:#5f6658; }
+#view-pass .passport-spread .stamp-collect { margin:0; padding:20px 14px 18px; background:#fffdf7; }
+#view-pass .stamp-collect > .eyebrow { font-size:10px; letter-spacing:1px; margin:0 4px 14px; }
+/* The scrolling ghost row must not widen the book's grid column. */
+#view-pass .passport-spread > * { min-width:0; }
+#view-pass .stamp-collect, #view-pass .ghost-row { max-width:100%; }

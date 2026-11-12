@@ -32,11 +32,11 @@ with sync_playwright() as p:
  page.locator('#close-modal').click()
  for i,id in enumerate(ids):
   c.set_geolocation({'latitude':10.24+i*.01,'longitude':105.17,'accuracy':10})
-  open_point(id);page.locator('#checkin').click();expect(page.locator('.stamp.earned')).to_have_count(i+1)
+  open_point(id);page.locator('#checkin').click();expect(page.locator('.desk-stamp')).to_have_count(i+1)
   expect(page.locator('.passport-page').first).to_contain_text(f'{i+1} / 15')
   assert page.locator('.stamp.locked').count()==0
  # Reopening an earned point does not create a second stamp.
- page.locator('.stamp[data-place=chua-linh-son]').click();page.locator('#checkin').click();expect(page.locator('.stamp.earned')).to_have_count(4)
+ page.locator('.desk-stamp[data-place=chua-linh-son]').evaluate('e=>e.click()');page.locator('#checkin').click();expect(page.locator('.desk-stamp')).to_have_count(4)
  page.locator('#passport-name').fill('Linh đi Óc Eo');page.locator('#save-name').click();expect(page.locator('#certificate')).to_be_enabled()
  page.evaluate("() => {window.__exportSVG='';const f=URL.createObjectURL.bind(URL);URL.createObjectURL=b=>{if(b.type.startsWith('image/svg+xml'))b.text().then(s=>window.__exportSVG=s);return f(b);};}")
  with page.expect_download() as download:page.locator('#save-pass-image').click()
@@ -44,7 +44,7 @@ with sync_playwright() as p:
  svg=page.evaluate('window.__exportSVG');assert svg.count('data-earned-stamp=')==4
  for id in ids:assert f'data-earned-stamp="{id}"' in svg
  assert 'go-cay-thi' not in svg and 'Ít lướt' not in svg
- page.reload(wait_until='networkidle');expect(page.locator('.stamp.earned')).to_have_count(4);expect(page.locator('.passport-page').first).to_contain_text('4 / 15')
+ page.reload(wait_until='networkidle');expect(page.locator('.desk-stamp')).to_have_count(4);expect(page.locator('.passport-page').first).to_contain_text('4 / 15')
  for width in [320,390]:
   page.set_viewport_size({'width':width,'height':844});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  page.set_viewport_size({'width':390,'height':844});page.evaluate('scrollTo(0,0)');page.screenshot(path=str(out/'oc-eo-pass-four-checkins.png'))

@@ -40,7 +40,7 @@ with sync_playwright() as p:
  checkin();q.evaluate("()=>{window.__site.radius=35;window.__watch(window.__site)}");respond(.001)
  expect(q.locator('#toast')).to_contain_text('35 m');assert q.evaluate('window.__saves.length')==0
  # A current successful check-in is saved under the current owner only.
- q.locator('#checkin').click();respond();expect(q.locator('.stamp.earned')).to_have_count(1)
+ q.locator('#checkin').click();respond();expect(q.locator('.desk-stamp')).to_have_count(1)
  assert q.evaluate("window.__saves.every(s=>s.uid==='test-C'&&s.data.badges.length===1)")
  assert q.evaluate("JSON.parse(localStorage.getItem('oceo-passport-test-C')).badges")==['nha-trung-bay-van-hoa-oc-eo']
  # The older collection export must not replace a newer personal editor.

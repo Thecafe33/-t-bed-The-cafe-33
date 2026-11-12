@@ -11,11 +11,9 @@ with sync_playwright() as p:
   q.goto(origin+'/#pass',wait_until='networkidle')
   assert q.locator('.passport-book').bounding_box()['y']<q.locator('#save-pass-image').bounding_box()['y']
   q.locator('#passport-name').fill('Tên đang nhập')
-  q.locator('#next-page').scroll_into_view_if_needed();before=q.evaluate('scrollY');q.locator('#next-page').click()
-  expect(q.locator('.stamp.earned')).to_have_count(2);expect(q.locator('#passport-name')).to_have_value('Tên đang nhập')
-  assert abs(q.evaluate('scrollY')-before)<4
-  expect(q.locator('#prev-page')).to_be_focused()
-  q.locator('#prev-page').click();expect(q.locator('.stamp.earned')).to_have_count(4)
+  # One Pass: the owner's name sits at the top of the open book, with the stamp desk inside it.
+  assert q.locator('#passport-name').bounding_box()['y']<q.locator('#stamp-desk').bounding_box()['y']
+  expect(q.locator('.passport-spread #stamp-desk .desk-stamp')).to_have_count(6);expect(q.locator('.passport-book')).to_have_count(1)
   q.locator('#toggle-book').click();expect(q.locator('.passport-cover')).to_be_visible();expect(q.locator('#toggle-book')).to_have_attribute('aria-expanded','false')
   q.locator('#open-book').click();expect(q.locator('.passport-spread')).to_be_visible();expect(q.locator('#toggle-book')).to_be_focused()
   expect(q.locator('#passport-name')).to_have_value('Tên đang nhập')
@@ -25,4 +23,4 @@ with sync_playwright() as p:
   assert not errors,errors
   c.close()
  b.close()
-print('PASS: Pass leads, page changes retain draft/scroll/focus, close/open is operable, motion enabled only when allowed, phone widths fit.')
+print('PASS: one Pass book with name first and the stamp desk inside, draft name kept, close/open is operable, motion enabled only when allowed, phone widths fit.')

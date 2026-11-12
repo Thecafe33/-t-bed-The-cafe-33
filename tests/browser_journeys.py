@@ -38,7 +38,7 @@ with sync_playwright() as p:
  page.locator('.place-art').click()
  expect(page.locator('#checkin')).to_be_enabled()
  page.locator('#checkin').click()
- expect(page.locator('.stamp.earned')).to_have_count(1)
+ expect(page.locator('.desk-stamp')).to_have_count(1)
  page.locator('#toggle-book').click()
  expect(page.locator('.passport-cover')).to_be_visible()
  page.locator('#open-book').click()
