@@ -199,7 +199,7 @@ function openModal(kicker, html, view = "generic") {
   modal.classList.toggle("artifact-deck-dialog",view==="artifacts");
   modal.classList.toggle("artifact-detail-dialog",view==="artifact");
   $("#artifact-back").hidden=view!=="artifact";
-  $("#close-modal").setAttribute("aria-label",translateText(view==="artifact"?"← Về bộ thẻ cổ vật":"Đóng hộp thoại"));
+  $("#close-modal").setAttribute("aria-label",translateText("Đóng hộp thoại"));
   modal.dataset.view = view;
   delete modal.dataset.placeId;
   $("#modal-kicker").textContent = kicker;
@@ -212,13 +212,12 @@ function openModal(kicker, html, view = "generic") {
 }
 function dismissModal(){
   stopNarration();
-  if(modal.dataset.view==="artifact"){showArtifactIndex();return;}
   modal.close();
 }
 $("#close-modal").onclick = dismissModal;
-$("#artifact-back").onclick = () => showArtifactIndex();
+$("#artifact-back").onclick = dismissModal;
 modal.addEventListener("cancel",event=>{
-  if(modal.dataset.view==="artifact"){event.preventDefault();showArtifactIndex();}
+  if(modal.dataset.view==="artifact"){event.preventDefault();dismissModal();}
 });
 modal.addEventListener("click", (ev) => {
   if (ev.target === modal) {
@@ -517,6 +516,10 @@ function showArtifactIndex(selected=artifactDeckState.selected){
 function showArtifact(id){
  const a=artifactsForPlaces(site.places).find(a=>a.id===id);if(!a)return;
  closeMapSearch();openModal("HIỆN VẬT ↔ ĐỊA ĐIỂM",artifactDetailHTML(a,site.places),"artifact");
+ const returnLabel=translateText(activeTab==="artifacts"?"← Về bộ thẻ cổ vật":"← Quay lại");
+ $("#artifact-back").textContent=returnLabel;
+ const returnButton=body.querySelector('[data-action="artifacts"]');
+ if(returnButton){returnButton.dataset.action="artifact-return";returnButton.textContent=returnLabel;}
  revealArtifact(body.querySelector(".artifact-detail-media"));
  $("#artifact-back").focus({preventScroll:true});
 }
@@ -1386,9 +1389,9 @@ document.addEventListener("click", (ev) => {
     return;
   }
   const artifact=ev.target.closest("[data-artifact]");
-  if(artifact){showArtifact(artifact.dataset.artifact);return;}
+  if(artifact){ev.preventDefault();showArtifact(artifact.dataset.artifact);return;}
   const discoveryRecord=ev.target.closest('[data-discovery-record]');
-  if(discoveryRecord){navigate('artifacts');showArtifact(discoveryRecord.dataset.discoveryRecord);return;}
+  if(discoveryRecord){ev.preventDefault();showArtifact(discoveryRecord.dataset.discoveryRecord);return;}
   const mode=ev.target.closest("[data-artifact-mode]");
   if(mode){const a=getArtifact(mode.dataset.id);if(a&&modal.dataset.view==="artifact"){
     body.querySelectorAll("[data-artifact-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b===mode)));
@@ -1444,6 +1447,7 @@ document.addEventListener("click", (ev) => {
   if (a === "review") showReviewForm();
   if (a === "privacy") showPrivacy();
   if (a === "sources") showSources();
+  if (a === "artifact-return") dismissModal();
   if (a === "artifacts") showArtifactIndex();
 });
 let currentUid;
