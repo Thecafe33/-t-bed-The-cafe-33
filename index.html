@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="./assets/genz.css?v=20261112-shell" />
     <link rel="stylesheet" href="./assets/artifacts.css?v=20261112-gesture" />
     <link rel="stylesheet" href="./assets/campaign.css?v=20261106-mountain" />
-    <link rel="stylesheet" href="./assets/journey-story.css?v=20261106-fresh" />
+    <link rel="stylesheet" href="./assets/journey-story.css?v=20261112-day" />
     <link rel="stylesheet" href="./assets/place-feed.css?v=20261106-mountain" />
     <link rel="stylesheet" href="./assets/header.css?v=20261108-stable" />
     <link rel="stylesheet" href="./assets/pass-collage.css?v=20261107-soft" />
@@ -228,14 +228,30 @@
         hidden
       >
         <div class="app-view-heading">
-          <div class="eyebrow">THEO DẤU CỔ VẬT. KỂ ÓC EO.</div>
+          <div class="eyebrow">MỘT NGÀY Ở ÓC EO</div>
           <h1 id="day-heading" tabindex="-1">Chuyến đi Óc Eo.</h1>
-          <p>Mang về một phát hiện, một khoảnh khắc và những dấu đã nhận.</p>
+          <p>Lịch gợi ý từ sáng đến chiều. Chạm từng chặng để xem hoặc chỉ đường.</p>
         </div>
-        <div id="campaign-journey"></div>
+        <section class="day-plan" aria-labelledby="day-plan-title">
+          <h2 id="day-plan-title" class="sr-only">Lịch trình gợi ý</h2>
+          <div class="plan-summary" id="plan-summary"></div>
+          <div class="plan-actions-bar">
+            <button type="button" class="button dark" data-journey-action="map"><span data-icon="map"></span><span>Xem trên bản đồ</span></button>
+            <button type="button" class="button outline" id="save-itinerary"><span data-icon="download"></span><span>Lưu lịch</span></button>
+          </div>
+          <ol class="timeline plan-list" id="timeline"></ol>
+        </section>
+        <div id="saved-trip"></div>
+        <section class="day-story" aria-labelledby="day-story-title">
+          <span class="day-story-icon" data-icon="camera"></span>
+          <div><h2 id="day-story-title">Ảnh chuyến đi của tôi</h2><p>Ghép ảnh của bạn với các tem đã nhận thành một story để chia sẻ.</p></div>
+          <div id="day-story-action"></div>
+        </section>
         <details class="trip-practical">
-          <summary>Trước khi đi: đón khách, di chuyển, ăn nghỉ</summary>
+          <summary><span data-icon="leaf"></span><span>Chuẩn bị trước khi đi</span></summary>
           <div>
+            <p class="trip-practical-note">Giờ trong lịch là gợi ý, chưa tính đường đi giữa các điểm. Hỏi Ban Quản lý giờ đón khách trước khi đi.</p>
+            <button type="button" class="button outline trip-pack" data-journey-action="pack"><span data-icon="download"></span><span>Tải ảnh lịch trình để xem offline</span></button>
             <h3>Hỏi Ban Quản lý trước</h3>
             <p>
               Địa chỉ công bố: đường Nguyễn Thị Hạnh, khóm Tân Hiệp A, xã Óc Eo,
@@ -272,41 +288,10 @@
             >
           </div>
         </details>
-        <details class="journey-legacy"><summary>Lịch khung một ngày và điểm đã lưu</summary>
-        <div class="day-trip-card">
-          <span class="day-trip-sun" aria-hidden="true">☀</span>
-          <div>
-            <span class="eyebrow">YOUR DAY, YOUR PACE</span>
-            <h2>07:30 <span>→</span> 16:00</h2>
-            <small>Lịch khung · chưa xác minh tuyến và giờ đón khách</small>
-          </div>
-          <button
-            class="circle-button"
-            id="save-itinerary"
-            aria-label="Lưu lịch trình"
-          >
-            <span data-icon="download"></span>
-          </button>
-        </div>
-        <details class="content-status">
-          <summary>Trước khi lên đường</summary>
-          <p class="data-note">
-            Kiểm tra giờ mở cửa và khả năng tiếp cận trước khi đi. Lịch hiện tại
-            là khung trải nghiệm, chưa tính quãng đường giữa các điểm.
-          </p>
-        </details>
-        <div id="saved-trip"></div>
-        <div class="timeline" id="timeline"></div>
-        </details>
-        <aside class="mountain-detour" aria-labelledby="mountain-detour-title">
-          <div class="eyebrow">HIDDEN GEM · NGOÀI LỊCH CHÍNH</div>
-          <h3 id="mountain-detour-title">Một góc khác trên Ba Thê.</h3>
-          <p>Nhà trưng bày cũ trên đỉnh núi là điểm tùy chọn, khác với nhà trưng bày hiện vật buổi sáng. Đường núi khó đi; tránh ngày mưa hoặc đường trơn, nên thuê xe ôm địa phương quen đường và đội mũ bảo hiểm. Chỉ ghé khu vực được phép tiếp cận, không vào công trình bỏ hoang.</p>
-          <button class="text-button" data-place="nha-trung-bay-cu-ba-the">Đọc lưu ý trước khi quyết định <span data-icon="arrow"></span></button>
+        <aside class="day-optional mountain-detour" aria-labelledby="mountain-detour-title">
+          <div class="eyebrow">NẾU CÒN THỜI GIAN · NGOÀI LỊCH CHÍNH</div>
+          <button class="day-optional-row" data-place="nha-trung-bay-cu-ba-the"><span data-icon="compass"></span><span><strong id="mountain-detour-title">Nhà trưng bày cũ trên đỉnh Ba Thê</strong><small>Đường núi khó đi, tránh ngày mưa. Đọc lưu ý trước khi quyết định.</small></span><span data-icon="arrowup"></span></button>
         </aside>
-        <a class="button dark full-width" href="#map" data-route="map"
-          >Mở bản đồ cho chuyến đi <span data-icon="arrowup"></span
-        ></a>
       </section>
       <section
         id="view-pass"

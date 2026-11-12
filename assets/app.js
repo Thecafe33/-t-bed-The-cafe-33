@@ -21,7 +21,7 @@ import {
 import { icon, mark } from "./icons.js";
 import { passArtwork, stampColor } from "./pass-art.js";
 import {heritageSymbolHTML} from "./heritage-symbols.js";
-import {JOURNEY,journeyState,journeyHTML} from "./journey.js";
+import {JOURNEY,journeyState} from "./journey.js";
 import {campaignHomeHTML} from "./campaign-home.js";
 import {placeCardHTML} from "./place-feed.js";
 import {initHeader} from "./header.js";
@@ -342,7 +342,7 @@ function mapPosition(p) {
 function hasMapPosition(p){return !!mapPosition(p);}
 function mapPlaces() {
   return [...site.places, ...site.stops.filter(visibleStop)].filter((p) =>
-    (!mapJourneyOnly||JOURNEY.stops.includes(p.id)) &&
+    (!mapJourneyOnly||planPlaceIds().includes(p.id)) &&
     (mapCategory === "all" || p.category === mapCategory) &&
     matchesSearch(p, $("#map-search").value));
 }
@@ -464,12 +464,18 @@ function renderMap() {
   if ($("#map-search").value.trim()) $("#map-directory").open=true;
   if (map) renderMarkers({fit:true});
 }
+// The day plan is the main content of the Day tab: one card per stop, each with its own actions.
+function planPlaceIds(){return [...new Set(site.itinerary.map(s=>s.placeId).filter(id=>id&&findPlace(id)))];}
 function renderTimeline() {
-  $("#timeline").innerHTML = site.itinerary
-    .map(
-      (s) =>
-        `<article class="timeline-row"><time>${e(s.time)}</time><div><h3>${e(s.title)}</h3><p>${e(s.description)}</p>${s.placeId ? `<button class="text-button" data-place="${e(s.placeId)}">Xem điểm dừng ${icon("arrow")}</button>` : ""}</div></article>`,
-    )
+  const steps=site.itinerary, first=steps[0]?.time||"", last=steps.at(-1)?.time||"";
+  const heritage=planPlaceIds().map(findPlace).filter(p=>p&&p.category==="heritage"&&p.collectible!==false);
+  const earned=heritage.filter(p=>profile.badges.includes(p.id)).length;
+  $("#plan-summary").innerHTML=`<span><b data-no-translate>${steps.length}</b> <span>chặng</span></span><span><b data-no-translate>${e(first)} → ${e(last)}</b></span>${heritage.length?`<span><span>Tem di sản</span> <b data-no-translate>${earned}/${heritage.length}</b></span>`:""}`;
+  $("#timeline").innerHTML = steps
+    .map((s) => {
+      const p=s.placeId?findPlace(s.placeId):null, route=p?directionsURL(p):null, stamped=p&&profile.badges.includes(p.id);
+      return `<li class="timeline-row plan-stop" data-category="${e(p?.category||"break")}"><time>${e(s.time)}</time><article class="plan-card"><h3>${e(s.title)}</h3><p>${e(s.description)}</p>${p||stamped?`<div class="plan-card-actions">${p?`<button class="plan-action" data-place="${e(p.id)}">${icon("arrowup")}<span>Xem điểm dừng</span></button>`:""}${route?`<a class="plan-action is-route" href="${e(route)}" target="_blank" rel="noopener noreferrer">${icon("route")}<span>Chỉ đường</span></a>`:""}${stamped?`<span class="plan-stamp">${icon("check")}<span>Đã có tem</span></span>`:""}</div>`:""}</article></li>`;
+    })
     .join("");
 }
 function renderSite() {
@@ -478,7 +484,6 @@ function renderSite() {
   passNeedsRender = true;
   renderPlaces();
   renderMap();
-  renderTimeline();
   renderSavedTrip();
   if (activeTab === "pass") showPassport();
   if(activeTab==="artifacts"&&artifactPageData!==JSON.stringify(site.places))renderArtifactPage();
@@ -613,15 +618,16 @@ function journeyShareURL(){
   return url.href;
 }
 function renderCampaign(){
-  const state=journeyState(site,profile.badges),active=journeyIsActive();
-  $('#campaign-home').innerHTML=campaignHomeHTML({active,count:state.count,total:state.total,canStory:state.canStory})+discoveryEntryHTML();
-  $('#campaign-journey').innerHTML=journeyHTML(site,profile.badges,{active});
-  $('#journey-map-bar').innerHTML=`<button data-journey-action="${mapJourneyOnly?'all-map':'map'}" aria-pressed="${mapJourneyOnly}">${icon(mapJourneyOnly?'check':'map')}<span>${mapJourneyOnly?'Chỉ hiện 3 điểm của lộ trình':'Lộ trình cổ vật · 3 điểm'}</span></button>${mapJourneyOnly?'<button class="text-button" data-journey-action="all-map">Hiện tất cả</button>':''}`;
+  const state=journeyState(site,profile.badges);
+  $('#campaign-home').innerHTML=campaignHomeHTML({steps:site.itinerary.length,canStory:state.canStory})+discoveryEntryHTML();
+  renderTimeline();
+  $('#day-story-action').innerHTML=`<button type="button" class="button outline" data-journey-action="${state.canStory?'story':'sample'}">${state.canStory?'Tạo story':'Xem mẫu story'} ${icon('arrowup')}</button>`;
+  $('#journey-map-bar').innerHTML=`<button data-journey-action="${mapJourneyOnly?'all-map':'map'}" aria-pressed="${mapJourneyOnly}">${icon(mapJourneyOnly?'check':'clock')}<span>${mapJourneyOnly?'Đang xem lịch trình':'Điểm trong lịch trình'}</span></button>${mapJourneyOnly?'<button class="text-button" data-journey-action="all-map">Hiện tất cả</button>':''}`;
   if(storyCreatorUI&&storyProfileSignature!==JSON.stringify(state.pass.earned.map(p=>p.id))){
     storyCreatorUI.destroy();storyCreatorUI=null;storyProfileSignature='';modal.close();
     toast('Bộ tem đã thay đổi. Mở lại công cụ để dùng tiến độ mới.');
   }
-  hydrate($('#campaign-home'));hydrate($('#campaign-journey'));
+  hydrate($('#campaign-home'));hydrate($('#view-day'));
 }
 function openJourney(){if(modal.open)modal.close();navigate('day');window.scrollTo({top:0,behavior:'instant'});$('#day-heading').focus({preventScroll:true});}
 function openPersonalStory(){
@@ -658,7 +664,7 @@ async function packJourney(button){
     const cacheName=(await caches.keys()).find(k=>k.startsWith(prefix));
     if(!cacheName)throw Error('cache');
     const cache=await caches.open(cacheName),assets=new URL(appURL('assets/'));
-    const images=journeyState(site,profile.badges).stops.map(s=>s.place?.image).filter(Boolean).map(p=>safeURL(p,{image:true})).filter(Boolean).filter(p=>{const u=new URL(p);return u.origin===assets.origin&&u.pathname.startsWith(assets.pathname);});
+    const images=planPlaceIds().map(findPlace).map(p=>p?.image).filter(Boolean).map(p=>safeURL(p,{image:true})).filter(Boolean).filter(p=>{const u=new URL(p);return u.origin===assets.origin&&u.pathname.startsWith(assets.pathname);});
     await Promise.all(images.map(async url=>{if(await cache.match(url))return;const r=await fetch(url);if(!r.ok)throw Error('photo');await cache.put(url,r);}));
     toast('Đã chuẩn bị bản đồ và tư liệu trên thiết bị này. Link nguồn và đặt chỗ cần mạng.');
   }catch{toast('Chưa chuẩn bị xong. Giữ kết nối rồi thử lại.');}

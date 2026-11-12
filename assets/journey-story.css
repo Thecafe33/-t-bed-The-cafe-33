@@ -102,3 +102,49 @@
  .journey-progress strong { font-size:28px; }
  .journey-step-heading h3 { font-size:17px; }
 }
+
+/* ── Day tab (2026-11-12): the plan is the main content ── */
+.townwalk-app .day-view .app-view-heading p { font-size:14px; color:#4a5142; }
+.day-plan { margin:6px 0 22px; }
+.plan-summary { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px; }
+.plan-summary>span { display:inline-flex; align-items:baseline; gap:5px; padding:7px 13px; border-radius:999px; background:#fffdf8; border:1px solid #2327201a; font-size:13px; color:#4a5142; }
+.plan-summary b { color:#173f36; font-size:14px; font-weight:800; }
+.plan-actions-bar { display:grid; grid-template-columns:1fr auto; gap:8px; margin-bottom:18px; }
+.plan-actions-bar .button { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; margin:0; font-size:14px; border-radius:999px; }
+.plan-actions-bar .icon { width:18px; height:18px; }
+.townwalk-app .plan-list { list-style:none; margin:0; padding:0; position:relative; display:grid; gap:12px; }
+.townwalk-app .plan-list::before { content:""; position:absolute; left:25px; top:18px; bottom:18px; width:2px; background:repeating-linear-gradient(#c9d6a4 0 6px,transparent 6px 12px); }
+.townwalk-app .plan-list::after, .townwalk-app .plan-list .timeline-row::before { display:none; }
+.townwalk-app .plan-list .timeline-row { display:grid; grid-template-columns:52px 1fr; gap:8px; padding:0; align-items:start; position:relative; }
+.townwalk-app .plan-list .timeline-row time { position:relative; z-index:1; display:grid; place-items:center; width:52px; height:32px; margin-top:12px; padding:0; border-radius:999px; background:#173f36; color:#d9f27a; font-size:13px; font-weight:800; letter-spacing:-.2px; }
+.townwalk-app .plan-list .timeline-row[data-category=break] time { background:#fffdf8; color:#4a5142; border:1px solid #2327201f; }
+.plan-card { padding:14px 14px; border-radius:20px; background:#fffdf8; border:1px solid #2327201a; box-shadow:0 2px 0 #23272010,0 10px 22px -16px #173f3666; }
+.townwalk-app .plan-card h3 { margin:0 0 4px; font-size:16px; line-height:1.35; font-weight:800; color:#173f36; letter-spacing:-.2px; }
+.townwalk-app .plan-card p { margin:0; font-size:13px; line-height:1.6; color:#5d6455; }
+.plan-card-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.plan-action { display:inline-flex; align-items:center; gap:4px; min-height:38px; padding:6px 11px; white-space:nowrap; border-radius:999px; border:1px solid #173f361f; background:#fff; color:#173f36; font:inherit; font-size:12px; font-weight:700; text-decoration:none; cursor:pointer; }
+.plan-action .icon { width:14px; height:14px; }
+.plan-action.is-route { background:#173f36; color:#d9f27a; border-color:#173f36; }
+.plan-stamp { display:inline-flex; align-items:center; gap:4px; padding:6px 11px; border-radius:999px; background:#e9f7b4; color:#2f4a22; font-size:12px; font-weight:700; }
+.plan-stamp .icon { width:14px; height:14px; }
+.day-story { display:grid; grid-template-columns:auto 1fr; gap:4px 12px; align-items:center; padding:14px 16px; margin:4px 0 14px; border-radius:20px; background:#f9dce9; }
+.day-story-icon { width:42px; height:42px; display:grid; place-items:center; border-radius:14px; background:#fff; color:#7b2d50; grid-row:span 2; }
+.day-story-icon .icon { width:22px; height:22px; }
+.townwalk-app .day-story h2 { margin:0; font-size:15px; font-weight:800; color:#4a1f33; }
+.townwalk-app .day-story p { margin:2px 0 0; font-size:12.5px; line-height:1.5; color:#6b3a52; }
+.day-story>#day-story-action { grid-column:2; }
+.day-story .button { min-height:40px; margin:6px 0 0; padding:7px 14px; font-size:13px; border-radius:999px; background:#fff; }
+.townwalk-app .day-view .trip-practical { margin:0 0 14px; border-radius:20px; }
+.townwalk-app .day-view .trip-practical summary { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:800; }
+.townwalk-app .day-view .trip-practical summary .icon { width:18px; height:18px; }
+.trip-practical-note { padding:10px 12px; border-radius:12px; background:#fff4dc; color:#6a4a12 !important; font-weight:600; }
+.townwalk-app .day-optional { margin:0 0 20px; padding:12px 14px; border-radius:18px; background:transparent; border:1px dashed #2327202e; box-shadow:none; }
+.townwalk-app .day-optional .eyebrow { font-size:10px; color:#7a7d70; margin-bottom:6px; }
+.townwalk-app .day-optional .eyebrow::before { display:none; }
+.day-optional-row { display:flex; align-items:center; gap:10px; width:100%; padding:4px 0; border:0; background:none; text-align:left; font:inherit; color:#3e4437; cursor:pointer; }
+.day-optional-row>.icon { width:20px; height:20px; flex:none; color:#7a7d70; }
+.day-optional-row>span:nth-child(2) { flex:1; display:grid; gap:2px; }
+.day-optional-row strong { font-size:14px; font-weight:700; }
+.day-optional-row small { font-size:12px; color:#7a7d70; line-height:1.45; }
+.townwalk-app .trip-pack { display:inline-flex; align-items:center; gap:8px; min-height:44px; margin:4px 0 8px; border-radius:999px; font-size:13px; }
+.trip-pack .icon { width:16px; height:16px; }

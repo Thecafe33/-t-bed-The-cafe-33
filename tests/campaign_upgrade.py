@@ -33,7 +33,7 @@ try:
   q.evaluate('async()=>{await navigator.serviceWorker.ready}');q.wait_for_function('!!navigator.serviceWorker.controller')
   assert q.evaluate("async()=> (await caches.match('/assets/model.js')).text()")=='export const OLD_BUILD=true;'
   mode['old']=False;q.goto(origin+'/index.html?upgrade=1#day',wait_until='networkidle')
-  expect(q.locator('#journey-title')).to_be_visible(timeout=25000)
+  expect(q.locator('#timeline .timeline-row >> nth=0')).to_be_visible(timeout=25000)
   expect(q.locator('#boot-state')).to_be_hidden()
   assert q.evaluate("async()=>(await import('/assets/app.js')).APP_BUILD")=='campaign-v1'
   assert q.evaluate("async()=>typeof(await import('/assets/model.js')).isAccessClosed")=='function'
@@ -43,7 +43,7 @@ try:
   expect(q.locator('.pocket-hero>img')).to_be_visible()
   q.locator('.app-tabbar [data-route=day]').click()
   assert q.evaluate("async()=>!(await caches.keys()).some(k=>k.includes('old-upgrade-test'))")
-  c.set_offline(True);q.reload(wait_until='domcontentloaded');expect(q.locator('#journey-title')).to_be_visible(timeout=15000)
+  c.set_offline(True);q.reload(wait_until='domcontentloaded');expect(q.locator('#timeline .timeline-row >> nth=0')).to_be_visible(timeout=15000)
   assert not errors,errors
   b.close()
  print('PASS: an old controlling cache with incompatible app/model modules upgrades atomically before campaign imports; no blank mixed-version UI; new build reopens offline.')

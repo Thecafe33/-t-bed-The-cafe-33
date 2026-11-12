@@ -53,7 +53,7 @@ with sync_playwright() as p:
  expect(page.locator('#map-list')).to_contain_text('Gò Út Trạnh')
  fill_map_search(page,'ut trach');expect(page.locator('.map-list-item')).to_have_count(1)
  go('day');expect(page.locator('.timeline-row')).to_have_count(6)
- expect(page.locator('.day-trip-card')).to_contain_text('chưa xác minh tuyến')
+ expect(page.locator('.trip-practical-note')).to_contain_text('chưa tính đường đi')
  go('map');expect(page.locator('#map-search')).to_have_value('ut trach')
  fill_map_search(page,'')
  page.screenshot(path=str(out/'oc-eo-mobile-map.png'))

@@ -23,13 +23,9 @@ with sync_playwright() as p:
  c.route('**/assets/cloud.js',lambda r:r.fulfill(content_type='text/javascript',body=fixture))
  c.add_init_script("Object.defineProperty(navigator,'geolocation',{value:{getCurrentPosition(success,error){window.__gps={success,error};}}})")
  q=c.new_page();errors=[];q.on('pageerror',lambda e:errors.append(str(e)));q.goto(origin+'/#day',wait_until='networkidle')
- q.locator('[data-journey-action=start]').click()
- q.evaluate("window.__user('test-A')");expect(q.locator('[data-journey-action=start]')).to_be_visible()
- q.locator('[data-journey-action=start]').click();assert q.evaluate("JSON.parse(localStorage.getItem('oceo-passport-test-A:journey')).active")
- q.evaluate("window.__user('test-B')");expect(q.locator('[data-journey-action=start]')).to_be_visible()
- assert q.evaluate("localStorage.getItem('oceo-passport-test-B:journey')") is None
+ expect(q.locator('#timeline .timeline-row').first).to_be_visible()
  def checkin():
-  q.locator('.journey-stop [data-place=nha-trung-bay-van-hoa-oc-eo]').first.click();q.locator('#checkin').click()
+  q.locator('#timeline [data-place=nha-trung-bay-van-hoa-oc-eo]').first.click();q.locator('#checkin').click()
  def respond(offset=0):
   q.evaluate("offset=>{const p=window.__site.places.find(p=>p.id==='nha-trung-bay-van-hoa-oc-eo');window.__gps.success({coords:{latitude:p.lat+offset,longitude:p.lng,accuracy:10}})}",offset)
  checkin();q.evaluate("window.__user('test-C')");respond()
@@ -62,12 +58,12 @@ with sync_playwright() as p:
  c.add_init_script("if(!localStorage.getItem('oceo-passport-guest'))localStorage.setItem('oceo-passport-guest',JSON.stringify({name:'Elio',badges:['linh-son-bac']}))")
  q=c.new_page();q.on('pageerror',lambda e:errors.append(str(e)));q.goto(origin+'/?journey=theo-dau-co-vat-v1#day',wait_until='networkidle')
  q.evaluate('async()=>{await navigator.serviceWorker.ready}');q.wait_for_function('!!navigator.serviceWorker.controller')
- q.locator('[data-journey-action=pack]').click();expect(q.locator('#toast')).to_contain_text('Đã chuẩn bị',timeout=15000)
+ q.locator('.trip-practical>summary').click();q.locator('[data-journey-action=pack]').click();expect(q.locator('#toast')).to_contain_text('Đã chuẩn bị',timeout=15000)
  c.set_offline(True);q.reload(wait_until='domcontentloaded')
- q.locator('.journey-finish [data-journey-action=story]').click();expect(q.locator('[data-story-action=download]')).to_be_enabled(timeout=15000)
+ q.locator('#day-story-action [data-journey-action=story]').click();expect(q.locator('[data-story-action=download]')).to_be_enabled(timeout=15000)
  q.locator('[data-story-field=photo]').set_input_files(str(repo/'assets/photos/ba-the.jpg'));expect(q.locator('[data-story-action=download]')).to_be_enabled(timeout=15000)
  with q.expect_download() as pending:q.locator('[data-story-action=download]').click()
  assert struct.unpack('>II',Path(pending.value.path()).read_bytes()[16:24])==(1080,1920)
  assert not errors,errors
  b.close()
-print('PASS: per-account journey state, stale-owner GPS ignored, closure/current radius revalidated, current-owner stamp saved once; late legacy preview cannot replace creator; cold offline photo PNG export and map/material pack.')
+print('PASS: day plan renders, stale-owner GPS ignored, closure/current radius revalidated, current-owner stamp saved once; late legacy preview cannot replace creator; cold offline photo PNG export and map/material pack.')

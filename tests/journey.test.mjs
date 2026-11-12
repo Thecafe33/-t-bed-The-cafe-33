@@ -56,7 +56,7 @@ test('mobile journey markup offers source-led stops, distinct progress, safe boo
  for(const action of ['stop','story','map','share','pack'])assert.ok(html.includes(`data-journey-action="${action}"`));
  assert.match(journeyHTML(fixture(),[]),/data-journey-action="start"/);
  assert.match(html,/href="https:\/\/the-cafe-33.web.app\/?"/);
- assert.match(html,/không xác nhận thời điểm/);assert.match(html,/không đồng nghĩa/);assert.match(html,/không cộng vào tiến độ ba chặng hoặc cấp thêm tem/);
+ assert.match(html,/không xác nhận thời điểm/);assert.match(html,/không đồng nghĩa/);assert.match(html,/không cộng vào tiến độ 3 điểm của lộ trình hoặc cấp thêm tem/);
  assert.equal((html.match(/class="journey-source text-button"/g)||[]).length,3);
  assert.ok(journeyMessages.length>35);assert.ok(journeyMessages.every(row=>row.length===3&&row.every(value=>typeof value==='string'&&value.trim())));
  const site=fixture();site.stops.find(p=>p.id==='the-cafe-33').bookingUrl='javascript:alert(1)';
