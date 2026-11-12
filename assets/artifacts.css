@@ -204,3 +204,11 @@
 @media(min-width:601px) {
  #view-artifacts>.eyebrow,#view-artifacts .artifact-index>h1,#view-artifacts .artifact-deck-intro { text-align:center; }
 }
+
+/* Reference images keep their full outline and captions in normal document flow. */
+.artifact-card-icon img{display:block;width:100%;height:100%;object-fit:contain;border-radius:10px}
+.artifact-photo-credit{overflow-wrap:anywhere}
+.artifact-detail-media .artifact-photo-caption{font-size:13px;line-height:1.6;margin-top:12px}
+.artifact-photo-links{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:6px}
+.artifact-photo-links a{display:inline-flex;align-items:center;min-height:44px;font-size:13px;color:inherit;text-underline-offset:3px}
+.artifact-detail-media .artifact-photo img{width:100%;height:auto;max-height:50dvh;object-fit:contain}

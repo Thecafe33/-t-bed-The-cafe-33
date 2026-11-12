@@ -27,9 +27,9 @@ export const ARTIFACTS = [
       "黄金 · 高1.9厘米 · 重8.7克"
     ],
     "story": [
-      "Nhỏ hơn một món đồ lưu niệm, nhưng mặt nhẫn mang cả hình bò thần Nandin nằm xếp chân. Bài nguồn liên hệ Nandin với thần Shiva; không thể chỉ từ chiếc nhẫn mà kết luận ai từng đeo nó.",
-      "A tiny ring carries a reclining Nandin bull. The source links Nandin to Shiva; the ring alone does not identify its wearer.",
-      "小小的戒面上有一头卧姿Nandin神牛。来源将Nandin与湿婆相联系，但仅凭戒指不能确定佩戴者身份。"
+      "Một chú bò nằm gọn trên mặt nhẫn. Nhìn kỹ sẽ thấy chân xếp lại và bướu vai nhô cao: đó là Nandin, bò thần gắn với Shiva. Chỉ nặng 8,7 g, chiếc nhẫn vẫn đủ chỗ cho cả một hình tượng tôn giáo.",
+      "A reclining bull fits on a ring. Look for its folded legs and raised shoulder hump: this is Nandin, associated with Shiva. At just 8.7 grams, the ring carries a whole religious image.",
+      "一头卧牛藏在戒面上。仔细看蜷起的腿和隆起的肩峰：这是与湿婆相关的Nandin神牛。仅重8.7克的戒指，容纳了完整的宗教形象。"
     ],
     "holding": [
       "Bài nguồn ghi Ban Quản lý Di tích văn hóa Óc Eo lưu giữ, bảo quản. Chưa xác nhận tủ trưng bày hiện tại; hãy hỏi trước, không chờ gặp nhẫn ngay tại Giồng Cát.",
@@ -42,9 +42,9 @@ export const ARTIFACTS = [
       "在允许区域观察土丘，询问戒指出自哪一文化层。不要翻挖或捡取材料。"
     ],
     "atDisplay": [
-      "Mở ảnh ở bài nguồn, tìm ba chi tiết: bò nằm xếp chân, bướu vai và nét trang trí nhỏ hai bên mặt nhẫn. Nếu được xem bản gốc, quan sát qua tủ theo hướng dẫn.",
-      "In the source photo, find the tucked legs, shoulder hump and tiny side decorations. If the original is displayed, observe through the case as instructed.",
-      "打开来源照片，找出蜷卧的腿、肩峰与戒面两侧的小纹饰。如有原件展出，请遵照指引隔柜观察。"
+      "Mở ảnh trên thẻ, tìm ba chi tiết: bò nằm xếp chân, bướu vai và nét trang trí nhỏ hai bên mặt nhẫn. Nếu được xem bản gốc, quan sát qua tủ theo hướng dẫn.",
+      "In the card photograph, find the tucked legs, shoulder hump and tiny side decorations. If the original is displayed, observe through the case as instructed.",
+      "打开卡片照片，找出蜷卧的腿、肩峰与戒面两侧的小纹饰。如有原件展出，请遵照指引隔柜观察。"
     ],
     "question": [
       "Mặt nhẫn mang hình con vật nào?",
@@ -75,7 +75,26 @@ export const ARTIFACTS = [
       "来源描述戒面为立体卧姿Nandin神牛，肩峰明显。"
     ],
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/chiec-nhan-vang-nandin-giong-cat-bao-vat-quoc-gia-cua-van-hoa-oc-eo",
-    "reviewedAt": "2026-11-05"
+    "reviewedAt": "2026-11-12",
+    "photo": {
+      "verified": true,
+      "usage": "reference",
+      "url": "assets/photos/artifacts/nandin-giong-cat.png",
+      "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/chiec-nhan-vang-nandin-giong-cat-bao-vat-quoc-gia-cua-van-hoa-oc-eo",
+      "sourceImageUrl": "https://vanhoaoceo.angiang.gov.vn/sites/default/files/inline-images/image_23.png",
+      "credit": "Ban Quản lý Di tích văn hóa Óc Eo",
+      "alt": [
+        "Nhẫn Nandin nhìn nghiêng, kèm thước tỷ lệ trong ảnh nguồn.",
+        "Side view of the Nandin ring with the source photograph’s scale.",
+        "Nandin戒指侧视图，保留来源照片中的比例尺。"
+      ],
+      "caption": [
+        "Nhẫn Nandin nhìn nghiêng, kèm thước tỷ lệ trong ảnh nguồn.",
+        "Side view of the Nandin ring with the source photograph’s scale.",
+        "Nandin戒指侧视图，保留来源照片中的比例尺。"
+      ],
+      "reviewedAt": "2026-11-12"
+    }
   },
   {
     "id": "phat-linh-son-bac",
@@ -104,9 +123,9 @@ export const ARTIFACTS = [
       "花岗岩 · 石块高约92厘米"
     ],
     "story": [
-      "Đây là hình Phật chạm nổi trên một khối đá lớn, không phải tượng tròn. Đôi mắt khoét sâu và ba ký tự bên dưới là các chi tiết đáng tìm; cách đọc chữ cần nghiên cứu chuyên môn.",
-      "The Buddha is carved in relief on a large stone, rather than as a freestanding statue. Look for deep-set eyes and three characters below; reading the script requires specialist study.",
-      "佛像浮雕刻于大石块上，并非圆雕。可留意深凿双眼与下方三个字符，文字释读需依靠专业研究。"
+      "Đừng chỉ nhìn khối đá — hãy tìm phần hình người nhô lên khỏi nền. Tư thế ngồi, đôi mắt khoét sâu và ba ký tự phía dưới mở ra ba cách quan sát cùng một phù điêu Phật: hình dáng, kỹ thuật và chữ viết.",
+      "Look beyond the stone block to the figure rising from its surface. The seated pose, deeply cut eyes and three characters below offer three ways into this Buddha relief: form, carving and writing.",
+      "不只看整块石头，还要寻找从石面凸起的人像。坐姿、深刻的眼部与下方三个字符，让我们从形态、雕刻和文字三个角度观察这件佛像浮雕。"
     ],
     "holding": [
       "Bài nguồn có ảnh hiện vật tại Nhà trưng bày Văn hóa Óc Eo. Đây là ghi nhận trong tư liệu, không bảo đảm lịch trưng bày hôm nay; gọi Ban Quản lý trước khi ghé.",
@@ -152,7 +171,26 @@ export const ARTIFACTS = [
       "形象以浮雕方式刻在大型花岗岩石块表面。"
     ],
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/bao-vat-quoc-gia-phu-dieu-phat-linh-son-bac-dau-an-phat-giao-thoi-ky-som-trong-van-hoa-oc-eo",
-    "reviewedAt": "2026-11-05"
+    "reviewedAt": "2026-11-12",
+    "photo": {
+      "verified": true,
+      "usage": "reference",
+      "url": "assets/photos/artifacts/phat-linh-son-bac.png",
+      "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/bao-vat-quoc-gia-phu-dieu-phat-linh-son-bac-dau-an-phat-giao-thoi-ky-som-trong-van-hoa-oc-eo",
+      "sourceImageUrl": "https://vanhoaoceo.angiang.gov.vn/sites/default/files/inline-images/image_27.png",
+      "credit": "Ban Quản lý Di tích văn hóa Óc Eo",
+      "alt": [
+        "Phù điêu Phật Linh Sơn Bắc trong ảnh trưng bày của bài nguồn.",
+        "The Linh Sơn Bắc Buddha relief in the source article’s display photograph.",
+        "来源文章中展出的Linh Sơn Bắc佛像浮雕。"
+      ],
+      "caption": [
+        "Phù điêu Phật Linh Sơn Bắc trong ảnh trưng bày của bài nguồn.",
+        "The Linh Sơn Bắc Buddha relief in the source article’s display photograph.",
+        "来源文章中展出的Linh Sơn Bắc佛像浮雕。"
+      ],
+      "reviewedAt": "2026-11-12"
+    }
   },
   {
     "id": "dau-phat-naga",
@@ -181,9 +219,9 @@ export const ARTIFACTS = [
       "陶质 · 头像后有五头Naga蛇神华盖"
     ],
     "story": [
-      "Cùng một di tích nhưng chất liệu và cách tạo hình khác hẳn phù điêu đá. Tán rắn Naga phía sau là chi tiết nhận diện bài nguồn nhấn mạnh.",
-      "The same site yielded a different material and sculptural form. The source highlights the Naga canopy behind the head.",
-      "同一遗址出土了材料与造型均不同的作品。来源特别强调头像后的Naga蛇神华盖。"
+      "Hãy nhìn ra phía sau khuôn mặt: tán Naga năm đầu mới là chi tiết dễ bỏ lỡ. Đầu tượng nhỏ bằng đất nung này cùng được tìm thấy ở Linh Sơn Bắc, nhưng khác hẳn phù điêu granite cả về chất liệu lẫn cách tạo hình.",
+      "Look behind the face: the five-headed Naga canopy is easy to miss. This small terracotta head was also found at Linh Sơn Bắc, but differs from the granite relief in both material and form.",
+      "把目光移到脸的后方：五头Naga蛇冠很容易被忽略。这件小陶头像也出自Linh Sơn Bắc，但材质与造型都不同于花岗岩浮雕。"
     ],
     "holding": [
       "Ban Quản lý lưu giữ; bài giới thiệu riêng có ảnh đầu tượng tại Nhà trưng bày Văn hóa Óc Eo. Hỏi nhà trưng bày về lịch xem hiện tại.",
@@ -196,7 +234,7 @@ export const ARTIFACTS = [
       "在Linh Sơn Bắc，区分石浮雕与陶质头像两件发现，并向讲解员询问其建筑背景是否相关。"
     ],
     "atDisplay": [
-      "Dùng ảnh trong bài nguồn để tìm tán Naga phía sau đầu. Đếm số đầu rắn được mô tả, đồng thời so chất liệu với phù điêu granite.",
+      "Dùng ảnh trên thẻ để tìm tán Naga phía sau đầu. Đếm số đầu rắn được mô tả, đồng thời so chất liệu với phù điêu granite.",
       "Use the source image to find the Naga canopy. Count the described snake heads and compare the material with the granite relief.",
       "利用来源图片寻找头像后的Naga华盖，核对所描述的蛇头数量，并与花岗岩浮雕比较材料。"
     ],
@@ -229,7 +267,26 @@ export const ARTIFACTS = [
       "综述描述五个Naga蛇头在佛头像后展开。"
     ],
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/dau-tuong-phat-linh-son-bac-bao-vat-quoc-gia-doc-dao-cua-van-hoa-oc-eo",
-    "reviewedAt": "2026-11-10"
+    "reviewedAt": "2026-11-12",
+    "photo": {
+      "verified": true,
+      "usage": "reference",
+      "url": "assets/photos/artifacts/dau-phat-naga.png",
+      "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/dau-tuong-phat-linh-son-bac-bao-vat-quoc-gia-doc-dao-cua-van-hoa-oc-eo",
+      "sourceImageUrl": "https://vanhoaoceo.angiang.gov.vn/sites/default/files/inline-images/image_25.png",
+      "credit": "Ban Quản lý Di tích văn hóa Óc Eo",
+      "alt": [
+        "Mặt trước đầu tượng Phật đất nung và tán Naga phía sau.",
+        "Front of the terracotta Buddha head with its Naga canopy behind.",
+        "陶质佛头像正面及后方Naga蛇冠。"
+      ],
+      "caption": [
+        "Mặt trước đầu tượng Phật đất nung và tán Naga phía sau.",
+        "Front of the terracotta Buddha head with its Naga canopy behind.",
+        "陶质佛头像正面及后方Naga蛇冠。"
+      ],
+      "reviewedAt": "2026-11-12"
+    }
   },
   {
     "id": "mo-vo-cay-tram",
@@ -258,9 +315,9 @@ export const ARTIFACTS = [
       "陶质 · 瓮高29.5厘米 · 独立盖"
     ],
     "story": [
-      "Bình và nắp là một tổ hợp mai táng, không chỉ là đồ đựng. Bài nguồn ghi nhận 16 hạt chuỗi thủy tinh và một mảnh vàng nhỏ; ý nghĩa các lỗ trổ trên thân bình vẫn cần nghiên cứu.",
-      "Jar and lid form a burial assemblage, not merely a container. The source records 16 glass beads and a small gold fragment; the cut-outs’ meaning remains under study.",
-      "瓮与盖组成墓葬组合，不只是容器。来源记录有16颗玻璃珠和一小片金片，瓮身镂孔的含义仍待研究。"
+      "Thân tròn, nắp đĩa và những lỗ trổ giống một khuôn mặt khiến chiếc vò rất dễ nhận ra. Nhưng đây là đồ dùng trong mai táng. Mười sáu hạt thủy tinh và một mảnh vàng nhỏ được ghi nhận cùng mộ giúp câu chuyện đi xa hơn hình dáng chiếc bình.",
+      "A rounded body, disc-shaped lid and face-like openings make this jar recognisable. It belonged to a burial. Sixteen glass beads and a small gold fragment recorded with the burial tell a story beyond the vessel’s shape.",
+      "圆鼓的器身、盘状盖与似人脸的孔洞，让这只陶瓮很容易辨认。它用于墓葬，同墓记录的十六颗玻璃珠与一小片金片，让故事不止于器形。"
     ],
     "holding": [
       "Bài nguồn có ảnh tại Nhà trưng bày Văn hóa Óc Eo. Xác nhận lại lịch và cách bố trí; nơi trưng bày không phải huyệt mộ ban đầu.",
@@ -306,7 +363,26 @@ export const ARTIFACTS = [
       "来源区分可见形态与仍需研究的象征含义。"
     ],
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/bao-vat-quoc-gia-mo-vo-go-cay-tram-dau-an-tang-tuc-doc-dao-trong-van-hoa-oc-eo",
-    "reviewedAt": "2026-11-05"
+    "reviewedAt": "2026-11-12",
+    "photo": {
+      "verified": true,
+      "usage": "reference",
+      "url": "assets/photos/artifacts/mo-vo-cay-tram.png",
+      "sourceUrl": "https://www.khuditichoceo.com/",
+      "sourceImageUrl": "https://www.khuditichoceo.com/Gh%C3%A9p%20h%C3%ACnh/IMG_4394.PNG",
+      "credit": "Óc Eo Heritage · khuditichoceo.com",
+      "alt": [
+        "Ảnh tách nền của vò và nắp; đã đối chiếu với ảnh trưng bày Gò Cây Trâm của Ban Quản lý.",
+        "Cutout of the jar and lid, matched to the authority’s Gò Cây Trâm display photograph.",
+        "陶瓮及盖的抠图，已与管理机构的Gò Cây Trâm展陈照片核对。"
+      ],
+      "caption": [
+        "Ảnh tách nền của vò và nắp; đã đối chiếu với ảnh trưng bày Gò Cây Trâm của Ban Quản lý.",
+        "Cutout of the jar and lid, matched to the authority’s Gò Cây Trâm display photograph.",
+        "陶瓮及盖的抠图，已与管理机构的Gò Cây Trâm展陈照片核对。"
+      ],
+      "reviewedAt": "2026-11-12"
+    }
   },
   {
     "id": "hat-chuoi-go-oc-eo",
@@ -334,9 +410,9 @@ export const ARTIFACTS = [
       "玻璃 · 尺寸与颜色多样"
     ],
     "story": [
-      "Nhiều hạt rất nhỏ, nên khảo cổ còn dùng sàng đất để thu hồi. Số lượng lớn chưa tự chứng minh tất cả được làm tại chỗ.",
-      "Some beads are tiny enough to require soil sieving. Large numbers alone do not prove that every bead was made on site.",
-      "部分珠子很小，需筛土回收。数量众多本身并不能证明全部在当地生产。"
+      "Có những dấu vết phải qua sàng đất mới hiện ra. Các hạt chuỗi ở Gò Óc Eo cho thấy vì sao khảo cổ cần giữ lại cả những vật rất nhỏ: lỗ xâu, màu và dáng hạt đều là dữ liệu để nghiên cứu kỹ thuật chế tác.",
+      "Some traces only emerge when soil is sieved. The beads from Gò Óc Eo show why tiny finds matter: perforations, colours and shapes all provide evidence for studying how they were made.",
+      "有些线索要筛过土才会出现。Gò Óc Eo的珠饰说明微小发现为何重要：穿孔、颜色和形状，都是研究制作技术的资料。"
     ],
     "holding": [
       "Nguồn chưa chỉ ra tủ trưng bày của riêng nhóm 676.789 hạt. Hỏi bộ sưu tập nào đang mở cho khách, không kỳ vọng còn hạt trên mặt đất.",
@@ -382,7 +458,7 @@ export const ARTIFACTS = [
       "还需核对原料、废料、工具、出土背景与材料分析。"
     ],
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/bi-an-nhung-hat-chuoi-co-oc-eo",
-    "reviewedAt": "2026-11-05"
+    "reviewedAt": "2026-11-12"
   },
   {
     "id": "hat-chuoi-lung-lon",
@@ -410,9 +486,9 @@ export const ARTIFACTS = [
       "珠饰群 · 分类见来源"
     ],
     "story": [
-      "Đặt chuyện hạt chuỗi cạnh câu chuyện cư trú ven kênh để hiểu một địa điểm qua nhiều loại bằng chứng. Không tự coi mọi dòng nước hiện nay là tuyến kênh cổ đã định tuổi.",
-      "Read the beads alongside evidence of canal-side settlement. Do not assume every present waterway is a dated ancient canal.",
-      "结合珠饰与沿渠居住证据理解遗址，不要把今天每条水道都认作已断代的古运河。"
+      "Một hạt chuỗi có thể nằm gọn trên đầu ngón tay; nơi tìm thấy nó lại mở ra câu chuyện cả vùng cư trú. Với Lung Lớn, hãy đặt nhóm hạt cạnh dấu tích ven kênh để tìm hiểu đời sống Óc Eo qua nhiều loại bằng chứng.",
+      "A bead may fit on a fingertip, while its findspot opens a wider story of settlement. At Lung Lớn, read the bead group alongside canal-side traces to explore Óc Eo life through several kinds of evidence.",
+      "一颗珠子可以小到停在指尖，出土地点却能带出整片居住区的故事。在Lung Lớn，可将珠饰与沿水道遗迹一起理解，从多种证据认识Óc Eo生活。"
     ],
     "holding": [
       "Chưa xác nhận nơi trưng bày riêng của nhóm hạt Lung Lớn. Dùng ảnh tư liệu và hỏi người thuyết minh để nhận đúng bộ sưu tập.",
@@ -458,7 +534,7 @@ export const ARTIFACTS = [
       "珠饰文章将其列为Lung Lớn的统计数量，并非今天的展品数量。"
     ],
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/bi-an-nhung-hat-chuoi-co-oc-eo",
-    "reviewedAt": "2026-11-05"
+    "reviewedAt": "2026-11-12"
   },
   {
     "id": "hat-chuoi-giong-trom",
@@ -486,9 +562,9 @@ export const ARTIFACTS = [
       "考古统计中的珠饰群"
     ],
     "story": [
-      "Một nhóm ít hạt vẫn có giá trị khi biết rõ nơi và lớp phát hiện. Giá trị khảo cổ không xếp hạng chỉ bằng số lượng.",
-      "A smaller group still matters when its discovery context is known. Archaeological value is not ranked by quantity alone.",
-      "数量较少的珠饰群若有明确出土背景，仍有研究价值。考古价值不只由数量决定。"
+      "Đừng để số lượng ít làm nhóm hạt này bị lướt qua. Với Giồng Trôm, điều đáng hỏi là chúng được tìm ở đâu và thuộc lớp nào. Biết bối cảnh phát hiện mới giúp một hạt nhỏ trở thành bằng chứng khảo cổ.",
+      "Do not skip this group because it is small. For Giồng Trôm, ask where the beads were found and in which layer. A documented context turns a tiny object into archaeological evidence.",
+      "不要因数量少就略过这组珠饰。对Giồng Trôm来说，更值得问的是它们出自何处、哪一地层。明确的发现背景，才能让小物件成为考古证据。"
     ],
     "holding": [
       "Chưa có xác nhận trưng bày riêng nhóm hạt này trong nguồn đã đọc. Hỏi người phụ trách trước khi lên kế hoạch xem bản gốc.",
@@ -534,7 +610,7 @@ export const ARTIFACTS = [
       "背景与档案将文物连接到遗址，仅外形相似并不足够。"
     ],
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/bi-an-nhung-hat-chuoi-co-oc-eo",
-    "reviewedAt": "2026-11-05"
+    "reviewedAt": "2026-11-12"
   },
   {
     "id": "mo-vo-linh-son-nam",
@@ -562,9 +638,9 @@ export const ARTIFACTS = [
       "大型陶瓮 · 以去除足部的高足碗盖口"
     ],
     "story": [
-      "Cùng là mai táng bằng vò, cách đậy miệng lại khác: bài nguồn mô tả Linh Sơn Nam dùng bát bồng bỏ chân, còn Gò Cây Trâm có nắp hình đĩa riêng.",
-      "Both are jar burials, but their closures differ: the source describes a modified pedestal bowl at Linh Sơn Nam and a separate disc-shaped lid at Gò Cây Trâm.",
-      "同为瓮棺，盖口方式却不同：来源描述Linh Sơn Nam用改制高足碗，Gò Cây Trâm则有独立盘形盖。"
+      "Hai mộ vò, hai cách đậy miệng. Tư liệu về Linh Sơn Nam mô tả một bát bồng đã bỏ chân làm vật đậy; Gò Cây Trâm lại có nắp hình đĩa riêng. Một chi tiết nhỏ giúp tránh nhầm hai phát hiện khác nhau.",
+      "Two jar burials, two ways of covering the opening. The Linh Sơn Nam account describes a pedestal bowl with its foot removed; Gò Cây Trâm has a separate disc-shaped lid. One small detail distinguishes two different finds.",
+      "两处瓮棺，有两种封口方式。Linh Sơn Nam资料描述以去足高脚碗作盖，Gò Cây Trâm则有独立盘状盖。小小的细节，可以区分不同发现。"
     ],
     "holding": [
       "Bài đối chiếu chưa xác nhận vị trí trưng bày hiện tại của mộ vò Linh Sơn Nam. Không dùng ảnh Gò Cây Trâm thay cho hiện vật này.",
@@ -610,7 +686,7 @@ export const ARTIFACTS = [
       "此细节来自与Gò Cây Trâm的比较，并不适用于所有瓮棺。"
     ],
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/bao-vat-quoc-gia-mo-vo-go-cay-tram-dau-an-tang-tuc-doc-dao-trong-van-hoa-oc-eo",
-    "reviewedAt": "2026-11-05"
+    "reviewedAt": "2026-11-12"
   },
   {
     "id": "linga-yoni-linh-son",
@@ -638,9 +714,9 @@ export const ARTIFACTS = [
       "两种不同石材"
     ],
     "story": [
-      "Bài nguồn nhấn mạnh sự khác nhau về vật liệu, màu và bề mặt giữa các bộ phận. Đây là hiện vật tôn giáo gắn với Hindu giáo; quan sát với thái độ tôn trọng.",
-      "The source highlights differences in material, colour and surface between the parts. This is a Hindu religious object; observe respectfully.",
-      "来源强调各部分在石材、颜色与表面上的差异。这是与印度教相关的宗教文物，请尊重地观察。"
+      "Nhìn từ phần trụ xuống bệ: màu và bề mặt đá không giống nhau. Bộ Linga–Yoni Linh Sơn được tạo từ hai loại đá, kết hợp thành một hiện vật thờ trong Hindu giáo. Sự khác biệt vật liệu là điểm bắt đầu để hiểu cách người xưa tổ chức hình khối.",
+      "Follow the upright form down to the base: the stone colour and surface change. The Linh Sơn Linga–Yoni combines two types of stone in a Hindu ritual object. That contrast is a starting point for understanding its construction.",
+      "从柱体向下看到基座，石色与表面并不相同。Linh Sơn的Linga–Yoni由两种石材构成，用于印度教礼仪。材质对比，是理解其形体组织的起点。"
     ],
     "holding": [
       "Nguồn chưa xác định nơi trưng bày hiện tại của bộ này. Không mặc định vật đang thờ trong chùa là chính hiện vật khai quật năm 1985.",
@@ -686,14 +762,388 @@ export const ARTIFACTS = [
       "综述记为Chùa Linh Sơn区域东侧、1985年发掘，未提供具体坑位坐标。"
     ],
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/10-bao-vat-quoc-gia-thuoc-van-hoa-oc-eo-o-an-giang",
-    "reviewedAt": "2026-11-05"
+    "reviewedAt": "2026-11-12",
+    "photo": {
+      "verified": true,
+      "usage": "reference",
+      "url": "assets/photos/artifacts/linga-yoni-linh-son.png",
+      "sourceUrl": "https://www.khuditichoceo.com/",
+      "sourceImageUrl": "https://www.khuditichoceo.com/Gh%C3%A9p%20h%C3%ACnh/IMG_4395.PNG",
+      "credit": "Óc Eo Heritage · khuditichoceo.com",
+      "alt": [
+        "Ảnh tách nền bộ Linga–Yoni; đã đối chiếu với mục Linh Sơn trong bài 10 bảo vật.",
+        "Linga–Yoni cutout, matched to the Linh Sơn entry in the authority’s ten-treasures article.",
+        "Linga–Yoni抠图，已与管理机构十件宝物文章中的Linh Sơn条目核对。"
+      ],
+      "caption": [
+        "Ảnh tách nền bộ Linga–Yoni; đã đối chiếu với mục Linh Sơn trong bài 10 bảo vật.",
+        "Linga–Yoni cutout, matched to the Linh Sơn entry in the authority’s ten-treasures article.",
+        "Linga–Yoni抠图，已与管理机构十件宝物文章中的Linh Sơn条目核对。"
+      ],
+      "reviewedAt": "2026-11-12"
+    }
+  },
+  {
+    "id": "vishnu-phat-bon-tay",
+    "placeId": "chua-linh-son",
+    "displayPlaceId": "chua-linh-son",
+    "symbol": "temple",
+    "color": "peach",
+    "name": [
+      "Tượng Vishnu · Phật Bốn Tay",
+      "Vishnu · the Four-Armed Buddha",
+      "毗湿奴像 · 四臂佛"
+    ],
+    "period": [
+      "Khoảng thế kỷ V theo iSpace",
+      "Around the 5th century CE, according to iSpace",
+      "据iSpace，约公元五世纪"
+    ],
+    "discovered": [
+      "Người dân phát hiện tháng 7/1912 trong khu vực quanh Chùa Linh Sơn. Nguồn mô tả vị trí cụ thể chưa nhất quán; pin của app chỉ dẫn tới chùa, không phải hố phát hiện.",
+      "Found by local residents in July 1912 in the Linh Sơn area. The source gives inconsistent descriptions of the exact findspot; the app pin marks the pagoda, not a discovery trench.",
+      "当地居民于1912年7月在Linh Sơn周边发现。来源对具体地点的描述不一致；应用定位指向寺院，并非出土坑位。"
+    ],
+    "material": [
+      "Đá sa thạch màu xám đen; bề mặt và tư thế đã được sửa đổi trong quá trình thờ phụng.",
+      "Dark grey sandstone; the surface and posture were altered during its later use in worship.",
+      "深灰色砂岩；表面和姿态在后来的供奉过程中经过改造。"
+    ],
+    "story": [
+      "Một pho tượng, hai cách tiếp nhận tín ngưỡng: nguyên tác được nhận diện là thần Vishnu bốn tay, về sau được cộng đồng sửa đổi và thờ như Phật. Hình dáng đang thấy không hoàn toàn là hình dáng ban đầu.",
+      "One statue, two religious readings: identified originally as four-armed Vishnu, it was later adapted and worshipped locally as a Buddha. Its present appearance is not entirely its original form.",
+      "同一尊像有两种宗教理解：原为四臂毗湿奴，后来被当地社群改造并作为佛像供奉。今天的外观并非完全保留原貌。"
+    ],
+    "holding": [
+      "Hồ sơ iSpace ghi tượng được thờ tại Chùa Linh Sơn. Tượng và hai bia được xếp hạng di tích quốc gia năm 1988; đây không phải quyết định công nhận bảo vật quốc gia.",
+      "iSpace records the statue as worshipped at Linh Sơn Pagoda. The statue and two steles received national monument recognition in 1988; this is not a national-treasure designation.",
+      "iSpace记载造像供奉于Linh Sơn寺。造像与两碑于1988年获国家级遗迹认定，这并非国家宝物认定。"
+    ],
+    "onSite": [
+      "Quan sát từ khu vực được phép: bốn tay và phần bệ ngồi. Hỏi người hướng dẫn chi tiết nào thuộc nguyên tác, chi tiết nào được bổ sung khi thờ như tượng Phật.",
+      "From an authorised area, look at the four arms and seated base. Ask a guide which details belong to the original and which were added for Buddhist worship.",
+      "在允许区域观察四臂与坐姿基座，询问哪些是原作，哪些是在作为佛像供奉时补加的。"
+    ],
+    "atDisplay": [
+      "Ảnh hiện trạng trong hồ sơ iSpace giúp nhận ra tượng đang được thờ. Không dùng ảnh này để phục dựng chắc chắn tư thế nguyên tác; hỏi trước khi chụp ở chùa.",
+      "The iSpace photograph shows the statue as worshipped today. It cannot by itself establish the original pose; ask before photographing in the pagoda.",
+      "iSpace现状照片可帮助识别今天供奉的造像，但不能仅凭照片确定原始姿态；寺内拍照前请先询问。"
+    ],
+    "question": [
+      "Vì sao tượng được gọi là Phật Bốn Tay dù nhận diện nguyên tác là Vishnu?",
+      "Why is an originally Vishnu statue called the Four-Armed Buddha?",
+      "原为毗湿奴的造像为何又称四臂佛？"
+    ],
+    "options": [
+      [
+        "Do cộng đồng tiếp nhận và sửa đổi để thờ như Phật",
+        "It was adapted locally for Buddhist worship",
+        "当地社群改造后作为佛像供奉"
+      ],
+      [
+        "Vì năm 1912 người ta tạo một tượng mới",
+        "A new statue was made in 1912",
+        "1912年新造了一尊像"
+      ],
+      [
+        "Vì mọi tượng bốn tay đều là Phật",
+        "Every four-armed statue is a Buddha",
+        "所有四臂像都是佛像"
+      ]
+    ],
+    "answer": 0,
+    "explanation": [
+      "Nguồn phân biệt nguyên tác Vishnu với những sửa đổi và cách thờ về sau. Năm 1912 là mốc phát hiện, không phải niên đại chế tác.",
+      "The source distinguishes the original Vishnu from later alterations and worship. 1912 is the discovery year, not the date of manufacture.",
+      "来源区分毗湿奴原作与后来的改造和供奉。1912年是发现年份，并非制作年代。"
+    ],
+    "sourceUrl": "https://ispace.angiang.vn/qr_info/oc-eo/chua-linh-son/",
+    "reviewedAt": "2026-11-11",
+    "photo": {
+      "verified": true,
+      "usage": "reference",
+      "url": "assets/photos/artifacts/vishnu-phat-bon-tay.png",
+      "sourceUrl": "https://ispace.angiang.vn/qr_info/oc-eo/chua-linh-son/",
+      "sourceImageUrl": "https://ispace.angiang.vn/qr_info/oc-eo/chua-linh-son/media/image005.png",
+      "credit": "iSpace An Giang",
+      "alt": [
+        "Ảnh tượng đang được thờ và hình vẽ chi tiết trong hồ sơ iSpace.",
+        "The worshipped statue and detail drawings reproduced in the iSpace record.",
+        "iSpace档案中的供奉造像照片及细部线描。"
+      ],
+      "caption": [
+        "Ảnh tượng đang được thờ và hình vẽ chi tiết trong hồ sơ iSpace.",
+        "The worshipped statue and detail drawings reproduced in the iSpace record.",
+        "iSpace档案中的供奉造像照片及细部线描。"
+      ],
+      "reviewedAt": "2026-11-12"
+    }
+  },
+  {
+    "id": "bia-da-linh-son",
+    "placeId": "chua-linh-son",
+    "displayPlaceId": "chua-linh-son",
+    "symbol": "cards",
+    "color": "lime",
+    "name": [
+      "Hai bia đá Chùa Linh Sơn",
+      "The two Linh Sơn stone steles",
+      "Linh Sơn寺两块石碑"
+    ],
+    "period": [
+      "Thế kỷ V–VII theo iSpace",
+      "5th–7th centuries CE, according to iSpace",
+      "据iSpace，公元五至七世纪"
+    ],
+    "discovered": [
+      "Hồ sơ iSpace ghi hai bia được phát hiện năm 1879; không nêu tên người phát hiện. Đây là mốc khác với việc tìm thấy tượng Phật Bốn Tay năm 1912.",
+      "iSpace dates the steles’ discovery to 1879 without naming the finder. This is distinct from the statue’s discovery in 1912.",
+      "iSpace记载两碑于1879年发现，未注明发现者，不能与1912年造像的发现混为一谈。"
+    ],
+    "material": [
+      "Đá sa thạch đen, có vân trên bề mặt.",
+      "Black sandstone with visible surface veining.",
+      "黑色砂岩，表面有纹理。"
+    ],
+    "story": [
+      "Nhìn từ cửa chính điện vào, bia trái có 11 dòng Sanskrit; bia phải không có chữ hoặc chữ đã mất. Một bên lưu dấu văn bản, bên kia nhắc rằng không phải mọi thông tin cổ đều còn nguyên để đọc.",
+      "From the main-hall entrance, the left stele bears eleven Sanskrit lines; the right is uninscribed or has lost its inscription. They show both the survival and the limits of the written record.",
+      "从正殿门口向内看，左碑有十一行梵文；右碑无字或文字已失。两碑同时体现文字记录的留存与缺失。"
+    ],
+    "holding": [
+      "Theo hồ sơ iSpace, hai bia được dựng hai bên tượng Phật Bốn Tay tại Chùa Linh Sơn. Chúng cùng tượng được xếp hạng di tích quốc gia năm 1988.",
+      "iSpace places the steles on either side of the Four-Armed Buddha at Linh Sơn Pagoda. They were recognised with the statue as a national monument in 1988.",
+      "据iSpace，两碑立于Linh Sơn寺四臂佛两侧，与造像一起于1988年获国家级遗迹认定。"
+    ],
+    "onSite": [
+      "Xác định hướng nhìn từ cửa chính điện rồi phân biệt hai bia. Quan sát từ xa, không sờ hoặc tô nét chữ; không suy đoán nội dung chỉ từ vài nét nhìn thấy.",
+      "Establish your viewpoint from the entrance and distinguish the two steles. Observe without touching or tracing the lettering; a few visible marks do not establish a reading.",
+      "先确定从正殿门口观看的方向，再辨认两碑。不要触摸或描画文字，也不要仅凭少数字迹推断文意。"
+    ],
+    "atDisplay": [
+      "Đọc bản giới thiệu hoặc bản dịch do nơi quản lý cung cấp. Hồ sơ iSpace đăng phần diễn giải văn khắc; app không tự phục dựng chữ đã mất hay dịch lại chữ cổ từ ảnh.",
+      "Use the interpretation or translation supplied by the custodian. iSpace publishes an interpretation; the app does not reconstruct lost letters or translate ancient writing from a photo.",
+      "请阅读管理方提供的解说或译文。iSpace刊有铭文解释；应用不会从照片重构缺字或自行翻译古文字。"
+    ],
+    "question": [
+      "Điều nào đúng về hai bia theo hồ sơ iSpace?",
+      "Which statement matches the iSpace account?",
+      "哪一项符合iSpace记录？"
+    ],
+    "options": [
+      [
+        "Cả hai đều còn nguyên 11 dòng chữ",
+        "Both preserve eleven complete lines",
+        "两碑均完整保留十一行文字"
+      ],
+      [
+        "Bia trái có 11 dòng; bia phải không chữ hoặc đã mất chữ",
+        "The left has eleven lines; the right is blank or has lost its inscription",
+        "左碑有十一行；右碑无字或文字已失"
+      ],
+      [
+        "Hai bia được làm mới năm 1988",
+        "Both were made in 1988",
+        "两碑均制作于1988年"
+      ]
+    ],
+    "answer": 1,
+    "explanation": [
+      "Nguồn xác định trái–phải từ cửa chính điện nhìn vào. Năm 1988 là mốc xếp hạng di tích, không phải năm chế tác bia.",
+      "Left and right are defined from the main-hall entrance. 1988 is the recognition year, not the date the steles were made.",
+      "左右按从正殿门口向内看的方向区分。1988年是遗迹认定年份，并非石碑制作年代。"
+    ],
+    "sourceUrl": "https://ispace.angiang.vn/qr_info/oc-eo/chua-linh-son/",
+    "reviewedAt": "2026-11-11",
+    "photo": {
+      "verified": true,
+      "usage": "reference",
+      "url": "assets/photos/artifacts/bia-da-linh-son.png",
+      "sourceUrl": "https://ispace.angiang.vn/qr_info/oc-eo/chua-linh-son/",
+      "sourceImageUrl": "https://ispace.angiang.vn/qr_info/oc-eo/chua-linh-son/media/image007.png",
+      "credit": "iSpace An Giang",
+      "alt": [
+        "Ảnh bia có chữ trong hồ sơ iSpace; không phải ảnh của cả hai bia.",
+        "The inscribed stele in the iSpace record; this does not show both steles.",
+        "iSpace档案中的有字石碑照片，并非两碑合照。"
+      ],
+      "caption": [
+        "Ảnh bia có chữ trong hồ sơ iSpace; không phải ảnh của cả hai bia.",
+        "The inscribed stele in the iSpace record; this does not show both steles.",
+        "iSpace档案中的有字石碑照片，并非两碑合照。"
+      ],
+      "reviewedAt": "2026-11-12"
+    }
+  },
+  {
+    "id": "phat-dong-cay-thi-a",
+    "placeId": "go-cay-thi",
+    "symbol": "temple",
+    "color": "butter",
+    "name": [
+      "Tượng Phật đồng thau Cây Thị A",
+      "The Cây Thị A brass Buddha",
+      "Cây Thị A黄铜佛像"
+    ],
+    "period": [
+      "Chưa xác minh niên đại riêng của tượng",
+      "The statue’s individual date is unconfirmed",
+      "造像自身年代尚未确认"
+    ],
+    "discovered": [
+      "Hồ sơ Cây Thị A ghi một tượng Phật bằng đồng thau được tìm thấy trong cuộc khảo sát tháng 2/1942 tại Gò Cây Thị. Trang không nêu người trực tiếp phát hiện.",
+      "The Cây Thị A record notes a brass Buddha found during the February 1942 survey at Gò Cây Thị. It does not name the individual finder.",
+      "Cây Thị A档案记载，1942年2月调查Gò Cây Thị时发现一尊黄铜佛像，未注明具体发现者。"
+    ],
+    "material": [
+      "Đồng thau theo phần tiếng Việt của hồ sơ iSpace.",
+      "Brass, as specified in the Vietnamese iSpace account.",
+      "iSpace越南语档案记为黄铜。"
+    ],
+    "story": [
+      "Tượng được ghi nhận trước cuộc khai quật năm 1944 của Louis Malleret. Nguồn mô tả ảnh hưởng nghệ thuật Ấn Độ và Đông Nam Á, nhưng chưa cung cấp hồ sơ riêng đủ để xác định niên đại và người chế tác.",
+      "The statue was recorded before Louis Malleret’s 1944 excavation. The account describes Indian and Southeast Asian artistic influences but lacks a separate object record establishing its date or maker.",
+      "此像的记录早于Louis Malleret于1944年的发掘。资料描述印度与东南亚艺术影响，但缺少足以确定年代或制作者的独立文物档案。"
+    ],
+    "holding": [
+      "Chưa xác nhận nơi lưu giữ hoặc trưng bày hiện nay. Không mặc định tượng nằm tại mái che Cây Thị hay Nhà trưng bày Văn hóa Óc Eo.",
+      "Its current custodian and display location are unconfirmed. Do not assume it is at the Cây Thị shelter or the Óc Eo exhibition house.",
+      "当前保管及展出地点尚未确认，不能默认原件在Cây Thị保护棚或Óc Eo展馆。"
+    ],
+    "onSite": [
+      "Quan sát kiến trúc Cây Thị A và hỏi hướng dẫn viên về ghi chép khảo sát năm 1942. Niên đại VI–VII được nguồn đoán định cho kiến trúc không tự động là tuổi của pho tượng.",
+      "Observe Cây Thị A’s architecture and ask about the 1942 survey record. The structure’s proposed sixth–seventh-century date does not automatically date this statue.",
+      "观察Cây Thị A建筑并询问1942年调查记录。建筑推定的六至七世纪年代不能直接赋予这尊像。"
+    ],
+    "atDisplay": [
+      "Chưa có ảnh hiện vật đã đối chiếu chắc chắn. Khi gặp ảnh tượng Phật kim loại, cần kiểm tra tên, số kiểm kê và nơi phát hiện trước khi coi là đúng tượng này.",
+      "No securely matched object photograph is available here. Check the name, inventory number and findspot before identifying a metal Buddha photograph as this statue.",
+      "目前没有已核实对应此件的照片。看到金属佛像照片时，需核对名称、藏品编号及出土地点。"
+    ],
+    "mediaNote": [
+      "Tư liệu phát hiện · chưa có ảnh hiện vật xác minh",
+      "Discovery record · object photograph unverified",
+      "发现记录 · 文物照片尚未核实"
+    ],
+    "question": [
+      "Tháng 2/1942 cho biết điều gì về pho tượng?",
+      "What does February 1942 tell us?",
+      "1942年2月说明什么？"
+    ],
+    "options": [
+      [
+        "Thời gian pho tượng được chế tác",
+        "When the statue was made",
+        "造像的制作时间"
+      ],
+      [
+        "Thời gian pho tượng được công nhận bảo vật",
+        "When it became a national treasure",
+        "认定为国家宝物的时间"
+      ],
+      [
+        "Thời điểm khảo sát ghi nhận phát hiện tượng",
+        "The survey when the statue was recorded as found",
+        "调查记录发现造像的时间"
+      ]
+    ],
+    "answer": 2,
+    "explanation": [
+      "1942 là mốc khảo sát và phát hiện trong hồ sơ; niên đại riêng của tượng vẫn chưa được nguồn này xác định.",
+      "1942 dates the survey and recorded discovery; this source does not establish the statue’s individual age.",
+      "1942年是调查和发现记录的年份，此来源并未确定造像自身年代。"
+    ],
+    "sourceUrl": "https://ispace.angiang.vn/qr_info/oc-eo/go-cay-thi-a/",
+    "reviewedAt": "2026-11-11"
+  },
+  {
+    "id": "vishnu-cay-thi-b",
+    "placeId": "go-cay-thi",
+    "symbol": "temple",
+    "color": "lilac",
+    "name": [
+      "Tượng Vishnu Gò Chôn Của",
+      "The Gò Chôn Của Vishnu statue",
+      "Gò Chôn Của毗湿奴像"
+    ],
+    "period": [
+      "Chưa xác minh niên đại riêng của tượng",
+      "The statue’s individual date is unconfirmed",
+      "造像自身年代尚未确认"
+    ],
+    "discovered": [
+      "Năm 1928, các nhà nghiên cứu người Pháp phát hiện tượng Vishnu tại Gò Chôn Của, địa điểm nay gọi là Cây Thị B. Nguồn chưa nêu tên từng người.",
+      "French researchers found a Vishnu statue in 1928 at Gò Chôn Của, now called Cây Thị B. The account does not name the individual researchers.",
+      "法国研究者于1928年在Gò Chôn Của，即今Cây Thị B，发现毗湿奴像，来源未列个人姓名。"
+    ],
+    "material": [
+      "Hồ sơ được đối chiếu chưa nêu chất liệu, kích thước hoặc số kiểm kê.",
+      "The checked record does not state material, dimensions or an inventory number.",
+      "已核对档案未列材质、尺寸或藏品编号。"
+    ],
+    "story": [
+      "Tên cũ Gò Chôn Của nối ghi chép phát hiện năm 1928 với Cây Thị B hôm nay. Đây là một tượng khác với Phật Bốn Tay ở Chùa Linh Sơn; cùng tên thần không có nghĩa là cùng hiện vật.",
+      "The older name Gò Chôn Của connects the 1928 find record to today’s Cây Thị B. This is a different statue from the Four-Armed Buddha at Linh Sơn; a shared deity does not mean a shared object.",
+      "旧名Gò Chôn Của将1928年发现记录与今Cây Thị B联系起来。它不同于Linh Sơn寺四臂佛，神名相同并不代表同一件文物。"
+    ],
+    "holding": [
+      "Chưa xác minh nơi lưu giữ hoặc trưng bày hiện tại. Không gán pho tượng này cho Chùa Linh Sơn hay cho một tủ trưng bày khi chưa có hồ sơ hiện vật.",
+      "The current custodian and display location are unconfirmed. Do not assign this statue to Linh Sơn Pagoda or a museum case without an object record.",
+      "当前保管和展出地点尚未确认，不能在缺少文物档案时将其归到Linh Sơn寺或某展柜。"
+    ],
+    "onSite": [
+      "Cây Thị B ở phía bắc A khoảng 22 m theo nguồn. Đối chiếu tên Gò Chôn Của với bảng giới thiệu; pin chung Cây Thị không đánh dấu vị trí tìm thấy tượng.",
+      "The source places B about 22 m north of A. Compare the older name with the site panel; the shared Cây Thị pin does not locate the statue’s findspot.",
+      "来源记B区位于A区以北约22米。结合说明牌核对旧名，共用的Cây Thị定位不代表造像出土点。"
+    ],
+    "atDisplay": [
+      "Chưa có ảnh đã xác minh đúng tượng. Đừng dùng ảnh một tượng Vishnu khác để suy đoán số tay, đồ cầm hoặc chất liệu của hiện vật này.",
+      "No photograph has been verified as this exact statue. Another Vishnu image cannot establish its number of arms, attributes or material.",
+      "尚无已确认对应此像的照片，不能用另一尊毗湿奴像推断其手臂数量、持物或材质。"
+    ],
+    "mediaNote": [
+      "Tư liệu phát hiện · chưa có ảnh hiện vật xác minh",
+      "Discovery record · object photograph unverified",
+      "发现记录 · 文物照片尚未核实"
+    ],
+    "question": [
+      "Gò Chôn Của trong ghi chép năm 1928 là địa điểm nào hôm nay?",
+      "Which present-day site was called Gò Chôn Của in the 1928 record?",
+      "1928年记录中的Gò Chôn Của如今是哪处遗址？"
+    ],
+    "options": [
+      [
+        "Cây Thị B",
+        "Cây Thị B",
+        "Cây Thị B"
+      ],
+      [
+        "Chùa Linh Sơn",
+        "Linh Sơn Pagoda",
+        "Linh Sơn寺"
+      ],
+      [
+        "Gò Giồng Cát",
+        "Gò Giồng Cát",
+        "Gò Giồng Cát"
+      ]
+    ],
+    "answer": 0,
+    "explanation": [
+      "Hồ sơ iSpace xác định Gò Chôn Của là Cây Thị B, nơi ghi nhận tượng năm 1928. Không nhầm với tượng ở Chùa Linh Sơn phát hiện năm 1912.",
+      "iSpace identifies Gò Chôn Của as Cây Thị B, the 1928 find location. It is distinct from the Linh Sơn statue found in 1912.",
+      "iSpace将Gò Chôn Của对应为Cây Thị B，即1928年发现地点，不同于1912年发现的Linh Sơn造像。"
+    ],
+    "sourceUrl": "https://ispace.angiang.vn/qr_info/oc-eo/go-cay-thi-b/",
+    "reviewedAt": "2026-11-11"
   }
 ];
 
 export function artifactMessageRows(){
  const out=[];
  for(const a of ARTIFACTS)for(const [key,value] of Object.entries(a)){
-  if(key==='options')out.push(...value);
+  if(key==='photo'){if(Array.isArray(value.alt))out.push(value.alt);if(Array.isArray(value.caption))out.push(value.caption);}
+  else if(key==='options')out.push(...value);
   else if(Array.isArray(value)&&value.length===3)out.push(value);
  }
  return out;

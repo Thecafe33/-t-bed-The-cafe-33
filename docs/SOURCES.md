@@ -124,7 +124,7 @@ Dựng lại dữ liệu: cài Python `shapely`, chạy `python3 tools/build_tow
 
 ## Bổ sung: cổ vật và bối cảnh phát hiện
 
-Xem [bảng nguồn và giới hạn của chín thẻ hiện vật](ARTIFACT-SOURCES.md): nhẫn Nandin, phù điêu Phật, đầu tượng Phật đất nung, hai mộ vò, các nhóm hạt chuỗi và Linga–Yoni Linh Sơn. Tách nơi phát hiện, nơi lưu giữ và lịch trưng bày; không suy đoán hố khai quật hay gán hiện vật ngoài xã vào danh mục.
+Xem [bảng nguồn và giới hạn của bộ thẻ hiện vật](ARTIFACT-SOURCES.md): nhẫn Nandin, phù điêu Phật, đầu tượng Phật đất nung, hai mộ vò, các nhóm hạt chuỗi và Linga–Yoni Linh Sơn. Tách nơi phát hiện, nơi lưu giữ và lịch trưng bày; không suy đoán hố khai quật hay gán hiện vật ngoài xã vào danh mục.
 
 ## Đối chiếu Óc Eo Heritage và iSpace, 11/11/2026
 

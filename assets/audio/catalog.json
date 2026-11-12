@@ -712,5 +712,89 @@
     "audioFormat": "mp3-xing-v1",
     "duration": 56.38,
     "bytes": 338492
+  },
+  "zh/artifact-vishnu-phat-bon-tay": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "7ef2416a58b5583ba6c224fd093adb770003fa922e1d6a1c6d2ce90d2ee1c7ef",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 62.86,
+    "bytes": 377372
+  },
+  "vi/artifact-vishnu-phat-bon-tay": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "83c71efecb13cec2695fc2b55af9181a1d45657747e03d2c7dc28bd3d218aa29",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 69.38,
+    "bytes": 416540
+  },
+  "vi/artifact-bia-da-linh-son": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "81a7b1ce27fe5b3b1d905580260505268946657c6c13c059606ecfb80257eaee",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 65.88,
+    "bytes": 395516
+  },
+  "zh/artifact-bia-da-linh-son": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "49b06c02c81db5794607eef2ebb5e7627e8d3158cb329b310cf35a1493ed87c9",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 55.1,
+    "bytes": 330860
+  },
+  "en/artifact-vishnu-phat-bon-tay": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "534744693c73ce3f82f6e80fc1a2b50a3fa4971f6926c4e0c19a4f8a4fb337d3",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 64.99,
+    "bytes": 390188
+  },
+  "vi/artifact-phat-dong-cay-thi-a": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "726f54fe58caf1afeea18a368bee878292f5bd59c5320bae56b3428466886183",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 63.43,
+    "bytes": 380828
+  },
+  "en/artifact-bia-da-linh-son": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "ba2fbee5cc281f4c61624722d82734198bc19949c809d6df2265dfd0c4ee60fe",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 60.96,
+    "bytes": 365996
+  },
+  "zh/artifact-phat-dong-cay-thi-a": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "f0130d6ec1139de0cf9f6d130cbb2f6bac3068e41f1430ed07d9773b40f45b51",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 59.33,
+    "bytes": 356204
+  },
+  "en/artifact-phat-dong-cay-thi-a": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "a43275d44a76ab1ce3516563791e2ef47074e9a92038fc1e9f1bff231a35a290",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 61.97,
+    "bytes": 372044
+  },
+  "zh/artifact-vishnu-cay-thi-b": {
+    "voice": "zh-CN-XiaoxiaoNeural",
+    "scriptHash": "7aebdb1eceaf58d37dcc4183491533e08b3fd8f6bda373ec04a84ed94ee0d47f",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 63.62,
+    "bytes": 381980
+  },
+  "en/artifact-vishnu-cay-thi-b": {
+    "voice": "en-GB-SoniaNeural",
+    "scriptHash": "81990b3d9cad18592fab867dd0dfc7f860b271c39594b0bd15bff870a3b013a4",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 69.26,
+    "bytes": 415820
+  },
+  "vi/artifact-vishnu-cay-thi-b": {
+    "voice": "vi-VN-HoaiMyNeural",
+    "scriptHash": "6a799a65ca7d817e0e78fb9976b0b6fa9859d794b432c8f3d4dbdbead2106ff7",
+    "audioFormat": "mp3-xing-v1",
+    "duration": 67.22,
+    "bytes": 403580
   }
 }

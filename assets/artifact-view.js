@@ -3,16 +3,26 @@ import {escapeHTML as e,eligible,safeURL} from './model.js';
 import {icon} from './icons.js';
 import {narrationHTML} from './narration.js';
 export const getArtifact=id=>ARTIFACTS.find(a=>a.id===id);
-// Embed only a reviewed photo of this exact object with a reusable-image credit.
-// The current source catalogue has no cleared object photos, so it uses labelled symbols.
-export function artifactMediaHTML(a){
- const photo=a.photo,src=photo?.approved===true&&photo.credit&&photo.license?safeURL(photo.url,{image:true}):'';
- if(src)return `<span class="artifact-photo"><img src="${e(src)}" alt="${e(photo.alt||a.name[0])}" loading="lazy" decoding="async"><small data-no-translate>${e(photo.credit)} · ${e(photo.license)}</small></span>`;
- return `<span class="artifact-swipe-art" aria-hidden="true">${icon(a.symbol)}<span>✦</span></span><small class="artifact-media-note">Biểu tượng minh hoạ · ảnh thật ở bài nguồn</small>`;
+// Verified reference photographs retain their source; a citation is not an open-licence claim.
+export function artifactPhoto(a){
+ const photo=a.photo;if(!photo?.credit)return null;
+ const src=safeURL(photo.url,{image:true}),source=safeURL(photo.sourceUrl);
+ const reviewedReference=photo.verified===true&&photo.usage==='reference'&&source;
+ const licensedPhoto=photo.approved===true&&photo.license;
+ return src&&(reviewedReference||licensedPhoto)?{...photo,src,source}:null;
+}
+export function artifactMediaHTML(a,{detail=false}={}){
+ const photo=artifactPhoto(a);
+ if(photo){
+  const alt=Array.isArray(photo.alt)?photo.alt[0]:(photo.alt||a.name[0]);
+  const caption=Array.isArray(photo.caption)?photo.caption[0]:'';
+  return `<span class="artifact-photo"><img src="${e(photo.src)}" alt="${e(alt)}" loading="lazy" decoding="async">${detail&&caption?`<small class="artifact-photo-caption">${e(caption)}</small>`:''}<small class="artifact-photo-credit"><span>Nguồn ảnh:</span> <span data-no-translate>${e(photo.credit)}${photo.license?` · ${e(photo.license)}`:''}</span></small>${detail?`<span class="artifact-photo-links"><a href="${e(photo.src)}" target="_blank" rel="noopener noreferrer">Xem ảnh lớn ↗</a>${photo.source?`<a href="${e(photo.source)}" target="_blank" rel="noopener noreferrer">Trang nguồn ảnh ↗</a>`:''}</span>`:''}</span>`;
+ }
+ return `<span class="artifact-swipe-art" aria-hidden="true">${icon(a.symbol)}<span>✦</span></span><small class="artifact-media-note">${e(a.mediaNote?.[0]||'Biểu tượng minh hoạ · ảnh thật ở bài nguồn')}</small>`;
 }
 function card(a,places){
- const p=places.find(p=>p.id===a.placeId);
- return `<button class="artifact-card artifact-${a.color}" data-artifact="${e(a.id)}"><span class="artifact-card-icon" aria-hidden="true">${icon(a.symbol)}</span><span><small data-no-translate>${e(p.name)}</small><strong>${e(a.name[0])}</strong><em>${e(a.period[0])}</em></span>${icon('arrowup')}</button>`;
+ const p=places.find(p=>p.id===a.placeId),photo=artifactPhoto(a);
+ return `<button class="artifact-card artifact-${a.color}" data-artifact="${e(a.id)}"><span class="artifact-card-icon" aria-hidden="true">${photo?`<img src="${e(photo.src)}" alt="" loading="lazy" decoding="async">`:icon(a.symbol)}</span><span><small data-no-translate>${e(p.name)}</small><strong>${e(a.name[0])}</strong><em>${e(a.period[0])}</em></span>${icon('arrowup')}</button>`;
 }
 export function artifactSection(place,places){
  if(place.category!=='heritage'||place.collectible===false)return '';
@@ -39,5 +49,5 @@ export function artifactStackHTML(state,places){
 }
 export function artifactDetailHTML(a,places,mode='site'){
  const p=places.find(p=>p.id===a.placeId), display=places.find(p=>p.id===a.displayPlaceId&&p.scopeConfirmed);
- return `<article class="artifact-detail"><div class="artifact-detail-media artifact-${a.color}">${artifactMediaHTML(a)}</div><div class="eyebrow">MỞ TƯ LIỆU. SO NGOÀI ĐỜI.</div><h2>${e(a.name[0])}</h2><p>${e(a.story[0])}</p>${narrationHTML('artifact',a.id)}<dl class="artifact-facts"><div><dt>Niên đại / mốc tư liệu</dt><dd>${e(a.period[0])}</dd></div><div><dt>Chất liệu / nhận diện</dt><dd>${e(a.material[0])}</dd></div></dl><section class="artifact-origin"><small>NƠI TÌM THẤY</small><h3 data-no-translate>${e(p.name)}</h3><p>${e(a.discovered[0])}</p><div class="artifact-links"><button class="text-button" data-place="${e(p.id)}">Đọc hồ sơ di tích ↗</button>${eligible(p)?`<button class="text-button" data-artifact-map="${e(p.id)}">Xem điểm tham khảo trên bản đồ ↗</button>`:''}</div></section><section class="artifact-holding"><h3>Nơi lưu giữ / trưng bày</h3><p>${e(a.holding[0])}</p>${display?`<button class="text-button" data-place="${e(display.id)}">Xem hồ sơ nhà trưng bày ↗</button>`:''}</section><section class="artifact-observe"><h3>Mở app, nhìn kỹ hơn.</h3><div class="artifact-mode" role="group" aria-label="Chọn bối cảnh quan sát"><button data-artifact-mode="site" data-id="${e(a.id)}" aria-pressed="${mode==='site'}">Ở di tích</button><button data-artifact-mode="display" data-id="${e(a.id)}" aria-pressed="${mode==='display'}">Ảnh tư liệu / trưng bày</button></div><p id="artifact-observation">${e((mode==='site'?a.onSite:a.atDisplay)[0])}</p></section><details class="artifact-challenge"><summary>Đoán nhanh một câu ↗</summary><h3>${e(a.question[0])}</h3><div class="artifact-answers">${a.options.map((o,i)=>`<button data-artifact-answer="${i}" data-id="${e(a.id)}" aria-pressed="false">${e(o[0])}</button>`).join('')}</div><div id="artifact-feedback" role="status" aria-live="polite"></div></details><a class="button outline full-width artifact-source" href="${e(safeURL(a.sourceUrl))}" target="_blank" rel="noopener noreferrer">${icon('arrowup')} Xem ảnh và bài nguồn Ban Quản lý</a><p class="artifact-method">Gợi ý quan sát do dự án biên tập từ nguồn, không thay lời thuyết minh tại chỗ. Hỏi trước khi chụp; không chạm, nhặt hay di chuyển hiện vật.</p><button class="text-button" data-action="artifacts">← Về bộ thẻ cổ vật</button></article>`;
+ return `<article class="artifact-detail"><div class="artifact-detail-media artifact-${a.color}">${artifactMediaHTML(a,{detail:true})}</div><div class="eyebrow">MỞ TƯ LIỆU. SO NGOÀI ĐỜI.</div><h2>${e(a.name[0])}</h2><p>${e(a.story[0])}</p>${narrationHTML('artifact',a.id)}<dl class="artifact-facts"><div><dt>Niên đại / mốc tư liệu</dt><dd>${e(a.period[0])}</dd></div><div><dt>Chất liệu / nhận diện</dt><dd>${e(a.material[0])}</dd></div></dl><section class="artifact-origin"><small>NƠI TÌM THẤY</small><h3 data-no-translate>${e(p.name)}</h3><p>${e(a.discovered[0])}</p><div class="artifact-links"><button class="text-button" data-place="${e(p.id)}">Đọc hồ sơ di tích ↗</button>${eligible(p)?`<button class="text-button" data-artifact-map="${e(p.id)}">Xem điểm tham khảo trên bản đồ ↗</button>`:''}</div></section><section class="artifact-holding"><h3>Nơi lưu giữ / trưng bày</h3><p>${e(a.holding[0])}</p>${display?`<button class="text-button" data-place="${e(display.id)}">Xem nơi lưu giữ ↗</button>`:''}</section><section class="artifact-observe"><h3>Mở app, nhìn kỹ hơn.</h3><div class="artifact-mode" role="group" aria-label="Chọn bối cảnh quan sát"><button data-artifact-mode="site" data-id="${e(a.id)}" aria-pressed="${mode==='site'}">Ở di tích</button><button data-artifact-mode="display" data-id="${e(a.id)}" aria-pressed="${mode==='display'}">Ảnh tư liệu / trưng bày</button></div><p id="artifact-observation">${e((mode==='site'?a.onSite:a.atDisplay)[0])}</p></section><details class="artifact-challenge"><summary>Đoán nhanh một câu ↗</summary><h3>${e(a.question[0])}</h3><div class="artifact-answers">${a.options.map((o,i)=>`<button data-artifact-answer="${i}" data-id="${e(a.id)}" aria-pressed="false">${e(o[0])}</button>`).join('')}</div><div id="artifact-feedback" role="status" aria-live="polite"></div></details><a class="button outline full-width artifact-source" href="${e(safeURL(a.sourceUrl))}" target="_blank" rel="noopener noreferrer">${icon('arrowup')} Đọc tư liệu gốc</a><p class="artifact-method">Gợi ý quan sát do dự án biên tập từ nguồn, không thay lời thuyết minh tại chỗ. Hỏi trước khi chụp; không chạm, nhặt hay di chuyển hiện vật.</p><button class="text-button" data-action="artifacts">← Về bộ thẻ cổ vật</button></article>`;
 }

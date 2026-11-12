@@ -1306,7 +1306,7 @@ function reportReview(id) {
 }
 function showSources() {
   openModal(
-    "TƯ LIỆU CÓ NGUỒN / CẬP NHẬT 05.11.2026",
+    "TƯ LIỆU CÓ NGUỒN / CẬP NHẬT 12.11.2026",
     `<div class="policy"><h2>Đọc đúng. <span class="serif">Đi có hiểu.</span></h2><p>Nội dung được biên tập từ tư liệu Ban Quản lý Di tích Văn hóa Óc Eo và nguồn riêng ghi tại từng hồ sơ, đối chiếu ngày 04–05/11/2026. Không phải trang chính thức của Ban Quản lý.</p><h3>Phạm vi</h3><p>Danh mục đang có ${site.places.length} hồ sơ, gồm di tích khu A – Núi Ba Thê, khu B – Đô thị Óc Eo, Nhà trưng bày Văn hóa Óc Eo và nhà trưng bày cũ trên đỉnh Ba Thê. Điểm trên đỉnh núi là tùy chọn, không tính vào bộ tem; nguồn kiến trúc và lưu ý hiện trạng được tách rõ trong hồ sơ. Lung Lớn A/B gộp một hồ sơ; Gò Cây Thị A/B gộp một điểm. Đây không phải kiểm kê toàn bộ di chỉ. Không đưa Nền Chùa và Giồng Xoài vào tuyến trong xã Óc Eo vì thuộc phạm vi cần tách riêng.</p><h3>Bài gốc</h3>${Object.entries(
       SOURCE_CATALOG,
     )
@@ -1316,7 +1316,7 @@ function showSources() {
       )
       .join(
         "",
-      )}<h3>Tọa độ và bản đồ</h3><p>© OpenStreetMap contributors, ODbL; Leaflet 1.9.4, BSD-2-Clause. Các điểm có tọa độ OSM là vị trí tham khảo, không phải đo đạc cổng vào. Một số quán và chỗ nghỉ dùng tâm ô Plus Code công khai ghi trên trang địa điểm Google Maps; nguồn riêng được dẫn trong từng hồ sơ. Đường nét đứt là ranh giới theo OSM, không thay thế bản đồ hành chính pháp lý. Điểm chưa có tọa độ không được đặt pin.</p><h3>Ảnh và thiết kế</h3><p>Ảnh Gò Cây Thị, Linh Sơn Nam, chùa Linh Sơn và núi Ba Thê: Bùi Thụy Đào Nguyên, Wikimedia Commons, CC BY-SA 3.0; nguồn từng ảnh được ghi trong thẻ chi tiết. Ảnh có thể được thu nhỏ bởi Wikimedia và cắt khung bằng CSS; bản gốc giữ giấy phép ghi tại trang nguồn. Các hình vẽ và logo hoa là thiết kế của dự án, không phải biểu trưng chính thức của di sản.</p><p><a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener noreferrer">Giấy phép ảnh CC BY-SA 3.0 ↗</a> · Phông Be Vietnam Pro/Lora/Townwalk SC (từ Noto CJK): SIL OFL.</p></div>`,
+      )}<h3>Tọa độ và bản đồ</h3><p>© OpenStreetMap contributors, ODbL; Leaflet 1.9.4, BSD-2-Clause. Các điểm có tọa độ OSM là vị trí tham khảo, không phải đo đạc cổng vào. Một số quán và chỗ nghỉ dùng tâm ô Plus Code công khai ghi trên trang địa điểm Google Maps; nguồn riêng được dẫn trong từng hồ sơ. Đường nét đứt là ranh giới theo OSM, không thay thế bản đồ hành chính pháp lý. Điểm chưa có tọa độ không được đặt pin.</p><h3>Ảnh và thiết kế</h3><p>Ảnh cổ vật được dẫn từ Óc Eo Heritage, Ban Quản lý Di tích văn hóa Óc Eo và iSpace An Giang, đối chiếu ngày 12/11/2026. Mỗi ảnh có chú thích và liên kết nguồn. Quyền đối với ảnh thuộc chủ sở hữu; ứng dụng không cấp phép lại các ảnh này.</p><p>Ảnh Gò Cây Thị, Linh Sơn Nam, chùa Linh Sơn và núi Ba Thê: Bùi Thụy Đào Nguyên, Wikimedia Commons, CC BY-SA 3.0; nguồn từng ảnh được ghi trong thẻ chi tiết. Ảnh có thể được thu nhỏ bởi Wikimedia và cắt khung bằng CSS; bản gốc giữ giấy phép ghi tại trang nguồn. Các hình vẽ và logo hoa là thiết kế của dự án, không phải biểu trưng chính thức của di sản.</p><p><a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener noreferrer">Giấy phép ảnh CC BY-SA 3.0 ↗</a> · Phông Be Vietnam Pro/Lora/Townwalk SC (từ Noto CJK): SIL OFL.</p></div>`,
     "sources",
   );
 }

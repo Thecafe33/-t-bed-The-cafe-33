@@ -35,3 +35,7 @@ Thay 25 bài về 16 điểm di sản/nhà trưng bày và 9 thẻ cổ vật, �
 ## Bổ sung ngày 11/11/2026
 
 Đã đối chiếu website người dùng cung cấp và các hồ sơ iSpace liên kết: [bảng dữ kiện, khác biệt và giới hạn](HERITAGE-CROSSCHECK-2026-11-11.md). Cập nhật năm bài về Út Trạnh, Cây Thị A–B, Chùa Linh Sơn, Sáu Thuận và Linh Sơn Nam ở ba ngôn ngữ, tái tạo 15 MP3 tương ứng. Bổ sung nguồn trực tiếp cho từng bài; giữ các bài hiện vật đã có nguồn chuyên biệt của Ban Quản lý. Niên đại được đọc thành lời trong bản tiếng Việt. Các thông tin trong bản đối chiếu mới thay thế giới hạn tương ứng được ghi tại phiên bản 10/11 ở trên.
+
+### Bốn bài hiện vật bổ sung cùng ngày
+
+Thêm thuyết minh riêng cho Phật Bốn Tay, hai bia Chùa Linh Sơn, tượng Phật đồng thau Cây Thị A và Vishnu Cây Thị B ở cả ba ngôn ngữ (12 MP3 mới). Tổng hiện tại: 13 thẻ hiện vật/nhóm, 38 bài × 3 ngôn ngữ = 114 bản thu. Các bài mới tách năm phát hiện, niên đại và xếp hạng, nêu rõ nơi lưu giữ chưa biết; không đọc bảng trường dữ liệu thành các câu rời rạc. Xem bảng đối chiếu đủ 10 mục trên website được cung cấp trong `ARTIFACT-SOURCES.md`.

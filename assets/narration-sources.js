@@ -305,5 +305,29 @@ export const NARRATION_SOURCES = {
       "title": "Núi Ba Thê và các di tích",
       "url": "https://vanhoaoceo.angiang.gov.vn/nui-ba-dau-an-van-hoa-oc-eo-giua-long-an-giang"
     }
+  ],
+  "artifact/vishnu-phat-bon-tay": [
+    {
+      "title": "iSpace An Giang · Tượng Vishnu · Phật Bốn Tay",
+      "url": "https://ispace.angiang.vn/qr_info/oc-eo/chua-linh-son/"
+    }
+  ],
+  "artifact/bia-da-linh-son": [
+    {
+      "title": "iSpace An Giang · Hai bia đá Chùa Linh Sơn",
+      "url": "https://ispace.angiang.vn/qr_info/oc-eo/chua-linh-son/"
+    }
+  ],
+  "artifact/phat-dong-cay-thi-a": [
+    {
+      "title": "iSpace An Giang · Tượng Phật đồng thau Cây Thị A",
+      "url": "https://ispace.angiang.vn/qr_info/oc-eo/go-cay-thi-a/"
+    }
+  ],
+  "artifact/vishnu-cay-thi-b": [
+    {
+      "title": "iSpace An Giang · Tượng Vishnu Gò Chôn Của",
+      "url": "https://ispace.angiang.vn/qr_info/oc-eo/go-cay-thi-b/"
+    }
   ]
 };

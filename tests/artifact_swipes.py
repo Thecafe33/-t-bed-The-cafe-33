@@ -8,7 +8,7 @@ with sync_playwright() as p:
  page=c.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
  page.add_init_script('window.__audioCreated=0;const Base=window.AudioContext;if(Base)window.AudioContext=class extends Base{constructor(...args){super(...args);window.__audioCreated++}}')
  page.goto(origin,wait_until='networkidle');profile=page.evaluate("localStorage.getItem('oceo-passport-guest')")
- page.locator('.artifact-launch').click();expect(page.locator('.artifact-swipe-card')).to_have_count(9)
+ page.locator('.artifact-launch').click();expect(page.locator('.artifact-swipe-card')).to_have_count(13)
  expect(page.locator('.artifact-swipe-card[aria-hidden=true][inert]')).to_have_count(8)
  page.locator('#artifact-random').click();expect(page.locator('[data-deck-active]')).to_have_attribute('data-artifact','nandin-giong-cat')
  def at(index):expect(page.locator('[data-deck-active]')).to_have_attribute('data-gallery-index',str(index))
@@ -24,7 +24,7 @@ with sync_playwright() as p:
  page.locator('#artifact-shuffle').click();at(0);assert current()!=seen[7]
  page.locator('#artifact-site-filter').select_option('go-giong-cat');expect(page.locator('.artifact-swipe-card')).to_have_count(1)
  expect(page.locator('#artifact-next')).to_be_disabled();expect(page.locator('#artifact-previous')).to_be_disabled();expect(page.locator('#artifact-random')).to_be_disabled()
- page.locator('#artifact-site-filter').select_option('all');old=current();page.locator('#artifact-view-toggle').click();expect(page.locator('.artifact-index .artifact-card')).to_have_count(9)
+ page.locator('#artifact-site-filter').select_option('all');old=current();page.locator('#artifact-view-toggle').click();expect(page.locator('.artifact-index .artifact-card')).to_have_count(13)
  page.locator('#artifact-view-toggle').click();assert current()==old
  assert page.evaluate("localStorage.getItem('oceo-passport-guest')")==profile
  assert page.evaluate('window.__audioCreated')==0
