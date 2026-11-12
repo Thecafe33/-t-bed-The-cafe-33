@@ -28,7 +28,7 @@ with sync_playwright() as p:
  for width in [320,390]:
   page.set_viewport_size({'width':width,'height':844});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  page.set_viewport_size({'width':390,'height':844});expect(page.locator('#toast')).not_to_have_class('show',timeout=7000);page.screenshot(path=str(out/'oc-eo-pass-save-button.png'))
- page.locator('.app-tabbar [data-route=map]').click();page.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===11")
+ page.locator('.app-tabbar [data-route=map]').click();page.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===13")
  page.locator('[data-map-category=rest]').click();expect(page.locator('.osm-pin')).to_have_count(2)
  assert page.locator('[data-map-category=rest]').evaluate('e=>getComputedStyle(e).whiteSpace')=='nowrap'
  expect(page.locator('.osm-pin[title="The cafe 33"]')).to_have_count(1);expect(page.locator('.osm-pin[title="XOFA coffee & tea"]')).to_have_count(1)

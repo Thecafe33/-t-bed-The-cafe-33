@@ -39,7 +39,7 @@ export function friendlyError(e){return e.message;}
  q.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===3")
  expect(q.locator('#journey-map-bar [aria-pressed=true]')).to_be_visible()
  q.locator('#journey-map-bar [data-journey-action=all-map]').first.click()
- q.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===11")
+ q.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===13")
  # Old valid stamps count in both independent projections; no claim about visit dates.
  ids=['nha-trung-bay-van-hoa-oc-eo','linh-son-bac','go-giong-cat','go-cay-thi']
  q.evaluate("ids=>localStorage.setItem('oceo-passport-guest',JSON.stringify({name:'Khám phá',badges:[...ids,ids[0],'not-a-stop']}))",ids)

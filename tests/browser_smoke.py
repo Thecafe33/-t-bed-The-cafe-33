@@ -43,7 +43,7 @@ with sync_playwright() as p:
  page.get_by_role('button',name='Ăn gì ngon?').click()
  go('map');expect(page.locator('#osm-map')).to_be_visible()
  expect(page.locator('#schematic')).to_have_count(0)
- page.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===11")
+ page.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===13")
  expect(page.locator('#map-network-state')).not_to_be_visible()
  expect(page.locator('.townwalk-cartography svg').first).to_be_visible()
  expect(page.locator('.leaflet-tile')).to_have_count(0)

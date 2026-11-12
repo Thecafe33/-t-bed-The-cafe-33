@@ -17,7 +17,7 @@ with sync_playwright() as p:
  expect(page.locator('.leaflet-tile')).to_have_count(0)
  assert not page.locator('#map-directory').evaluate('e=>e.open')
  assert page.locator('#osm-map').bounding_box()['height']>=450
- page.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===11")
+ page.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===13")
  expect(page.locator('.map-cluster').first).to_be_visible()
  largest=max(int(v) for v in page.locator('[data-cluster-count]').all_text_contents())
  page.locator(f'.map-cluster:has([data-cluster-count="{largest}"])').first.click()
@@ -34,7 +34,7 @@ with sync_playwright() as p:
  expect(page.locator('#map-selection h2')).to_have_text('Chùa Linh Sơn');expect(page.locator('#map-selection')).to_contain_text('đường chim bay')
  assert not page.evaluate("JSON.parse(localStorage.getItem('oceo-passport-guest')||'{}').badges?.length")
  # Pending coordinates are searchable in the directory; no made-up pin or external directions.
- fill_map_search(page,'go 6 thuan');expect(page.locator('.map-list-item')).to_have_count(1)
+ fill_map_search(page,'hao va thanh co');expect(page.locator('.map-list-item')).to_have_count(1)
  expect(page.locator('#map-directory')).to_have_attribute('open','');expect(page.locator('.osm-pin')).to_have_count(0)
  expect(page.locator('#map-suggestions')).to_contain_text('chưa có pin');expect(page.locator('#map-selection')).to_be_empty()
  page.locator('.map-list-item').click();expect(page.locator('#checkin')).to_be_disabled();expect(page.locator('#focus-on-map')).to_have_count(0);page.locator('#close-modal').click()
