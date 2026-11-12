@@ -1,0 +1,44 @@
+/* Collecting desk: overlapping stamps that can be dragged, plus the export packaging choice. */
+.stamp-collect { margin: 4px 0 26px; }
+.desk-head { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:0 4px 12px; }
+.desk-head small { display:block; font-size:11px; font-weight:800; letter-spacing:3px; color:#6b6b60; }
+.desk-head strong { display:block; font-family:Lora,TownwalkSC,Georgia,serif; font-style:italic; font-weight:500; font-size:30px; line-height:1.15; color:#173f36; overflow-wrap:anywhere; }
+.desk-count { flex:none; line-height:.9; color:#173f36; }
+.desk-count b { font-size:52px; font-weight:800; letter-spacing:-3px; }
+.desk-count span { font-size:15px; font-weight:800; }
+.stamp-desk { position:relative; border-radius:28px; background:#efe9d9 radial-gradient(#1d2a2414 1.2px,transparent 1.4px) 0 0/18px 18px; overflow:hidden; user-select:none; -webkit-user-select:none; contain:layout; }
+.desk-stamp { position:absolute; display:block; padding:0; border:0; background:none; cursor:grab; touch-action:none; transform:rotate(var(--r,0deg)); filter:drop-shadow(0 6px 8px #1d2a2433); transition:filter .2s, transform .2s; -webkit-tap-highlight-color:transparent; }
+.desk-stamp svg { display:block; width:100%; height:auto; pointer-events:none; }
+.desk-stamp.lifted { cursor:grabbing; transform:rotate(var(--r,0deg)) scale(1.07); filter:drop-shadow(0 24px 22px #1d2a2455); transition:filter .2s, transform .15s; }
+.desk-stamp:focus-visible { outline:3px solid #173f36; outline-offset:4px; border-radius:6px; }
+.stamp-desk.settling .desk-stamp { transition:left .4s cubic-bezier(.22,1,.36,1), top .4s cubic-bezier(.22,1,.36,1), transform .4s; }
+.desk-tools { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:10px; }
+.desk-hint { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:99px; background:#1d2a24; color:#fff; font-size:12.5px; font-weight:800; }
+.desk-hint::before { content:"✋"; }
+.desk-reset { display:inline-flex; align-items:center; gap:6px; min-height:40px; padding:8px 14px; border-radius:99px; border:1.5px solid #1d2a2433; background:#fff; color:#173f36; font:inherit; font-size:12.5px; font-weight:800; cursor:pointer; }
+.desk-reset .icon { width:16px; height:16px; }
+.desk-empty { display:flex; gap:12px; align-items:center; padding:22px; border-radius:24px; border:2px dashed #1d2a2433; color:#3e4437; }
+.desk-empty p { margin:0; font-size:14px; line-height:1.55; }
+.desk-waiting { margin:22px 4px 10px; font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:#173f36; }
+.ghost-row { list-style:none; margin:0; padding:0 0 6px; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; }
+.ghost-row li { flex:none; }
+.ghost-row svg { display:block; }
+/* Pass book stamps now carry their own printed art. */
+#view-pass .stamp-grid .stamp.art-stamp { min-height:0; padding:0; background:none; border:0; box-shadow:none; clip-path:none; filter:drop-shadow(0 4px 6px #1d2a2426); }
+#view-pass .stamp-grid .stamp.art-stamp::after { display:none; }
+#view-pass .stamp-grid .stamp.art-stamp svg { display:block; width:100%; height:auto; }
+/* Export packaging */
+.pack-choice { border:0; margin:0 0 12px; padding:0; min-width:0; }
+.pack-choice legend { padding:0; margin-bottom:8px; font-size:11px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:#173f36; }
+.pack-choice { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.pack-choice legend { grid-column:1/-1; float:left; width:100%; }
+.pack-choice label { position:relative; display:block; cursor:pointer; }
+.pack-choice input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+.pack-choice label > span { display:flex; flex-direction:column; align-items:center; gap:6px; min-height:84px; justify-content:center; padding:10px 6px; border-radius:20px; border:1.5px solid #1d2a2426; background:#fff; color:#173f36; text-align:center; transition:background .2s, color .2s; }
+.pack-choice b { font-size:12.5px; line-height:1.2; }
+.pack-choice .icon { width:22px; height:22px; }
+.pack-choice input:checked + span { background:#173f36; color:#d9f27a; border-color:#173f36; }
+.pack-choice input:focus-visible + span { outline:3px solid #173f36; outline-offset:3px; }
+@media (prefers-reduced-motion: reduce) { .desk-stamp, .desk-stamp.lifted, .stamp-desk.settling .desk-stamp { transition:none; } }
+#view-pass .pass-toolbar { flex-wrap:wrap; }
+#view-pass .pass-toolbar .pack-choice { flex:1 0 100%; width:100%; }

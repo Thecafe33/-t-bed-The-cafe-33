@@ -1,5 +1,5 @@
 import {appURL} from './app-paths.js';
-import {buildHeritagePoster} from './pass-poster.js';
+import {buildPoster} from './pass-poster.js';
 import {HERITAGE_IMAGES,heritageSymbol} from './heritage-symbols.js';
 const COLORS=['#dfe8c6','#e2daf5','#f6e4a8','#efc6b4','#d9e9ec'];
 export function stampColor(place){
@@ -33,9 +33,12 @@ async function embeddedImages(keys){
  }));
  return Object.fromEntries(entries.filter(([,value])=>value));
 }
-export function buildPassSVG(options){return buildHeritagePoster(options);}
+// Painted backdrop for the letter and flight packages; empty until the artwork is supplied.
+export const PASS_BACKDROP='';
+export function buildPassSVG(options){return buildPoster(options);}
 export async function passArtwork(options){
- const keys=['ring',...options.earned.map(p=>heritageSymbol(p).key)];
- const [fontCSS,images]=await Promise.all([embeddedFonts(),embeddedImages(keys)]);
+ const keys=options.earned.map(p=>heritageSymbol(p).key);
+ const [fontCSS,images,backdrop]=await Promise.all([embeddedFonts(),embeddedImages(keys),PASS_BACKDROP&&options.kind!=='pass'?fetch(appURL(PASS_BACKDROP)).then(r=>r.ok?r.blob():null).then(b=>b&&toDataURL(b)).catch(()=>''):'']);
+ if(backdrop)images.backdrop=backdrop;
  return buildPassSVG({...options,fontCSS,images});
 }

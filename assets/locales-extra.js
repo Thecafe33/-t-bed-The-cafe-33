@@ -371,4 +371,13 @@ export const EXTRA_MESSAGES = [
 ["Tải ảnh lịch trình để xem offline", "Save plan photos for offline use", "下载行程图片以便离线查看"],
 ["Điểm trong lịch trình", "Day plan stops", "行程中的地点"],
 ["Đang xem lịch trình", "Showing the day plan", "正在查看行程"],
+["Bàn tem", "Stamp desk", "印章桌"],
+["ÓC EO PASS · CỦA", "ÓC EO PASS · OF", "ÓC EO PASS · 持有人"],
+["Kéo tem để sắp xếp", "Drag to arrange", "拖动整理印章"],
+["Xếp gọn", "Tidy up", "整理"],
+["Tem đầu tiên đang chờ bạn. Đến điểm và check-in để tem xuất hiện trên bàn.", "Your first stamp is waiting. Check in at a stop and it lands on your desk.", "第一枚印章正等着你。到达地点签到，印章就会出现在桌上。"],
+["tem đang chờ", "stamps waiting", "枚印章等你收集"],
+["Đóng gói ảnh thành", "Package your image as", "图片样式"],
+["Một bức thư", "A letter", "一封信"],
+["Một chuyến bay", "A flight", "一趟航班"],
 ];

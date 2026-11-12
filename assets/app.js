@@ -28,6 +28,8 @@ import {initHeader} from "./header.js";
 import {mountStoryCreator} from "./story-creator.js";
 import {mountStory} from "./story.js";
 import { stampOutline } from "./stamp-shape.js";
+import {stampSVG} from "./stamp-art.js";
+import {mountStampDesk,ghostRow,readDesk} from "./stamp-desk.js";
 import { appURL } from "./app-paths.js";
 import { mountTownMap } from "./town-map.js";
 import {ARTIFACTS,artifactsForPlaces} from "./artifacts.js";
@@ -838,7 +840,7 @@ function updateStampBorders() {
       apply(entry.target, size?.inlineSize || entry.target.offsetWidth, size?.blockSize || entry.target.offsetHeight);
     }
   });
-  for (const element of document.querySelectorAll('#pass-content .stamp')) {
+  for (const element of document.querySelectorAll('#pass-content .stamp:not(.art-stamp)')) {
     apply(element, element.offsetWidth, element.offsetHeight);
     stampBorderObserver?.observe(element);
   }
@@ -855,11 +857,11 @@ function showPassport() {
   bookPage = Math.max(0, Math.min(pages - 1, bookPage));
   passNeedsRender = false;
   $("#pass-content").innerHTML =
-    `<div class="app-view-heading"><div class="eyebrow">GOM TEM DI SẢN. LAN TỎA ÓC EO.</div><h1 id="pass-heading" tabindex="-1">Óc Eo <span class="serif">Pass.</span></h1><p>Mỗi con tem là một lần chạm Óc Eo.</p></div><div class="pass-story-entry"><button class="button dark" data-journey-action="story" ${!count ? "disabled" : ""}>Tạo story với ảnh của tôi ${icon("camera")}</button><p>Có một tem là có thể kể. Ảnh chỉ xử lý trên máy.</p></div><div class="pass-toolbar"><button class="button dark" id="save-pass-image">Lưu ảnh về máy ${icon("download")}</button><button class="text-button book-toggle" id="toggle-book">Đóng bìa Óc Eo Pass ${icon("passport")}</button></div><p class="pass-save-caption">Lưu ảnh tiến độ bất cứ lúc nào.</p><div class="passport-book"><button class="passport-cover" id="open-book">${mark}<small>ÓC EO TOWNWALK</small><h3>Óc Eo<br><span class="serif">Pass.</span></h3><span>Chạm để mở một chuyến đi ↗</span></button><div class="passport-spread"><div class="passport-page"><div class="eyebrow">ÓC EO TOWNWALK / YOUR PASS</div><h3>Óc Eo.<br><span class="serif">I was here.</span></h3><p>Óc Eo Pass này thuộc về</p><div class="owner-name" data-no-translate>${e(profile.name || translateText("Một tâm hồn tò mò"))}</div><small>Xã Óc Eo · An Giang</small><div class="pass-total-display" aria-hidden="true"><strong>${count}</strong><span>/ ${total}</span></div><div class="passport-progress"><span style="width:${total ? (count / total) * 100 : 0}%"></span></div><p>${total ? `Bạn đã đạt ${count} / ${total} tem` : "Bộ sưu tập đang được bổ sung"}</p><small>${cloud.state.user ? "Đồng bộ với tài khoản khi có mạng" : "Chế độ khách · lưu trên thiết bị này"}</small></div><div class="passport-page passport-flip"><div class="eyebrow">NHỮNG NƠI MÌNH ĐÃ CHẠM</div>${all.length ? `<div class="stamp-grid">${all
+    `<div class="app-view-heading"><div class="eyebrow">GOM TEM DI SẢN. LAN TỎA ÓC EO.</div><h1 id="pass-heading" tabindex="-1">Óc Eo <span class="serif">Pass.</span></h1><p>Mỗi con tem là một lần chạm Óc Eo.</p></div><section class="stamp-collect" aria-label="Bàn tem"><div class="desk-head"><div><small>ÓC EO PASS · CỦA</small><strong data-no-translate>${e(profile.name || translateText("Một tâm hồn tò mò"))}</strong></div><div class="desk-count" aria-label="${count} / ${total}"><b>${String(count).padStart(2,"0")}</b><span>/${total}</span></div></div>${count ? `<div class="stamp-desk" id="stamp-desk"></div><div class="desk-tools"><span class="desk-hint">Kéo tem để sắp xếp</span><button type="button" class="desk-reset" id="desk-reset">Xếp gọn ${icon("undo")}</button></div>` : `<div class="desk-empty">${icon("compass")}<p>Tem đầu tiên đang chờ bạn. Đến điểm và check-in để tem xuất hiện trên bàn.</p></div>`}${count < total ? `<h3 class="desk-waiting"><span data-no-translate>${total - count}</span> <span>tem đang chờ</span></h3><ul class="ghost-row" aria-hidden="true">${ghostRow(collection.filter(p=>!earned.some(x=>x.id===p.id)))}</ul>` : ""}</section><div class="pass-story-entry"><button class="button dark" data-journey-action="story" ${!count ? "disabled" : ""}>Tạo story với ảnh của tôi ${icon("camera")}</button><p>Có một tem là có thể kể. Ảnh chỉ xử lý trên máy.</p></div><div class="pass-toolbar"><fieldset class="pack-choice"><legend>Đóng gói ảnh thành</legend>${[["pass","Óc Eo Pass","passport"],["letter","Một bức thư","mail"],["flight","Một chuyến bay","plane"]].map(([v,l,i])=>`<label><input type="radio" name="pack" value="${v}" ${v===packChoice()?"checked":""}><span>${icon(i)}<b>${l}</b></span></label>`).join("")}</fieldset><button class="button dark" id="save-pass-image">Lưu ảnh về máy ${icon("download")}</button><button class="text-button book-toggle" id="toggle-book">Đóng bìa Óc Eo Pass ${icon("passport")}</button></div><p class="pass-save-caption">Lưu ảnh tiến độ bất cứ lúc nào.</p><div class="passport-book"><button class="passport-cover" id="open-book">${mark}<small>ÓC EO TOWNWALK</small><h3>Óc Eo<br><span class="serif">Pass.</span></h3><span>Chạm để mở một chuyến đi ↗</span></button><div class="passport-spread"><div class="passport-page"><div class="eyebrow">ÓC EO TOWNWALK / YOUR PASS</div><h3>Óc Eo.<br><span class="serif">I was here.</span></h3><p>Óc Eo Pass này thuộc về</p><div class="owner-name" data-no-translate>${e(profile.name || translateText("Một tâm hồn tò mò"))}</div><small>Xã Óc Eo · An Giang</small><div class="pass-total-display" aria-hidden="true"><strong>${count}</strong><span>/ ${total}</span></div><div class="passport-progress"><span style="width:${total ? (count / total) * 100 : 0}%"></span></div><p>${total ? `Bạn đã đạt ${count} / ${total} tem` : "Bộ sưu tập đang được bổ sung"}</p><small>${cloud.state.user ? "Đồng bộ với tài khoản khi có mạng" : "Chế độ khách · lưu trên thiết bị này"}</small></div><div class="passport-page passport-flip"><div class="eyebrow">NHỮNG NƠI MÌNH ĐÃ CHẠM</div>${all.length ? `<div class="stamp-grid">${all
       .slice(bookPage * 4, bookPage * 4 + 4)
       .map(
         (p) =>
-          `<button class="stamp earned ${["butter", "lavender", "peach", "lime"].includes(p.color) ? p.color : "butter"}" style="background:${stampColor(p)}" data-place="${e(p.id)}" aria-label="${e(p.name)}: đã check-in">${heritageSymbolHTML(p)}<b>${e(p.name.toUpperCase())}</b><small>ĐÃ CHECK-IN</small></button>`,
+          `<button class="stamp earned art-stamp" data-place="${e(p.id)}" aria-label="${e(p.name)}: đã check-in">${stampSVG(p,{collection,locale:getLanguage(),back:false,localImages:true,id:`book-${p.id}`})}</button>`,
       )
       .join(
         "",
@@ -874,6 +876,9 @@ function showPassport() {
   book.dataset.paginated=String(pages>1);
   hydrate($("#pass-content"));
   updateStampBorders();
+  const desk=$("#stamp-desk"),deskApi=desk&&mountStampDesk(desk,{earned,collection,locale:getLanguage(),label:n=>e(n),reduced:reducedMotion()});
+  if(deskApi)$("#desk-reset").onclick=()=>{deskApi.reset();playEffect('paper');};
+  content.querySelectorAll('input[name=pack]').forEach(input=>input.onchange=()=>{try{localStorage.setItem('oceo-pack',input.value);}catch{}});
   const turnBook=(closed)=>{
     playEffect('paper');
     book.classList.toggle('closed',closed);
@@ -920,7 +925,7 @@ function showPassport() {
     button.disabled = true;
     button.textContent = "Đang tạo ảnh PNG…";
     try {
-      await showCertificate({progress: true, download: true,
+      await showCertificate({progress: true, download: true, kind: packChoice(),
         name: $("#passport-name").value.trim().slice(0,60)});
     } finally {
       if (button.isConnected) {
@@ -932,12 +937,18 @@ function showPassport() {
   $("#certificate").onclick = async () => {
     const button = $("#certificate");
     button.disabled = true;
-    try { await showCertificate({progress:true,name:$("#passport-name").value.trim().slice(0,60)}); }
+    try { await showCertificate({progress:true,kind:packChoice(),name:$("#passport-name").value.trim().slice(0,60)}); }
     finally { if(button.isConnected) button.disabled = count === 0; }
   };
   $("#passport-login")?.addEventListener("click", showLogin);
 }
-async function showCertificate({progress = false, download = false, name = ""} = {}) {
+function packChoice(){
+  const checked=document.querySelector('input[name=pack]:checked')?.value;
+  if(checked)return checked;
+  try{const v=localStorage.getItem('oceo-pack');return ['pass','letter','flight'].includes(v)?v:'pass';}catch{return 'pass';}
+}
+const PACK_FILES={pass:"oc-eo-pass.png",letter:"oc-eo-buc-thu.png",flight:"oc-eo-chuyen-bay.png"};
+async function showCertificate({progress = false, download = false, name = "", kind = "pass"} = {}) {
   const owner=profileKey(),epoch=profileEpoch,dialogVersion=modalEpoch,navVersion=navigationEpoch;
   const sameOwner=()=>owner===profileKey()&&epoch===profileEpoch;
   const sameView=()=>sameOwner()&&dialogVersion===modalEpoch&&navVersion===navigationEpoch;
@@ -945,7 +956,7 @@ async function showCertificate({progress = false, download = false, name = ""} =
   if (!progress && !complete) return;
   const exportName = (name || profile.name || translateText("Một tâm hồn tò mò")).trim().slice(0,60);
   const date = new Intl.DateTimeFormat(dateLocale(), {timeZone:"Asia/Ho_Chi_Minh"}).format(new Date());
-  const {svg,width,height} = await passArtwork({collection,earned,name:exportName,date,locale:getLanguage()});
+  const {svg,width,height} = await passArtwork({kind,collection,earned,name:exportName,date,locale:getLanguage(),arrangement:readDesk()});
   if(!sameOwner()||(!download&&!sameView()))return;
   const url = URL.createObjectURL(
     new Blob([svg], { type: "image/svg+xml;charset=utf-8" }),
@@ -962,7 +973,7 @@ async function showCertificate({progress = false, download = false, name = ""} =
     if (!blob) throw Error("Không xuất được ảnh.");
     if(!sameOwner()||(!download&&!sameView()))return;
     if (download) {
-      downloadBlob(blob, "oc-eo-pass.png");
+      downloadBlob(blob, PACK_FILES[kind]||PACK_FILES.pass);
       toast("Ảnh PNG đã sẵn sàng. Nếu máy mở ảnh, nhấn giữ để lưu.");
       return;
     }
@@ -973,9 +984,9 @@ async function showCertificate({progress = false, download = false, name = ""} =
       "certificate",
     );
     $("#download-certificate").onclick = () =>
-      downloadBlob(blob, "oc-eo-townwalk.png");
+      downloadBlob(blob, (kind==="pass"?"oc-eo-townwalk.png":PACK_FILES[kind]));
     $("#share-certificate").onclick = async () => {
-      const f = new File([blob], "oc-eo-townwalk.png", { type: "image/png" });
+      const f = new File([blob], (kind==="pass"?"oc-eo-townwalk.png":PACK_FILES[kind]), { type: "image/png" });
       try {
         if (navigator.canShare?.({ files: [f] })) {
           await navigator.share({
@@ -984,7 +995,7 @@ async function showCertificate({progress = false, download = false, name = ""} =
             text: "#OcEoTownwalk #ChamNganNam",
           });
         } else {
-          downloadBlob(blob, "oc-eo-townwalk.png");
+          downloadBlob(blob, (kind==="pass"?"oc-eo-townwalk.png":PACK_FILES[kind]));
           toast("Đã tải ảnh để bạn đăng lên mạng xã hội.");
         }
       } catch (err) {

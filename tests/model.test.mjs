@@ -177,7 +177,8 @@ test("story export draws only earned stamps, escapes names and retains every sta
  const full=buildPassSVG({collection,earned:collection,name:'Người khám phá',date:'05/11/2026'});
  assert.equal(full.height,1920);
  assert.equal((full.svg.match(/data-earned-stamp=/g)||[]).length,15);
- assert.equal(new Set([...full.svg.matchAll(/id="(cut-\d+)"/g)].map(m=>m[1])).size,15);
+ assert.equal(new Set([...full.svg.matchAll(/data-earned-stamp="([^"]+)"/g)].map(m=>m[1])).size,15);
+ for(const kind of ['letter','flight']){const art=buildPassSVG({kind,collection,earned:collection.slice(0,4),name:'A <b>',date:'05/11/2026'});assert.equal(art.width,1080);assert.equal(art.height,1920);assert.ok(art.svg.includes('A &lt;b&gt;'));assert.ok(!art.svg.includes(`data-earned-stamp="${collection[5].id}"`));}
  for(const p of collection)assert.ok(full.svg.includes(`data-earned-stamp="${p.id}"`));
 });
 

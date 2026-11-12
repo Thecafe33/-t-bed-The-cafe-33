@@ -43,7 +43,10 @@ with sync_playwright() as p:
  def collect():
   pending.update(page.evaluate("async()=>{const m=await import('/assets/i18n.js');return m.untranslatedUI()}"))
  def go(tab):
-  page.locator(f'.app-tabbar [data-route={"pass" if tab=="community" else tab}]').click()
+  link=page.locator(f'.app-tabbar [data-route={"pass" if tab=="community" else tab}]')
+  # The tab bar hides while scrolling down a long view; focusing it brings it back.
+  if page.locator('html').evaluate("e=>e.classList.contains('navigation-concealed')"):link.evaluate('e=>{e.blur();e.focus({preventScroll:true})}')
+  link.click()
   if tab=='community':page.locator('#view-pass .memories-switch [data-memories=community]').click()
  for lang in ['en','zh']:
   page.locator('#language-select').select_option(lang)
