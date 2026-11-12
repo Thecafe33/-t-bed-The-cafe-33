@@ -5,7 +5,7 @@ import {reducedMotion,playEffect} from './effects.js';
 import {translateText} from './i18n.js';
 
 /** Persistent cards, a continuous position and interruptible momentum. */
-export function mountArtifactDeck({root,dialog,state,places,onOpen}){
+export function mountArtifactDeck({root,dialog,state,places}){
  const abort=new AbortController(),options={signal:abort.signal};
  let disposed=false,gesture=null,frame=0,wheelTimer=0,suppressUntil=0;
  let position=state.index,target=position,velocity=0,moving=false,pendingFocus=null;
@@ -40,12 +40,6 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
   const status=find('#artifact-deck-progress');
   const label=state.view==='list'?`${state.total} thẻ`:`Thẻ ${state.total?state.index+1:0} / ${state.total}`;
   if(status.textContent!==translateText(label))status.textContent=translateText(label);
-  if(state.view==='deck'){
-   find('#artifact-previous').disabled=!state.total||state.index===0;
-   find('#artifact-next').disabled=!state.total||state.index===state.total-1;
-   find('#artifact-open').disabled=!state.total;
-   if(state.total&&find('#artifact-open').textContent!==translateText('Soi kỹ thẻ này'))find('#artifact-open').textContent=translateText('Soi kỹ thẻ này');
-  }
   if(previous!==state.index)playEffect('paper');
  }
  function measure(){
@@ -89,7 +83,7 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
  function step(direction){
   if(state.view!=='deck'||!state.total)return;
   const next=clamp((moving?target:Math.round(position))+direction);
-  glide(next,velocity,next===0?'#artifact-open':direction>0?'#artifact-next':'#artifact-previous');
+  glide(next,velocity,'[data-deck-active]');
  }
  root.addEventListener('change',event=>{
   if(event.target.id==='artifact-site-filter'){state.selected=event.target.value;render({focus:'#artifact-site-filter'});}
@@ -100,9 +94,6 @@ export function mountArtifactDeck({root,dialog,state,places,onOpen}){
    case 'artifact-shuffle':state.shuffle();render({focus:'#artifact-shuffle'});playEffect('paper');break;
    case 'artifact-random':state.setRandom(!state.random);render({focus:'#artifact-random'});break;
    case 'artifact-view-toggle':state.view=state.view==='deck'?'list':'deck';render({focus:'#artifact-view-toggle'});break;
-   case 'artifact-previous':step(-1);break;
-   case 'artifact-next':step(1);break;
-   case 'artifact-open':stop();position=clamp(Math.round(position));paint();commit(position);if(state.current)onOpen(state.current);break;
   }
  },options);
  root.addEventListener('click',event=>{

@@ -14,7 +14,7 @@ import {
 globalThis.location = { origin: "https://oceotownwalk.web.app" };
 test("curated records distinguish collection membership from available check-in positions", () => {
   const d = cloneDefault();
-  assert.equal(d.places.filter(eligible).length, 7);
+  assert.equal(d.places.filter(eligible).length, 8);
   assert.equal(d.places.length, 16);
   assert.equal(d.stops.length, 9);
   for (const p of d.places.filter(p=>p.recordType!=="hidden-gem")) {
@@ -42,7 +42,7 @@ test("confirmation requires post-merger scope, source and valid coordinates", ()
   ])
     assert.equal(eligible({ ...p, ...update }), false);
   const d = cloneDefault();
-  d.places.find(p=>p.id==='go-ut-trach').verified = true;
+  d.places.find(p=>p.id==='go-sau-thuan').verified = true;
   assert.throws(() => validateSite(d), /nguồn HTTPS/);
 });
 test("geofence measures same point, near point and far point", () => {
@@ -85,7 +85,7 @@ test("user supplied text is escaped and unsafe navigation schemes are rejected",
 
 test("user-supplied site names are retained without invented map coordinates", () => {
   const sites = cloneDefault().places;
-  for (const id of ["go-sau-thuan", "go-ut-trach"]) {
+  for (const id of ["go-sau-thuan", "go-cay-tram"]) {
     const p = sites.find((p) => p.id === id);
     assert.ok(p);
     assert.equal(p.lat, null);

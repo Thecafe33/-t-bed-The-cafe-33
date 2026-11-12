@@ -304,6 +304,7 @@ export const EXTRA_MESSAGES = [
 ["Xem nơi lưu giữ ↗", "Open the holding location ↗", "查看保管地点 ↗"],
 ["TƯ LIỆU CÓ NGUỒN / CẬP NHẬT 12.11.2026", "SOURCED MATERIAL / UPDATED 12 NOV 2026", "资料来源 / 更新于2026年11月12日"],
 ['Ảnh cổ vật được dẫn từ Óc Eo Heritage, Ban Quản lý Di tích văn hóa Óc Eo và iSpace An Giang, đối chiếu ngày 12/11/2026. Mỗi ảnh có chú thích và liên kết nguồn. Quyền đối với ảnh thuộc chủ sở hữu; ứng dụng không cấp phép lại các ảnh này.', 'Artifact images are referenced from Óc Eo Heritage, the Óc Eo heritage authority and iSpace An Giang, checked on 12 November 2026. Each image has a caption and source link. Image rights remain with their owners; this application does not relicense them.', '文物图片引自Óc Eo Heritage、Óc Eo遗产管理机构和iSpace An Giang，于2026年11月12日核对。每张图片附说明和来源链接，图片权利归原权利人所有，本应用不重新授权。'],
+["Minh hoạ:", "Illustration:", "插画："],
 ["Nguồn ảnh:", "Image source:", "图片来源："],
 ["Xem ảnh lớn ↗", "Open full-size image ↗", "查看大图 ↗"],
 ["Trang nguồn ảnh ↗", "Image source page ↗", "图片来源页面 ↗"],

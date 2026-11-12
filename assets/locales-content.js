@@ -141,6 +141,7 @@ export const ITINERARY_TRANSLATIONS=[
  [['Gò Cây Thị → Giồng Cát','Gò Cây Thị → Giồng Cát'],['Visit only after the authority confirms access. Plan transport between clusters rather than assuming the whole route is walkable.','请先确认遗址允许接待，再安排行程；各组之间应预留交通方式，不要默认全程适合步行。']],
  [['XOFA · try Sữa Gạo Phù Nam','XOFA · 试试Sữa Gạo Phù Nam'],['Finish with a culture-inspired drink at XOFA, indicatively from 25K. Check current prices, rest, then save and share your Óc Eo Pass.','在XOFA用一杯受Óc Eo文化启发的饮品结束旅程，参考价25K起。确认现价、休息片刻，再保存和分享Óc Eo Pass。']]
 ];
+CONTENT_TRANSLATIONS['go-ut-trach'].coordinateNote=['Google Maps place location for Gò Út Trạnh, checked via Óc Eo Heritage on 12 November 2026; not an excavation trench coordinate.','Gò Út Trạnh的Google Maps地点位置，经Óc Eo Heritage链接于2026年11月12日核对；并非发掘坑位坐标。'];
 for(const [id,r] of Object.entries(HERITAGE_RESEARCH)){
  Object.assign(CONTENT_TRANSLATIONS[id],{description:r.summary.slice(1),lookFor:r.observe.slice(1)});
 }

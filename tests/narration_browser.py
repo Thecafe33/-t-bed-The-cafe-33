@@ -8,7 +8,7 @@ with sync_playwright() as p:
  q=c.new_page();errors=[];q.on('pageerror',lambda e:errors.append(str(e)))
  q.goto(ORIGIN+'/#artifacts',wait_until='networkidle')
  q.locator('#artifact-site-filter').select_option('go-giong-cat')
- q.locator('#artifact-open').click()
+ q.locator('[data-deck-active]').click()
  player=q.locator('#modal .narration-player');expect(player).to_be_visible()
  player.locator('summary').click()
  expect(player.locator('.narration-transcript')).to_contain_text('8,7 gram')
@@ -44,7 +44,7 @@ with sync_playwright() as p:
  path='/assets/audio/vi/artifact-nandin-giong-cat.mp3?v=20261111'
  assert q.evaluate("async(path)=>{const r=await fetch(path,{headers:{Range:'bytes=0-1023'}});return r.status===206&&(await r.arrayBuffer()).byteLength===1024}",path)
  c.set_offline(True);q.reload(wait_until='domcontentloaded')
- q.locator('#artifact-site-filter').select_option('go-giong-cat');q.locator('#artifact-open').click();q.locator('#modal .narration-player summary').click()
+ q.locator('#artifact-site-filter').select_option('go-giong-cat');q.locator('[data-deck-active]').click();q.locator('#modal .narration-player summary').click()
  expect(q.locator('#modal .narration-sources a')).to_have_count(1)
  expect(q.locator('#modal .narration-transcript')).to_contain_text('8,7 gram')
  assert q.evaluate("async(path)=>{const r=await fetch(path,{headers:{Range:'bytes=1024-2047'}});return r.status===206&&(await r.arrayBuffer()).byteLength===1024}",path)

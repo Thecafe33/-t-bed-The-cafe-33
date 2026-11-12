@@ -2,48 +2,48 @@
   {
     "id": "nandin-giong-cat",
     "verified": true,
-    "usage": "reference",
-    "url": "assets/photos/artifacts/nandin-giong-cat.png",
+    "usage": "illustration",
+    "url": "assets/heritage-art/nandin-giong-cat.webp",
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/chiec-nhan-vang-nandin-giong-cat-bao-vat-quoc-gia-cua-van-hoa-oc-eo",
-    "sourceImageUrl": "https://vanhoaoceo.angiang.gov.vn/sites/default/files/inline-images/image_23.png",
-    "credit": "Ban Quản lý Di tích văn hóa Óc Eo",
+    "sourceImageUrl": "assets/heritage-art/nandin-giong-cat.webp",
+    "credit": "Óc Eo Townwalk",
     "alt": [
-      "Nhẫn Nandin nhìn nghiêng, kèm thước tỷ lệ trong ảnh nguồn.",
-      "Side view of the Nandin ring with the source photograph’s scale.",
-      "Nandin戒指侧视图，保留来源照片中的比例尺。"
+      "Nhẫn vàng Nandin Giồng Cát · minh hoạ trong bộ tem",
+      "Giồng Cát Nandin gold ring · Pass illustration",
+      "Giồng Cát金质Nandin戒指 · 印章插画"
     ],
     "caption": [
-      "Nhẫn Nandin nhìn nghiêng, kèm thước tỷ lệ trong ảnh nguồn.",
-      "Side view of the Nandin ring with the source photograph’s scale.",
-      "Nandin戒指侧视图，保留来源照片中的比例尺。"
+      "Minh hoạ đã dùng trong Óc Eo Pass, dựng từ ảnh tham khảo người dùng cung cấp.",
+      "The illustration already used in Óc Eo Pass, created from the user’s reference photograph.",
+      "沿用Óc Eo Pass中的插画，根据用户提供的参考照片制作。"
     ],
     "reviewedAt": "2026-11-12",
-    "bytes": 64969,
-    "sha256": "5667555ba1ff33457eb2b562fd1ee5e0828615c4948600937339577e689daaf5",
-    "rights": "Referenced third-party image. No open licence stated by the source; no ownership or open-licence claim by this project. Original file preserved, including existing marks."
+    "bytes": 385720,
+    "sha256": "350353a3a16d846ec1060e339b83a6e813b18328d10452a059e489bd8d1f1b51",
+    "rights": "Existing project illustration derived from user-supplied reference, documented in docs/PASS-ART-DIRECTION.md. Not a documentary photograph or scientific reconstruction."
   },
   {
     "id": "phat-linh-son-bac",
     "verified": true,
-    "usage": "reference",
-    "url": "assets/photos/artifacts/phat-linh-son-bac.png",
+    "usage": "illustration",
+    "url": "assets/heritage-art/linh-son-bac-relief.webp",
     "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/bao-vat-quoc-gia-phu-dieu-phat-linh-son-bac-dau-an-phat-giao-thoi-ky-som-trong-van-hoa-oc-eo",
-    "sourceImageUrl": "https://vanhoaoceo.angiang.gov.vn/sites/default/files/inline-images/image_27.png",
-    "credit": "Ban Quản lý Di tích văn hóa Óc Eo",
+    "sourceImageUrl": "assets/heritage-art/linh-son-bac-relief.webp",
+    "credit": "Óc Eo Townwalk",
     "alt": [
-      "Phù điêu Phật Linh Sơn Bắc trong ảnh trưng bày của bài nguồn.",
-      "The Linh Sơn Bắc Buddha relief in the source article’s display photograph.",
-      "来源文章中展出的Linh Sơn Bắc佛像浮雕。"
+      "Phù điêu Phật Linh Sơn Bắc · minh hoạ trong bộ tem",
+      "Linh Sơn Bắc Buddha relief · Pass illustration",
+      "Linh Sơn Bắc佛像浮雕 · 印章插画"
     ],
     "caption": [
-      "Phù điêu Phật Linh Sơn Bắc trong ảnh trưng bày của bài nguồn.",
-      "The Linh Sơn Bắc Buddha relief in the source article’s display photograph.",
-      "来源文章中展出的Linh Sơn Bắc佛像浮雕。"
+      "Minh hoạ đã dùng trong Óc Eo Pass, dựng từ ảnh tham khảo người dùng cung cấp.",
+      "The illustration already used in Óc Eo Pass, created from the user’s reference photograph.",
+      "沿用Óc Eo Pass中的插画，根据用户提供的参考照片制作。"
     ],
     "reviewedAt": "2026-11-12",
-    "bytes": 528581,
-    "sha256": "3d1672181a35188dacf39f84bba7a8cc0a59b052f6faf75ac5e6c077f8cf18c8",
-    "rights": "Referenced third-party image. No open licence stated by the source; no ownership or open-licence claim by this project. Original file preserved, including existing marks."
+    "bytes": 831082,
+    "sha256": "a8e07526c0aac3c60f0384d618149e6025086f617d028cb82abd8331587c8c84",
+    "rights": "Existing project illustration derived from user-supplied reference, documented in docs/PASS-ART-DIRECTION.md. Not a documentary photograph or scientific reconstruction."
   },
   {
     "id": "dau-phat-naga",

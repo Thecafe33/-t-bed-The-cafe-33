@@ -7,7 +7,7 @@ export const getArtifact=id=>ARTIFACTS.find(a=>a.id===id);
 export function artifactPhoto(a){
  const photo=a.photo;if(!photo?.credit)return null;
  const src=safeURL(photo.url,{image:true}),source=safeURL(photo.sourceUrl);
- const reviewedReference=photo.verified===true&&photo.usage==='reference'&&source;
+ const reviewedReference=photo.verified===true&&['reference','illustration'].includes(photo.usage)&&source;
  const licensedPhoto=photo.approved===true&&photo.license;
  return src&&(reviewedReference||licensedPhoto)?{...photo,src,source}:null;
 }
@@ -16,7 +16,7 @@ export function artifactMediaHTML(a,{detail=false}={}){
  if(photo){
   const alt=Array.isArray(photo.alt)?photo.alt[0]:(photo.alt||a.name[0]);
   const caption=Array.isArray(photo.caption)?photo.caption[0]:'';
-  return `<span class="artifact-photo"><img src="${e(photo.src)}" alt="${e(alt)}" loading="lazy" decoding="async">${detail&&caption?`<small class="artifact-photo-caption">${e(caption)}</small>`:''}<small class="artifact-photo-credit"><span>Nguồn ảnh:</span> <span data-no-translate>${e(photo.credit)}${photo.license?` · ${e(photo.license)}`:''}</span></small>${detail?`<span class="artifact-photo-links"><a href="${e(photo.src)}" target="_blank" rel="noopener noreferrer">Xem ảnh lớn ↗</a>${photo.source?`<a href="${e(photo.source)}" target="_blank" rel="noopener noreferrer">Trang nguồn ảnh ↗</a>`:''}</span>`:''}</span>`;
+  return `<span class="artifact-photo"><img src="${e(photo.src)}" alt="${e(alt)}" loading="lazy" decoding="async">${detail&&caption?`<small class="artifact-photo-caption">${e(caption)}</small>`:''}<small class="artifact-photo-credit"><span>${photo.usage==='illustration'?'Minh hoạ:':'Nguồn ảnh:'}</span> <span data-no-translate>${e(photo.credit)}${photo.license?` · ${e(photo.license)}`:''}</span></small>${detail?`<span class="artifact-photo-links"><a href="${e(photo.src)}" target="_blank" rel="noopener noreferrer">Xem ảnh lớn ↗</a>${photo.source?`<a href="${e(photo.source)}" target="_blank" rel="noopener noreferrer">Trang nguồn ảnh ↗</a>`:''}</span>`:''}</span>`;
  }
  return `<span class="artifact-swipe-art" aria-hidden="true">${icon(a.symbol)}<span>✦</span></span><small class="artifact-media-note">${e(a.mediaNote?.[0]||'Biểu tượng minh hoạ · ảnh thật ở bài nguồn')}</small>`;
 }
@@ -45,7 +45,7 @@ export function artifactStackHTML(state,places){
   return `<${tag} class="artifact-swipe-card artifact-${a.color}" data-deck-layer="${level}" data-gallery-id="${e(a.id)}" data-gallery-index="${state.index+level}" ${level===0?`type="button" data-deck-active data-artifact="${e(a.id)}" aria-describedby="artifact-deck-help"`:'type="button" tabindex="-1" aria-hidden="true" inert'}><span class="artifact-swipe-top"><small>ÓC EO / CỔ VẬT</small><span aria-hidden="true">${String(state.index+level+1).padStart(2,'0')}</span></span>${artifactMediaHTML(a)}<span class="artifact-swipe-period">${e(a.period[0])}</span><strong class="artifact-swipe-title">${e(a.name[0])}</strong><span class="artifact-swipe-material">${e(a.material[0])}</span><span class="artifact-swipe-story">${e(a.story[0])}</span><span class="artifact-swipe-place">${icon('pin')}<span data-no-translate>${e(p.name)}</span></span><span class="artifact-swipe-open">Chạm để soi kỹ ↗</span><span class="artifact-swipe-label" aria-hidden="true">THẺ TIẾP ↗</span></${tag}>`;
  }).join('');
  const end=state.total?`<div class="artifact-deck-end">${icon('check')}<h3>Đi hết bộ thẻ rồi.</h3><p>Xáo lại để gặp những câu chuyện theo thứ tự khác.</p></div>`:'<div class="artifact-deck-end"><h3>Chưa có thẻ tư liệu phù hợp.</h3></div>';
- return `<div class="artifact-stack" role="group" aria-label="Chồng thẻ cổ vật">${stack||end}</div><div class="artifact-deck-actions"><button id="artifact-previous" ${state.index===0?'disabled':''}>${icon('undo')}<span>Xem lại</span></button><button id="artifact-open" ${!state.current&&!state.total?'disabled':''}>${state.current?'Soi kỹ thẻ này':state.total>1?'Xáo lại bộ thẻ':'Xem lại bộ thẻ'}</button><button id="artifact-next" ${state.complete?'disabled':''}>${icon('arrow')}<span>Thẻ tiếp</span></button></div><p class="artifact-deck-help" id="artifact-deck-help">Quẹt để đổi thẻ, chạm để mở chi tiết.</p>`;
+ return `<div class="artifact-stack" role="group" aria-label="Chồng thẻ cổ vật">${stack||end}</div><p class="artifact-deck-help" id="artifact-deck-help">Quẹt để đổi thẻ, chạm để mở chi tiết.</p>`;
 }
 export function artifactDetailHTML(a,places,mode='site'){
  const p=places.find(p=>p.id===a.placeId), display=places.find(p=>p.id===a.displayPlaceId&&p.scopeConfirmed);

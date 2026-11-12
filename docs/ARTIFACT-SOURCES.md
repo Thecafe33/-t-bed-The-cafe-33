@@ -85,3 +85,9 @@ Theo yêu cầu dùng hình ảnh và biên soạn lại tư liệu, bổ sung 7
 - Không sử dụng ảnh có tên tệp tạo sinh làm bằng chứng khảo cổ. Không lấy tượng Brahma/Ganesha hay tượng Phật khác làm ảnh minh họa cho hiện vật chưa xác minh. Hai tượng Cây Thị, các nhóm hạt chuỗi và mộ vò Linh Sơn Nam tiếp tục giữ giới hạn ảnh riêng.
 
 Viết mới phần dẫn chuyện của 9 thẻ cũ ở ba ngôn ngữ, mở bằng chi tiết nhìn thấy rồi giải thích giá trị thông tin. Bốn thẻ bổ sung cũng là văn bản biên soạn riêng, không sao chép mô tả trên website. Giữ ngày khai quật, niên đại, chất liệu và nơi lưu giữ trong các trường riêng; những điều chưa biết không được biến thành khẳng định để làm câu chuyện hấp dẫn. Thuyết minh đã có nội dung đầy đủ hơn, tiếp tục dùng bản kể riêng thay vì đọc lại câu dẫn ngắn trên thẻ.
+
+## Điều chỉnh theo phản hồi 12/11/2026
+
+Nandin và phù điêu Linh Sơn Bắc dùng lại hai WebP đã có trong `assets/heritage-art`, cùng bộ hình của Óc Eo Pass. Đây là minh hoạ dựng từ ảnh người dùng gửi (xem PASS-ART-DIRECTION.md), không gọi là ảnh tư liệu gốc. Đã bỏ hai PNG nhập thêm khỏi repo và cập nhật manifest: hiện có năm ảnh tham khảo và hai minh hoạ có sẵn. Bộ thẻ bỏ hàng nút Xem lại/Soi kỹ/Thẻ tiếp; vẫn kéo ngang liên tục, chạm thẻ để mở và dùng phím mũi tên. Thêm màu nền butter còn thiếu cho thẻ Cây Thị.
+
+Pin Út Trạnh được đối chiếu từ https://maps.app.goo.gl/SaEaWdhmqndGWPLf9 : địa điểm có tọa độ 10.2435302, 105.1537974, khác tọa độ tâm camera trong URL. Không dùng chuỗi DMS trên trang tham khảo: các mốc khác bị lệch so với địa điểm thật. Liên kết JXo7CV8ZfjtKHAFc7 trên trang tham khảo được dùng lại cho cả Sáu Thuận/Giồng Cát nhưng thực tế mở Cây Thị; không dùng để tạo pin cho hai địa điểm kia. Các vị trí chưa xác minh vẫn chờ bổ sung, đã hỏi chủ dự án về link chính xác.

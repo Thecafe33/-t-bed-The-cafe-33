@@ -484,7 +484,7 @@ function renderArtifactPage(){
  artifactDeckUI?.destroy();
  root.innerHTML=artifactIndexHTML(site.places,artifactDeckState.selected,{page:true})+discoveryEntryHTML();
  hydrate(root);
- artifactDeckUI=mountArtifactDeck({root,dialog:$("#view-artifacts"),state:artifactDeckState,places:site.places,onOpen:showArtifact});
+ artifactDeckUI=mountArtifactDeck({root,dialog:$("#view-artifacts"),state:artifactDeckState,places:site.places});
 }
 function showArtifactIndex(selected=artifactDeckState.selected){
  stopNarration();

@@ -78,20 +78,20 @@ export const ARTIFACTS = [
     "reviewedAt": "2026-11-12",
     "photo": {
       "verified": true,
-      "usage": "reference",
-      "url": "assets/photos/artifacts/nandin-giong-cat.png",
+      "usage": "illustration",
+      "url": "assets/heritage-art/nandin-giong-cat.webp",
       "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/chiec-nhan-vang-nandin-giong-cat-bao-vat-quoc-gia-cua-van-hoa-oc-eo",
-      "sourceImageUrl": "https://vanhoaoceo.angiang.gov.vn/sites/default/files/inline-images/image_23.png",
-      "credit": "Ban Quản lý Di tích văn hóa Óc Eo",
+      "sourceImageUrl": "assets/heritage-art/nandin-giong-cat.webp",
+      "credit": "Óc Eo Townwalk",
       "alt": [
-        "Nhẫn Nandin nhìn nghiêng, kèm thước tỷ lệ trong ảnh nguồn.",
-        "Side view of the Nandin ring with the source photograph’s scale.",
-        "Nandin戒指侧视图，保留来源照片中的比例尺。"
+        "Nhẫn vàng Nandin Giồng Cát · minh hoạ trong bộ tem",
+        "Giồng Cát Nandin gold ring · Pass illustration",
+        "Giồng Cát金质Nandin戒指 · 印章插画"
       ],
       "caption": [
-        "Nhẫn Nandin nhìn nghiêng, kèm thước tỷ lệ trong ảnh nguồn.",
-        "Side view of the Nandin ring with the source photograph’s scale.",
-        "Nandin戒指侧视图，保留来源照片中的比例尺。"
+        "Minh hoạ đã dùng trong Óc Eo Pass, dựng từ ảnh tham khảo người dùng cung cấp.",
+        "The illustration already used in Óc Eo Pass, created from the user’s reference photograph.",
+        "沿用Óc Eo Pass中的插画，根据用户提供的参考照片制作。"
       ],
       "reviewedAt": "2026-11-12"
     }
@@ -174,20 +174,20 @@ export const ARTIFACTS = [
     "reviewedAt": "2026-11-12",
     "photo": {
       "verified": true,
-      "usage": "reference",
-      "url": "assets/photos/artifacts/phat-linh-son-bac.png",
+      "usage": "illustration",
+      "url": "assets/heritage-art/linh-son-bac-relief.webp",
       "sourceUrl": "https://vanhoaoceo.angiang.gov.vn/bao-vat-quoc-gia-phu-dieu-phat-linh-son-bac-dau-an-phat-giao-thoi-ky-som-trong-van-hoa-oc-eo",
-      "sourceImageUrl": "https://vanhoaoceo.angiang.gov.vn/sites/default/files/inline-images/image_27.png",
-      "credit": "Ban Quản lý Di tích văn hóa Óc Eo",
+      "sourceImageUrl": "assets/heritage-art/linh-son-bac-relief.webp",
+      "credit": "Óc Eo Townwalk",
       "alt": [
-        "Phù điêu Phật Linh Sơn Bắc trong ảnh trưng bày của bài nguồn.",
-        "The Linh Sơn Bắc Buddha relief in the source article’s display photograph.",
-        "来源文章中展出的Linh Sơn Bắc佛像浮雕。"
+        "Phù điêu Phật Linh Sơn Bắc · minh hoạ trong bộ tem",
+        "Linh Sơn Bắc Buddha relief · Pass illustration",
+        "Linh Sơn Bắc佛像浮雕 · 印章插画"
       ],
       "caption": [
-        "Phù điêu Phật Linh Sơn Bắc trong ảnh trưng bày của bài nguồn.",
-        "The Linh Sơn Bắc Buddha relief in the source article’s display photograph.",
-        "来源文章中展出的Linh Sơn Bắc佛像浮雕。"
+        "Minh hoạ đã dùng trong Óc Eo Pass, dựng từ ảnh tham khảo người dùng cung cấp.",
+        "The illustration already used in Óc Eo Pass, created from the user’s reference photograph.",
+        "沿用Óc Eo Pass中的插画，根据用户提供的参考照片制作。"
       ],
       "reviewedAt": "2026-11-12"
     }
