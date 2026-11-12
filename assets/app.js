@@ -273,7 +273,7 @@ function renderPlaces() {
         heritageGroup === "all" ||
         p.group === heritageGroup),
   );
-  if(filter==='heritage')data.sort((a,b)=>Number(!!safeURL(b.image,{image:true}))-Number(!!safeURL(a.image,{image:true})));
+  if(filter==='heritage')data.sort((a,b)=>Number(a.recordType==='hidden-gem')-Number(b.recordType==='hidden-gem') || Number(!!safeURL(b.image,{image:true}))-Number(!!safeURL(a.image,{image:true})));
   $("#data-note").textContent =
     filter === "heritage"
       ? `${site.places.length} hồ sơ: di tích khu A/B, nhà trưng bày và điểm khám phá tùy chọn. Không phải toàn bộ mọi di chỉ khảo cổ. Đọc nguồn riêng và lưu ý tiếp cận từng điểm; vị trí OSM là tham khảo.`
@@ -300,26 +300,21 @@ function renderPlaces() {
           "Chưa có cơ sở được xác minh trong xã Óc Eo sau sáp nhập. Chúng mình sẽ cập nhật tên, địa chỉ và nguồn thực tế; không gợi ý quán hay nơi lưu trú giả.",
         );
   $('#places-grid').scrollLeft=0;
-  catalogCardObserver.disconnect();
-  $('#places-grid').querySelectorAll('.feed-card').forEach(card=>catalogCardObserver.observe(card));
-  requestAnimationFrame(syncCatalogShelf);
+  requestAnimationFrame(syncShelfIndicators);
 }
-function syncCatalogShelf(){
- const rail=$('#places-grid'),max=rail.scrollWidth-rail.clientWidth;
- // Size the shelf to the card in view, so a longer warning far along the shelf
- // does not leave empty space below every other stop. Search keeps natural height.
- if(document.body.classList.contains('is-searching'))rail.style.height='';
- else if(rail.clientWidth){
-  const bounds=rail.getBoundingClientRect();
-  const cards=[...rail.querySelectorAll('.feed-card')];
-  const current=cards.reduce((best,card)=>Math.abs(card.getBoundingClientRect().left-bounds.left)<Math.abs(best.getBoundingClientRect().left-bounds.left)?card:best,cards[0]);
-  rail.style.height=current?`${Math.ceil(current.getBoundingClientRect().height)+26}px`:'';
+function syncShelfIndicators(){
+ for(const id of ['places-grid','curiosity-trail']){
+  const rail=document.getElementById(id),indicator=document.querySelector(`[data-shelf-for="${id}"]`);
+  const max=rail.scrollWidth-rail.clientWidth;
+  indicator.hidden=max<=1||document.body.classList.contains('is-searching');
+  indicator.style.setProperty('--shelf-progress',Math.max(0,Math.min(1,max>0?rail.scrollLeft/max:0)));
  }
- document.querySelectorAll('[data-catalog-move]').forEach(button=>button.disabled=Number(button.dataset.catalogMove)<0?rail.scrollLeft<3:rail.scrollLeft>=max-3);
 }
-const catalogCardObserver=new ResizeObserver(syncCatalogShelf);
-$('#places-grid').addEventListener('scroll',syncCatalogShelf,{passive:true});
-window.addEventListener('resize',syncCatalogShelf);
+const shelfObserver=new ResizeObserver(syncShelfIndicators);
+for(const id of ['places-grid','curiosity-trail']){
+ const rail=document.getElementById(id);shelfObserver.observe(rail);
+ rail.addEventListener('scroll',syncShelfIndicators,{passive:true});
+}
 function normalizedSearch(value) {
   return String(value)
     .normalize("NFD")
@@ -1357,8 +1352,6 @@ $("#account-button").onclick = () =>
 $("#write-review").onclick = showReviewForm;
 $("#more-reviews").onclick = () => loadReviews($("#more-reviews").dataset.retry==="true");
 document.addEventListener("click", (ev) => {
-  const catalogMove=ev.target.closest('[data-catalog-move]');
-  if(catalogMove){const rail=$('#places-grid'),width=rail.querySelector('.place-card')?.getBoundingClientRect().width||rail.clientWidth;rail.scrollBy({left:Number(catalogMove.dataset.catalogMove)*(width+16),behavior:reducedMotion()?'auto':'smooth'});return;}
   const saveCard=ev.target.closest('[data-save-place]');
   if(saveCard){const p=findPlace(saveCard.dataset.savePlace);if(!p)return;let ids=savedSiteIds();ids=ids.includes(p.id)?ids.filter(id=>id!==p.id):[...ids,p.id];store('oceo-saved-sites',ids);renderSavedTrip();return;}
   const journeyButton=ev.target.closest('[data-journey-action]');
@@ -1513,7 +1506,7 @@ if (!incomingJourney && linkedPlace && findPlace(linkedPlace)) placeDetail(linke
 
 window.addEventListener('oceo-language-change', () => {
   if($('#story-content').hasChildNodes())mountStory($('#story-content'));
-  requestAnimationFrame(syncCatalogShelf);
+  requestAnimationFrame(syncShelfIndicators);
   renderReviews();
   storyCreatorUI?.setLocale?.(getLanguage());
   const owner=document.querySelector('.owner-name');

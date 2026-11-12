@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="./assets/artifacts.css?v=20261112-toolbar" />
     <link rel="stylesheet" href="./assets/campaign.css?v=20261106-mountain" />
     <link rel="stylesheet" href="./assets/journey-story.css?v=20261112-story" />
-    <link rel="stylesheet" href="./assets/place-feed.css?v=20261106-mountain" />
+    <link rel="stylesheet" href="./assets/place-feed.css?v=20261112-shelves" />
     <link rel="stylesheet" href="./assets/header.css?v=20261108-stable" />
     <link rel="stylesheet" href="./assets/pass-collage.css?v=20261107-soft" />
     <link rel="stylesheet" href="./assets/interaction-motion.css?v=20261108" />
@@ -152,11 +152,13 @@
           ><button data-group="A" aria-pressed="false">Núi Ba Thê</button
           ><button data-group="B" aria-pressed="false">Đô thị Óc Eo</button>
         </div>
-        <div class="catalog-navigation"><p id="catalog-summary" class="catalog-summary"></p><div class="catalog-scroll-controls"><button type="button" data-catalog-move="-1" aria-label="Điểm trước">←</button><button type="button" data-catalog-move="1" aria-label="Điểm tiếp">→</button></div></div><p class="catalog-swipe-hint">Lướt ngang để chọn điểm muốn ghé ↔</p>
+        <div class="catalog-navigation"><p id="catalog-summary" class="catalog-summary"></p></div>
         <div id="places-grid" class="places-grid"></div>
+        <div class="shelf-indicator" data-shelf-for="places-grid" aria-hidden="true"><span></span></div>
         <section class="curiosity-section" aria-labelledby="curiosity-heading">
-          <div class="curiosity-heading"><div><span class="eyebrow">CHUYỆN Ở ĐÂY, CHƯA CHẮC BẠN BIẾT</span><h2 id="curiosity-heading">Óc Eo có <span class="serif">plot twist.</span> <span class="emoji" aria-hidden="true">🤯</span></h2></div><span class="shelf-hint" aria-hidden="true">↔</span></div>
+          <div class="curiosity-heading"><div><span class="eyebrow">CHUYỆN Ở ĐÂY, CHƯA CHẮC BẠN BIẾT</span><h2 id="curiosity-heading">Óc Eo có <span class="serif">plot twist.</span> <span class="emoji" aria-hidden="true">🤯</span></h2></div></div>
           <div id="curiosity-trail" class="curiosity-trail" aria-label="Những câu chuyện để khám phá"></div>
+          <div class="shelf-indicator" data-shelf-for="curiosity-trail" aria-hidden="true"><span></span></div>
         </section>
         <button class="artifact-launch" data-action="artifacts"><span aria-hidden="true" data-icon="gem"></span><span><strong>Theo dấu cổ vật</strong><small>Từ hiện vật, tìm về nơi phát hiện.</small></span><span data-icon="arrowup" aria-hidden="true"></span></button>
         <details class="culture-quick">

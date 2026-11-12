@@ -307,6 +307,7 @@ export const EXTRA_MESSAGES = [
 ["Đến mốc tham khảo", "Directions to landmark", "前往参照点"],
 ["Pin chỉ mốc tìm đường; chưa mở nhận tem GPS tại di tích này.", "This pin marks a navigation landmark; GPS stamp collection is not yet available at this site.", "此标记仅表示导航参照点；该遗址暂未开放 GPS 集章。"],
 ["← Quay lại", "← Go back", "← 返回"],
+["Hidden gem · đường núi", "Hidden gem · mountain road", "隐秘景点 · 山路"],
 ["Mốc tìm đường", "Navigation landmark", "导航参照点"],
 ["Mốc tìm đường · vị trí tham khảo", "Navigation landmark · reference location", "导航参照点 · 参考位置"],
 ["Đối diện Chùa Linh Sơn. Pin dùng chùa làm mốc tìm đường, không phải vị trí đo đạc của Gò Sáu Thuận.", "Opposite Linh Son Pagoda. This pin marks the pagoda as a navigation landmark, not the surveyed location of Go Sau Thuan.", "位于灵山寺对面。此标记以寺庙为导航参照，并非六顺丘遗址的实测位置。"],
