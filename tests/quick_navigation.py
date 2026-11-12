@@ -66,7 +66,7 @@ with sync_playwright() as p:
    expect(dialog).to_be_hidden()
    assert q.locator('.quick-nav-wave').evaluate('e=>e.getAnimations().length')==0
   expect(brand).to_have_css('opacity','1')
-  for tab in ['map','day','pass','community','explore']:
+  for tab in ['map','day','story','pass','explore']:
    brand.click();q.locator(f'[data-quick-route={tab}]').click();expect(dialog).to_be_hidden();expect(q.locator(f'#view-{tab}')).to_be_visible();expect(q.locator('.app-view:visible')).to_have_count(1)
    expect(q.locator(f'#view-{tab} h1')).to_be_focused()
   # Two fast choices must end on the latest route, with no delayed override.
@@ -78,7 +78,7 @@ with sync_playwright() as p:
   # The route commits only after coverage; cancelling an early choice is safe.
   q.locator('.app-tabbar [data-route=explore]').click()
   q.locator('.app-tabbar [data-route=map]').click()
-  brand.click();q.evaluate("document.querySelector('[data-quick-route=community]').click()")
+  brand.click();q.evaluate("document.querySelector('[data-quick-route=story]').click()")
   if motion=='no-preference':expect(q.locator('#view-map')).to_be_visible()
   q.go_back();expect(dialog).to_be_hidden();expect(q.locator('#view-map' if motion=='reduce' else '#view-explore')).to_be_visible()
   previous=q.evaluate('document.body.dataset.tab')

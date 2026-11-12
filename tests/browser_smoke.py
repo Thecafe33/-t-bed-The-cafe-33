@@ -10,13 +10,15 @@ with sync_playwright() as p:
  context.route('**/*',lambda r:r.continue_() if r.request.url.startswith('http://127.0.0.1:8000') else r.abort())
  page=context.new_page();errors=[];page.on('pageerror',lambda err:errors.append(str(err)))
  def go(tab):
-  link=page.locator(f'.app-tabbar [data-route={tab}]')
+  # Stamps and stories share one tab; stories open through its switch.
+  link=page.locator(f'.app-tabbar [data-route={"pass" if tab=="community" else tab}]')
   if page.locator('html').evaluate("e=>e.classList.contains('navigation-concealed')"):
    link.evaluate('e=>{e.blur();e.focus({preventScroll:true})}')
   link.click()
+  if tab=='community':page.locator('#view-pass .memories-switch [data-memories=community]').click()
   expect(page.locator('.app-view:visible')).to_have_count(1)
   expect(page.locator(f'[data-view={tab}]')).to_be_visible()
-  expect(page.locator(f'.app-tabbar [data-route={tab}]')).to_have_attribute('aria-current','page')
+  expect(link).to_have_attribute('aria-current','page')
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),tab
  page.goto('http://127.0.0.1:8000',wait_until='networkidle')
  expect(page.locator('h1:visible')).to_contain_text('Ngàn năm tuổi.')
@@ -95,7 +97,7 @@ with sync_playwright() as p:
  page.reload(wait_until='networkidle');expect(page.locator('[data-view=community]')).to_be_visible()
  for width in [320,360,430,768,1440]:
   page.set_viewport_size({'width':width,'height':844})
-  for tab in ['explore','map','day','pass','community']:go(tab)
+  for tab in ['explore','map','day','story','pass','community']:go(tab)
   assert page.locator('.app-main').bounding_box()['width']<=560
  page.set_viewport_size({'width':390,'height':844})
  go('pass');expect(page.locator('.owner-name')).to_have_text('Tên của bạn')

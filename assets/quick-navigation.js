@@ -1,7 +1,7 @@
 import {icon,mark} from './icons.js';
 import {reducedMotion} from './effects.js';
 import {translateText} from './i18n.js';
-const routes=[['explore','Khám phá','compass'],['map','Bản đồ','map'],['day','Chuyến đi','clock'],['pass','Bộ tem','passport'],['community','Góc kể','camera']];
+const routes=[['explore','Khám phá','compass'],['map','Bản đồ','map'],['day','Chuyến đi','clock'],['story','Story','book'],['pass','Kỷ niệm','passport']];
 
 export function initQuickNavigation(navigate){
  const brand=document.querySelector('.app-header .brand');

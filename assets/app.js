@@ -26,6 +26,7 @@ import {campaignHomeHTML} from "./campaign-home.js";
 import {placeCardHTML} from "./place-feed.js";
 import {initHeader} from "./header.js";
 import {mountStoryCreator} from "./story-creator.js";
+import {mountStory} from "./story.js";
 import { stampOutline } from "./stamp-shape.js";
 import { appURL } from "./app-paths.js";
 import { mountTownMap } from "./town-map.js";
@@ -63,6 +64,7 @@ const tabTitles = {
   explore: "Khám phá",
   map: "Bản đồ",
   day: "Chuyến đi",
+  story: "Story",
   pass: "Óc Eo Pass",
   community: "Cộng đồng",
   artifacts: "Theo dấu cổ vật",
@@ -91,7 +93,7 @@ function activateTab(tab, { focus = false, reveal = true } = {}) {
     .querySelectorAll(".app-view[data-view]")
     .forEach((view) => (view.hidden = view.dataset.view !== tab));
   document.querySelectorAll(".app-tabbar [data-route]").forEach((link) => {
-    if (link.dataset.route === tab) link.setAttribute("aria-current", "page");
+    if (link.dataset.route === tab || (link.dataset.routeGroup||"").split(" ").includes(tab)) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
   $(".header-deck").toggleAttribute("aria-current",tab==="artifacts");
@@ -105,6 +107,8 @@ function activateTab(tab, { focus = false, reveal = true } = {}) {
   )
     showPassport();
   if (tab === "map") showTownMap();
+  if (tab === "story" && !$("#story-content").hasChildNodes()) mountStory($("#story-content"));
+  document.querySelectorAll("[data-memories]").forEach(l=>l.dataset.memories===tab?l.setAttribute("aria-current","page"):l.removeAttribute("aria-current"));
   if (tab === "artifacts") renderArtifactPage();
   if (tab === "discovery"&&!discoveryUI)discoveryUI=mountDiscovery($("#discovery-content"));
   if (tab === "community" && !reviewsRequested) {
@@ -1504,6 +1508,7 @@ const linkedPlace = new URLSearchParams(location.search).get("place");
 if (!incomingJourney && linkedPlace && findPlace(linkedPlace)) placeDetail(linkedPlace);
 
 window.addEventListener('oceo-language-change', () => {
+  if($('#story-content').hasChildNodes())mountStory($('#story-content'));
   requestAnimationFrame(syncCatalogShelf);
   renderReviews();
   storyCreatorUI?.setLocale?.(getLanguage());

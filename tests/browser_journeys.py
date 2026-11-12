@@ -54,7 +54,7 @@ with sync_playwright() as p:
  assert download.value.suggested_filename=='oc-eo-townwalk.png'
  assert page.evaluate("window.__exportSVG.includes('>ÓC EO</text>') && window.__exportSVG.includes('>TOWNWALK</text>') && !window.__exportSVG.includes('ký ức') && !window.__exportSVG.includes('hộ chiếu')")
  page.locator('#close-modal').click()
- page.locator('.app-tabbar [data-route=community]').click()
+ page.locator('.app-tabbar [data-route=pass]').click();page.locator('#view-pass .memories-switch [data-memories=community]').click()
  page.locator('#write-review').click()
  page.locator('[name=name]').fill('Người khám phá')
  page.locator('[name=text]').fill('Một chuyến đi đáng nhớ. Nội dung kiểm thử, không gửi lên Firebase.')

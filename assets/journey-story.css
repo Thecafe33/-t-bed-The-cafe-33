@@ -148,3 +148,36 @@
 .day-optional-row small { font-size:12px; color:#7a7d70; line-height:1.45; }
 .townwalk-app .trip-pack { display:inline-flex; align-items:center; gap:8px; min-height:44px; margin:4px 0 8px; border-radius:999px; font-size:13px; }
 .trip-pack .icon { width:16px; height:16px; }
+
+/* ── Memories: Pass and stories share one tab with a two-way switch ── */
+.memories-switch { display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:4px; margin:0 0 18px; border-radius:999px; background:#efeee6; }
+.memories-switch a { display:flex; align-items:center; justify-content:center; gap:7px; min-height:44px; border-radius:999px; color:#4a5142; font-size:14px; font-weight:700; text-decoration:none; transition:background .2s,color .2s; }
+.memories-switch a .icon { width:18px; height:18px; }
+.memories-switch a[aria-current=page] { background:#173f36; color:#d9f27a; box-shadow:0 6px 14px -8px #173f3688; }
+
+/* ── Story: the flow of Óc Eo ── */
+.townwalk-app .story-heading h1 { font-size:36px; line-height:1.1; }
+.story-flow { list-style:none; margin:10px 0 0; padding:0; position:relative; display:grid; gap:18px; }
+.story-flow::before { content:""; position:absolute; left:21px; top:10px; bottom:10px; width:3px; border-radius:3px; background:linear-gradient(#f8d6c3,#ffe08f 30%,#c9b08a 50%,#e2efb0 75%,#d9f27a); }
+.story-chapter { display:grid; grid-template-columns:44px 1fr; gap:12px; align-items:start; position:relative; }
+.story-dot { position:relative; z-index:1; width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:#173f36; color:#d9f27a; font-size:13px; font-weight:800; box-shadow:0 0 0 5px #fbf8f0; }
+.story-card { --tone:#fff4dc; padding:18px 18px 14px; border-radius:24px; background:linear-gradient(160deg,var(--tone),#fffdf8 70%); border:1px solid #2327201a; box-shadow:0 2px 0 #23272010,0 14px 28px -18px #173f3666; }
+.story-chapter[data-tone=dawn] .story-card { --tone:#f9dce9; }
+.story-chapter[data-tone=gold] .story-card { --tone:#ffe8a8; }
+.story-chapter[data-tone=dusk] .story-card { --tone:#e0d8f7; }
+.story-chapter[data-tone=paper] .story-card { --tone:#efe6cf; }
+.story-chapter[data-tone=leaf] .story-card { --tone:#e2efb0; }
+.story-era { display:inline-block; padding:4px 12px; border-radius:999px; background:#173f36; color:#d9f27a; font-size:12px; font-weight:800; letter-spacing:.3px; }
+.townwalk-app .story-card h2 { margin:10px 0 6px; font-size:22px; line-height:1.25; font-weight:800; letter-spacing:-.6px; color:#173f36; }
+.townwalk-app .story-card p { margin:0; font-size:14px; line-height:1.7; color:#3e4437; }
+.story-links { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+.story-link { display:inline-flex; align-items:center; gap:6px; min-height:38px; padding:6px 13px; border-radius:999px; border:1px solid #173f361f; background:#fff; color:#173f36; font:inherit; font-size:12.5px; font-weight:700; cursor:pointer; }
+.story-cta { display:inline-flex; margin:14px 0 2px; min-height:46px; border-radius:999px; }
+.story-source { display:block; margin-top:12px; font-size:11px; color:#7a7d70; text-decoration:none; }
+.story-note { margin:18px 4px 8px !important; font-size:11.5px !important; color:#7a7d70; }
+@media (prefers-reduced-motion:no-preference) {
+  .story-chapter { opacity:0; transform:translateY(24px); transition:opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
+  .story-chapter.is-in { opacity:1; transform:none; }
+  .story-chapter.is-in .story-dot { animation:story-pop .5s cubic-bezier(.34,1.5,.64,1); }
+}
+@keyframes story-pop { from { transform:scale(.4); } }

@@ -42,7 +42,9 @@ with sync_playwright() as p:
  pending=set()
  def collect():
   pending.update(page.evaluate("async()=>{const m=await import('/assets/i18n.js');return m.untranslatedUI()}"))
- def go(tab):page.locator(f'.app-tabbar [data-route={tab}]').click()
+ def go(tab):
+  page.locator(f'.app-tabbar [data-route={"pass" if tab=="community" else tab}]').click()
+  if tab=='community':page.locator('#view-pass .memories-switch [data-memories=community]').click()
  for lang in ['en','zh']:
   page.locator('#language-select').select_option(lang)
   expect(page.locator('html')).to_have_attribute('lang','en' if lang=='en' else 'zh-Hans')
@@ -54,7 +56,7 @@ with sync_playwright() as p:
     assert button.bounding_box()['height']>=44
   page.set_viewport_size({'width':390,'height':844})
   page.screenshot(path=str(out/f'oc-eo-{lang}-phone.png'))
-  for tab in ['map','day','pass','community']:go(tab);collect()
+  for tab in ['map','day','story','pass','community']:go(tab);collect()
   assert page.locator('.memory p').text_content()=='Bản đồ'
   assert page.locator('.memory-footer [data-no-translate]').text_content()=='Khám phá'
   go('map')
