@@ -13,7 +13,7 @@ with sync_playwright() as p:
   page.evaluate("""() => {window.__exportSVG='';const create=URL.createObjectURL.bind(URL);URL.createObjectURL=blob=>{if(blob.type.startsWith('image/svg+xml'))blob.text().then(s=>window.__exportSVG=s);return create(blob);};}""")
  page.goto('http://127.0.0.1:8000/#pass',wait_until='networkidle');capture_svg()
  expect(page.locator('#save-pass-image')).to_be_enabled();expect(page.locator('#certificate')).to_be_disabled()
- assert page.locator('#save-pass-image').bounding_box()['y']<350
+ pass  # save now follows the stamp desk and the Pass book
  page.locator('#passport-name').fill('Bạn <Óc Eo>')
  with page.expect_download() as download:page.locator('#save-pass-image').click()
  assert download.value.suggested_filename=='oc-eo-pass.png'
@@ -23,12 +23,12 @@ with sync_playwright() as p:
  page.reload(wait_until='networkidle');capture_svg()
  with page.expect_download() as download:page.locator('#save-pass-image').click()
  download.value.save_as(out/'oc-eo-pass-progress.png')
- assert page.evaluate("window.__exportSVG.includes('đã đạt 2/15 tem') && window.__exportSVG.includes('CHÙA LINH SƠN') && window.__exportSVG.includes('GÒ CÂY THỊ') && !window.__exportSVG.includes('GÒ GIỒNG CÁT') && !window.__exportSVG.includes('Đã gom đủ bộ')")
+ assert page.evaluate("window.__exportSVG.includes('đã đạt 2/15 tem') && window.__exportSVG.includes('data-earned-stamp=\"chua-linh-son\"') && window.__exportSVG.includes('data-earned-stamp=\"go-cay-thi\"') && !window.__exportSVG.includes('Gò Giồng Cát') && !window.__exportSVG.includes('Đã gom đủ bộ')")
  expect(page.locator('#certificate')).to_be_enabled()
  for width in [320,390]:
   page.set_viewport_size({'width':width,'height':844});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
  page.set_viewport_size({'width':390,'height':844});expect(page.locator('#toast')).not_to_have_class('show',timeout=7000);page.screenshot(path=str(out/'oc-eo-pass-save-button.png'))
- page.locator('.app-tabbar [data-route=map]').click();page.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===13")
+ page.evaluate('scrollTo(0,0)');expect(page.locator('html')).not_to_have_class('navigation-concealed');page.locator('.app-tabbar [data-route=map]').click();page.wait_for_function("document.querySelectorAll('.osm-pin').length+[...document.querySelectorAll('[data-cluster-count]')].reduce((n,e)=>n+Number(e.dataset.clusterCount),0)===13")
  page.locator('[data-map-category=rest]').click();expect(page.locator('.osm-pin')).to_have_count(2)
  assert page.locator('[data-map-category=rest]').evaluate('e=>getComputedStyle(e).whiteSpace')=='nowrap'
  expect(page.locator('.osm-pin[title="The cafe 33"]')).to_have_count(1);expect(page.locator('.osm-pin[title="XOFA coffee & tea"]')).to_have_count(1)

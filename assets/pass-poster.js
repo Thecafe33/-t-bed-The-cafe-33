@@ -1,5 +1,5 @@
 // Three ways to package an Óc Eo Pass as a 1080 × 1920 story image:
-// "pass" (a passport visa page), "letter" (stamps spilling from an envelope) and "flight"
+// "pass" (a collector's stamp album page; no seals or official-looking marks), "letter" (stamps spilling from an envelope) and "flight"
 // (a boarding pass to the 1st–7th century). Only earned stops ever appear as stamps.
 import {escapeHTML as e} from './model.js';
 import {stampSVG,stampSpec,deskLayout,STAMP_INK,STAMP_PAPER} from './stamp-art.js';
@@ -8,13 +8,13 @@ export const POSTER_INK=STAMP_INK,POSTER_PAPER=STAMP_PAPER;
 export const PACKAGES=['pass','letter','flight'];
 const SERIF="Lora,TownwalkSC,Georgia,serif";
 const copy={
- vi:{visas:'THỊ THỰC · VISAS',owner:'CHỦ PASS',footer:'Chạm di sản. Chia sẻ Óc Eo.',full:'Đã gom đủ bộ. Khoe Óc Eo thôi!',empty:'Tem đầu tiên đang chờ bạn.',hint:'Đến điểm, check-in rồi tem sẽ hiện ở đây.',unit:'TEM',
+ vi:{album:'ALBUM TEM SƯU TẦM',owner:'CHỦ PASS',footer:'Chạm di sản. Chia sẻ Óc Eo.',full:'Đã gom đủ bộ. Khoe Óc Eo thôi!',empty:'Tem đầu tiên đang chờ bạn.',hint:'Đến điểm, check-in rồi tem sẽ hiện ở đây.',unit:'TEM',
   letter:['Thư từ','Óc Eo.'],to:'Gửi Óc Eo,',from:'TỪ',stampHere:'DÁN TEM',flight:['Chuyến bay','về Óc Eo.'],boarding:'THẺ LÊN MÁY BAY',air:'ÓC EO AIR',now:'HÔM NAY',era:'THẾ KỶ I–VII',
   passenger:'HÀNH KHÁCH',gate:'CỔNG',day:'NGÀY',seat:'GHẾ',cls:'HẠNG',status:'TRẠNG THÁI',arrived:'Đã đến ✓',boardingSoon:'Sắp khởi hành',more:n=>`+${n} tem`,art:'MINH HOẠ CẢM HỨNG HIỆN VẬT ÓC EO · BỘ SƯU TẬP CÁ NHÂN'},
- en:{visas:'VISAS · THỊ THỰC',owner:'PASS HOLDER',footer:'Meet heritage. Share Óc Eo.',full:'Full set. Share Óc Eo!',empty:'Your first stamp is waiting.',hint:'Check in at a stop and its stamp appears here.',unit:'STAMPS',
+ en:{album:'STAMP ALBUM',owner:'PASS HOLDER',footer:'Meet heritage. Share Óc Eo.',full:'Full set. Share Óc Eo!',empty:'Your first stamp is waiting.',hint:'Check in at a stop and its stamp appears here.',unit:'STAMPS',
   letter:['Letters','from Óc Eo.'],to:'Dear Óc Eo,',from:'FROM',stampHere:'STAMP',flight:['A flight','to Óc Eo.'],boarding:'BOARDING PASS',air:'ÓC EO AIR',now:'TODAY',era:'1ST–7TH CENTURY',
   passenger:'PASSENGER',gate:'GATE',day:'DATE',seat:'SEAT',cls:'CLASS',status:'STATUS',arrived:'Arrived ✓',boardingSoon:'Boarding soon',more:n=>`+${n} stamps`,art:'ILLUSTRATIONS INSPIRED BY ÓC EO OBJECTS · PERSONAL COLLECTION'},
- zh:{visas:'签证 · VISAS',owner:'持有人',footer:'感受遗产，分享Óc Eo。',full:'已集齐，分享Óc Eo吧！',empty:'第一枚印章，正等着你。',hint:'到达地点签到，印章就会出现在这里。',unit:'枚印章',
+ zh:{album:'集邮册',owner:'持有人',footer:'感受遗产，分享Óc Eo。',full:'已集齐，分享Óc Eo吧！',empty:'第一枚印章，正等着你。',hint:'到达地点签到，印章就会出现在这里。',unit:'枚印章',
   letter:['来自','Óc Eo的信。'],to:'致Óc Eo：',from:'寄自',stampHere:'贴邮票',flight:['飞往','Óc Eo的航班。'],boarding:'登机牌',air:'ÓC EO AIR',now:'今天',era:'公元1–7世纪',
   passenger:'旅客',gate:'登机口',day:'日期',seat:'座位',cls:'舱位',status:'状态',arrived:'已到达 ✓',boardingSoon:'即将出发',more:n=>`+${n}枚`,art:'以Óc Eo文物为灵感的插画 · 个人收藏'},
 };
@@ -23,7 +23,6 @@ const upper=s=>String(s).toLocaleUpperCase('vi-VN');
 function wrap(value,max){
  const rows=[];for(const word of String(value).trim().split(/\s+/)){if(rows.length&&Array.from(rows.at(-1)).length+Array.from(word).length+1<=max)rows[rows.length-1]+=' '+word;else rows.push(word);}return rows;
 }
-const mrz=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[đĐ]/g,'D').toUpperCase().replace(/[^A-Z0-9]+/g,'<').replace(/^<|<$/g,'');
 /** A painted backdrop when one is supplied, otherwise soft watercolour washes. */
 function backdrop(images,id){
  if(images.backdrop)return `<image href="${e(images.backdrop)}" width="1080" height="1920" preserveAspectRatio="xMidYMid slice"/>`;
@@ -35,40 +34,30 @@ function earnedStamp(place,ctx,{x,y,width,rotate=0,mark=false,back=true,hero=fal
  const spec=stampSpec(place,ctx.collection,ctx.locale);
  return `<g ${hero?"data-hero-stamp":"data-earned-stamp"}="${e(place.id)}" data-symbol="${spec.symbol.key}" data-symbol-relation="${spec.symbol.relation}" transform="rotate(${rotate} ${x+width/2} ${y+width*.6})">${stampSVG(place,{collection:ctx.collection,locale:ctx.locale,images:ctx.images,mark,back,x,y,width,id:`p${ctx.n++}`})}</g>`;
 }
-const INKS=['#c8423b','#2c6cbd','#2f7a4a','#6447d6','#b5651d','#9c4f2c'];
-function inkStamp(place,i,ctx,{cx,cy,size}){
- const c=INKS[i%INKS.length],k=size/260,name=upper(place.name),spec=stampSpec(place,ctx.collection,ctx.locale),cap=upper(spec.caption);
- const shapes=[
-  ()=>`<circle r="120" fill="none" stroke="${c}" stroke-width="7"/><circle r="100" fill="none" stroke="${c}" stroke-width="3"/>`,
-  ()=>`<rect x="-150" y="-92" width="300" height="184" rx="14" fill="none" stroke="${c}" stroke-width="7"/><rect x="-137" y="-79" width="274" height="158" rx="8" fill="none" stroke="${c}" stroke-width="2.5"/>`,
-  ()=>`<ellipse rx="152" ry="108" fill="none" stroke="${c}" stroke-width="7"/><ellipse rx="138" ry="94" fill="none" stroke="${c}" stroke-width="2"/>`,
-  ()=>`<path d="M0-128 111-64V64L0 128-111 64V-64Z" fill="none" stroke="${c}" stroke-width="7"/>`];
- const inner=[160,250,240,170][i%4],rot=[-11,7,-5,9,-8,4][i%6];
- return `<g data-earned-stamp="${e(place.id)}" data-symbol="${spec.symbol.key}" data-symbol-relation="${spec.symbol.relation}" transform="translate(${cx} ${cy}) rotate(${rot}) scale(${k})" opacity=".9">${shapes[i%4]()}
-  <text data-stamp-caption="" y="-40" text-anchor="middle" font-size="${fitSize(cap,inner*.92,19,.66)}" font-weight="800" letter-spacing="2" fill="${c}">${e(cap)}</text>
-  <text data-stamp-name="" y="12" text-anchor="middle" font-size="${fitSize(name,inner,34,.66)}" font-weight="800" fill="${c}">${e(name)}</text>
-  <text y="52" text-anchor="middle" font-size="20" font-weight="800" letter-spacing="3" fill="${c}">AN GIANG ✓</text></g>`;
-}
+/** A collector's album page: one numbered slot per stop, earned paper stamps in their own slot. */
 function passPage(ctx,S){
- const {earned,count,total,name}=ctx,cols=count>4?3:2,rows=Math.max(1,Math.ceil(count/cols)),top=360,area=1020;
- const cw=980/cols,ch=Math.min(330,area/rows),size=Math.min(cw*.82,ch*1.15,300),gridTop=top+(area-ch*rows)/2;
- const guilloche=Array.from({length:62},(_,i)=>`<path d="M0 ${150+i*28}Q270 ${122+i*28} 540 ${150+i*28}T1080 ${150+i*28}" fill="none" stroke="#9db7a6" stroke-width="1.3" opacity=".4"/>`).join('');
- const stamps=earned.map((p,i)=>inkStamp(p,i,ctx,{cx:50+cw*(i%cols)+cw/2,cy:gridTop+ch*Math.floor(i/cols)+ch/2,size})).join('');
- const empty=`<rect x="140" y="520" width="800" height="560" rx="40" fill="none" stroke="#1d2a2455" stroke-width="4" stroke-dasharray="14 16"/><text x="540" y="770" text-anchor="middle" font-size="44" font-weight="800">${e(S.empty)}</text><text x="540" y="840" text-anchor="middle" font-size="26">${e(S.hint)}</text>`;
- const hero=earned.at(-1),nameRows=wrap(name,22).slice(0,2),nameSize=nameRows.length>1?52:fitSize(name,600,74,.5);
- return `<rect width="1080" height="1920" fill="#efe7d3"/>${guilloche}<rect x="40" y="40" width="1000" height="1840" rx="34" fill="none" stroke="#1d2a2430" stroke-width="3"/>
- <text x="84" y="112" font-size="22" font-weight="800" letter-spacing="6">${e(S.visas)}</text>
+ const {collection,earned,count,total,name}=ctx,cols=3,rows=Math.max(1,Math.ceil(total/cols)),top=330,area=1190,cw=328,ch=area/rows,left=(1080-cw*cols)/2;
+ const owned=new Set(earned.map(p=>p.id));
+ const slots=collection.map((p,i)=>{
+  const cx=left+cw*(i%cols)+cw/2,cy=top+ch*Math.floor(i/cols)+ch/2,n=String(i+1).padStart(2,'0');
+  const slot=`<rect x="${cx-cw/2+12}" y="${cy-ch/2+8}" width="${cw-24}" height="${ch-16}" rx="16" fill="#fffdf7" fill-opacity=".55" stroke="#1d2a2433" stroke-width="2.5" stroke-dasharray="9 9"/><text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="44" font-weight="800" fill="#1d2a241f">${n}</text>`;
+  if(!owned.has(p.id))return slot;
+  const land=stampSpec(p,collection,ctx.locale).layout==='land',maxH=ch-14,width=Math.min(land?cw-24:cw-40,land?maxH/.8:maxH/1.27),height=land?width*.8:width*1.27;
+  return slot+earnedStamp(p,ctx,{x:cx-width/2,y:cy-height/2,width,rotate:[-4,3,-2,5,-3,2][i%6],back:false});
+ }).join('');
+ const nameRows=wrap(name,22).slice(0,2),nameSize=nameRows.length>1?52:fitSize(name,640,74,.5);
+ return `<rect width="1080" height="1920" fill="#f1ead8"/>${Array.from({length:40},(_,i)=>`<path d="M0 ${i*48+20}h1080" stroke="#1d2a24" stroke-opacity=".04" stroke-width="2"/>`).join('')}
+ <rect x="40" y="40" width="1000" height="1840" rx="34" fill="none" stroke="#1d2a2430" stroke-width="3"/>
+ <text x="84" y="112" font-size="22" font-weight="800" letter-spacing="6">${e(S.album)}</text>
  <text x="80" y="216" font-family="${SERIF}" font-style="italic" font-size="104">Óc Eo Pass</text>
  <text x="84" y="270" font-size="24" font-weight="800" letter-spacing="5">ÓC EO</text><text x="200" y="270" font-size="24" letter-spacing="5">TOWNWALK</text><text x="380" y="270" font-size="24" letter-spacing="3">· ${e(ctx.date)}</text>
  <text data-poster-progress="" x="996" y="212" text-anchor="end" font-size="96" font-weight="800" letter-spacing="-4">${String(count).padStart(2,'0')}<tspan font-size="36" font-weight="500" letter-spacing="0">/${total}</tspan></text>
  <text x="996" y="262" text-anchor="end" font-size="20" font-weight="800" letter-spacing="3">${e(count===total&&total>0?S.full:S.unit)}</text>
- ${count?stamps:empty}
- ${hero?earnedStamp(hero,ctx,{x:740,y:1420,width:270,rotate:7,back:false,hero:true}):''}
- <text data-owner-label="" x="84" y="1478" font-size="20" font-weight="800" letter-spacing="3" fill="#6b6b60">${e(S.owner)}</text>
- ${nameRows.map((r,j)=>`<text data-owner-name="" x="80" y="${(nameRows.length>1?1552:1578)+j*(nameSize+6)}" font-family="${SERIF}" font-style="italic" font-size="${nameSize}">${e(r)}</text>`).join('')}
- <text x="84" y="1700" font-size="30" font-weight="800">${e(S.footer)}</text><text x="84" y="1742" font-size="20" letter-spacing="1">#OcEoTownwalk  #ChamOcEo</text>
- <text x="84" y="1806" font-size="24" letter-spacing="4" fill="#1d2a24bb">${e(('P<VNMOCEO<<'+mrz(name)+'<'.repeat(30)).slice(0,38))}</text>
- <text x="84" y="1842" font-size="24" letter-spacing="4" fill="#1d2a24bb">${e((String(count).padStart(2,'0')+'<'+total+'<<'+ctx.date.replace(/\D/g,'')+'<<CHAMOCEO'+'<'.repeat(30)).slice(0,38))}</text>`;
+ ${slots}
+ ${count?'':`<rect x="190" y="840" width="700" height="170" rx="30" fill="${POSTER_PAPER}"/><text x="540" y="915" text-anchor="middle" font-size="38" font-weight="800">${e(S.empty)}</text><text x="540" y="965" text-anchor="middle" font-size="22">${e(S.hint)}</text>`}
+ <text data-owner-label="" x="84" y="1600" font-size="20" font-weight="800" letter-spacing="3" fill="#6b6b60">${e(S.owner)}</text>
+ ${nameRows.map((r,j)=>`<text data-owner-name="" x="80" y="${(nameRows.length>1?1672:1698)+j*(nameSize+6)}" font-family="${SERIF}" font-style="italic" font-size="${nameSize}">${e(r)}</text>`).join('')}
+ <text x="84" y="1800" font-size="30" font-weight="800">${e(S.footer)}</text><text x="84" y="1842" font-size="20" letter-spacing="1">#OcEoTownwalk  #ChamOcEo</text>`;
 }
 /** The visitor's desk arrangement, spread over a poster region at a size that suits the count. */
 function pile(ctx,{x,y,w,h},max=320){
