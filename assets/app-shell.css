@@ -75,7 +75,8 @@
   white-space: nowrap;
 }
 .app-view {
-  padding: 22px 20px 0;
+  --view-gutter: 20px;
+  padding: 22px var(--view-gutter) 0;
   animation: screen-in 0.24s ease both;
 }
 .app-view[hidden] {
@@ -933,7 +934,8 @@
     padding: 21px 25px 18px;
   }
   .townwalk-app .app-view {
-    padding: 25px 25px 0;
+    --view-gutter: 25px;
+    padding: 25px var(--view-gutter) 0;
   }
   .townwalk-app .pocket-hero {
     min-height: 330px;
@@ -980,7 +982,8 @@
     font-size: 5px;
   }
   .app-view {
-    padding-inline: 15px;
+    --view-gutter: 15px;
+    padding-inline: var(--view-gutter);
   }
   .pocket-hero {
     padding: 18px;

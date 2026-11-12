@@ -181,7 +181,14 @@
 @keyframes vibe-scroll { to { transform: translateX(-50%); } }
 
 /* ── Story shelf ────────────────────────────────────────── */
-.townwalk-app .curiosity-trail { padding: 6px 6px 18px 2px; gap: 14px; scrollbar-width: none; }
+/* Let moving cards reach the shell edge; inset only the first/last resting card. */
+.townwalk-app .curiosity-trail {
+  margin-inline: calc(-1 * var(--view-gutter));
+  padding: 6px var(--view-gutter) 18px;
+  scroll-padding-inline: var(--view-gutter);
+  gap: 14px;
+  scrollbar-width: none;
+}
 .townwalk-app .curiosity-trail::-webkit-scrollbar { display: none; }
 .townwalk-app .shelf-hint {
   font-size: 16px;
