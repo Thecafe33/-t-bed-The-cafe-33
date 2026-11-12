@@ -333,6 +333,13 @@ function matchesSearch(place, query) {
   const q=normalizedSearch(query).trim();
   return q.split(/\s+/).every(word=>text.includes(word)) || text.replace(/\s+/g,"").includes(q.replace(/\s+/g,""));
 }
+// Landmark pins help visitors orient themselves without enabling GPS stamp claims.
+function mapPosition(p) {
+  if(eligible(p))return p;
+  const anchor=p?.scopeConfirmed&&p.locationHint&&findPlace(p.mapAnchorId);
+  return anchor&&eligible(anchor)?anchor:null;
+}
+function hasMapPosition(p){return !!mapPosition(p);}
 function mapPlaces() {
   return [...site.places, ...site.stops.filter(visibleStop)].filter((p) =>
     (!mapJourneyOnly||JOURNEY.stops.includes(p.id)) &&
@@ -341,13 +348,14 @@ function mapPlaces() {
 }
 // Google Maps directions: exact pin when sourced, otherwise a name + address search for local tips.
 function directionsURL(p) {
+  if(p.mapAnchorId && mapPosition(p)){const a=mapPosition(p);return `https://www.google.com/maps/dir/?api=1&destination=${a.lat},${a.lng}`;}
   if (eligible(p)) return `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
   if (p.localRecommendation && p.address) return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${p.name}, ${p.address}`)}`;
   return null;
 }
 function directionsLink(p, className = "button outline") {
   const url = directionsURL(p); if (!url) return "";
-  return `<a class="${className} directions-link" href="${e(url)}" target="_blank" rel="noopener noreferrer">${icon("route")}<span>${eligible(p) ? "Chỉ đường" : "Tìm trên Google Maps"}</span></a>`;
+  return `<a class="${className} directions-link" href="${e(url)}" target="_blank" rel="noopener noreferrer">${icon("route")}<span>${p.mapAnchorId ? "Đến mốc tham khảo" : eligible(p) ? "Chỉ đường" : "Tìm trên Google Maps"}</span></a>`;
 }
 function coordinateLabel(p) {
   const url = safeURL(p.coordinateSource);
@@ -372,12 +380,12 @@ $("#surprise-me").onclick=()=>{
   if(picked){lastSurprise=picked.id;placeDetail(picked.id);}
 };
 function renderMapSelection() {
-  const visible=mapPlaces(), located=visible.filter(eligible);
-  const p=visible.find(p=>p.id===mapSelectedId && eligible(p)) || ($("#map-search").value.trim() && located.length===1?located[0]:null);
+  const visible=mapPlaces(), located=visible.filter(hasMapPosition);
+  const p=visible.find(p=>p.id===mapSelectedId && hasMapPosition(p)) || ($("#map-search").value.trim() && located.length===1?located[0]:null);
   if(p)$("#map-suggestions").innerHTML="";
   if(p){
-    const distance=userPoint?Math.round(distanceMeters(userPoint,p)):null;
-    const detail=distance===null?`${p.duration} phút gợi ý`:`${distance} m · đường chim bay`;
+    const distance=userPoint&&eligible(p)?Math.round(distanceMeters(userPoint,p)):null;
+    const detail=p.locationHint?e(p.locationHint):distance===null?`${p.duration} phút gợi ý`:`${distance} m · đường chim bay`;
     $("#map-selection").innerHTML=`<div class="map-card-top"><div class="map-card-art">${safeURL(p.image,{image:true})?`<img src="${e(safeURL(p.image,{image:true}))}" alt="">`:icon(p.symbol)}</div><div class="map-card-copy"><small>${p.category==="heritage"?"CHẠM DI SẢN":p.category==="stay"?"NGHỈ LẠI ÓC EO":"DỪNG MỘT CHÚT"}</small><h2>${e(p.name)}</h2><p>${detail}</p></div></div><div class="map-card-actions"><button class="button" data-place="${e(p.id)}">Khám phá ${icon("arrowup")}</button>${directionsLink(p)}</div>`;
   }else{
     const preferred=["chua-linh-son","go-cay-thi","xofa"].map(findPlace).filter(p=>p && located.some(v=>v.id===p.id));
@@ -388,15 +396,15 @@ function renderMapSelection() {
   }
 }
 function selectMapPlace(id) {
-  const p=findPlace(id);if(!p || !eligible(p))return;
+  const p=findPlace(id);if(!p || !hasMapPosition(p))return;
   mapSelectedId=id;
   for(const [key,marker] of mapMarkers){marker.getElement()?.classList.toggle("is-selected",key===id);marker.setZIndexOffset(key===id?1000:0);}
   renderMapSelection();revealView($("#map-selection"));
-  if(map){map.setView([p.lat,p.lng],Math.max(map.getZoom(),17),{animate:false});if(map.getSize().y<420)map.panBy([0,18],{animate:false});const marker=mapMarkers.get(id);if(marker)markerLayer.zoomToShowLayer(marker,()=>{marker.getElement()?.classList.add("is-selected");marker.openTooltip();});}
+  if(map){map.setView([mapPosition(p).lat,mapPosition(p).lng],Math.max(map.getZoom(),17),{animate:false});if(map.getSize().y<420)map.panBy([0,18],{animate:false});const marker=mapMarkers.get(id);if(marker)markerLayer.zoomToShowLayer(marker,()=>{marker.getElement()?.classList.add("is-selected");marker.openTooltip();});}
 }
 function fitMapPoints() {
-  const points=mapPlaces().filter(eligible);
-  if(map && points.length){const compact=map.getSize().y<420;map.fitBounds(points.map(p=>[p.lat,p.lng]),{paddingTopLeft:[35,compact?118:127],paddingBottomRight:[62,compact?130:218],maxZoom:16,animate:false});mapHasFramed=true;}
+  const points=mapPlaces().filter(hasMapPosition);
+  if(map && points.length){const compact=map.getSize().y<420;map.fitBounds(points.map(p=>[mapPosition(p).lat,mapPosition(p).lng]),{paddingTopLeft:[35,compact?118:127],paddingBottomRight:[62,compact?130:218],maxZoom:16,animate:false});mapHasFramed=true;}
 }
 function openMapDirectory(){
   closeMapSearch();
@@ -410,7 +418,7 @@ function renderMapSearchResults(){
   $("#map-search-count").textContent=query?`${visible.length} kết quả`:"Gợi ý cho chuyến đi";
   $("#clear-map-search").hidden=!query;
   $("#toggle-map-search").dataset.searchActive=String(!!query);
-  $("#map-search-results").innerHTML=results.length?results.map(p=>`<button class="map-search-result" data-map-result="${e(p.id)}">${icon(p.symbol)}<span><strong>${e(p.name)}</strong><small>${eligible(p)?"Xem điểm trên bản đồ":"Có câu chuyện · vị trí đang bổ sung"}</small></span>${icon("arrowup")}</button>`).join(""):'<p class="map-search-empty">Chưa tìm thấy tên này trong danh sách đang biên tập.</p>';
+  $("#map-search-results").innerHTML=results.length?results.map(p=>`<button class="map-search-result" data-map-result="${e(p.id)}">${icon(p.symbol)}<span><strong>${e(p.name)}</strong><small>${hasMapPosition(p)?"Xem điểm trên bản đồ":"Có câu chuyện · vị trí đang bổ sung"}</small></span>${icon("arrowup")}</button>`).join(""):'<p class="map-search-empty">Chưa tìm thấy tên này trong danh sách đang biên tập.</p>';
   if(query && visible.length>8)$("#map-search-results").insertAdjacentHTML("beforeend",'<button class="text-button" data-open-map-directory>Xem toàn bộ kết quả ↓</button>');
 }
 function closeMapSearch({returnFocus=false}={}){
@@ -431,11 +439,11 @@ document.addEventListener("keydown",ev=>{if(ev.key==="Escape"&&!$("#map-search-p
 document.addEventListener("click",ev=>{
   if(!$("#map-search-panel").hidden && !ev.target.closest("#map-search-panel,#toggle-map-search"))closeMapSearch();
   const result=ev.target.closest("[data-map-result]");
-  if(result){const p=findPlace(result.dataset.mapResult);closeMapSearch({returnFocus:true});if(p){if(eligible(p))selectMapPlace(p.id);else placeDetail(p.id);}}
+  if(result){const p=findPlace(result.dataset.mapResult);closeMapSearch({returnFocus:true});if(p){if(hasMapPosition(p))selectMapPlace(p.id);else placeDetail(p.id);}}
 });
 function renderMap() {
   const visible = mapPlaces();
-  const located = visible.filter(eligible).length;
+  const located = visible.filter(hasMapPosition).length;
   document.querySelectorAll("[data-map-category]").forEach((button) => {
     button.classList.toggle("active", button.dataset.mapCategory === mapCategory);
     button.setAttribute("aria-pressed", String(button.dataset.mapCategory === mapCategory));
@@ -444,8 +452,8 @@ function renderMap() {
     `${visible.length} địa điểm / gợi ý · ${located} có pin. Nguồn từng vị trí ghi trong chi tiết.`;
   // Directory grouped by kind; each card opens the story, jumps to the pin or gives directions.
   const groups=[["heritage","Di sản","temple"],["food","Ăn uống","food"],["rest","Cà phê · nghỉ chân","coffee"],["stay","Lưu trú","bed"]];
-  const status=p=>p.collectible===false?["Hidden gem · đường núi","warn"]:eligible(p)?["Có vị trí trên bản đồ","ok"]:p.localRecommendation?["Gợi ý địa phương","tip"]:["Đang bổ sung vị trí","wait"];
-  const card=p=>{const [label,tone]=status(p);const route=directionsURL(p);return `<article class="map-list-card" data-category="${e(p.category)}"><button class="map-list-item" data-place="${e(p.id)}"><span class="map-list-art">${icon(p.symbol)}</span><span class="map-list-copy"><strong>${e(p.name)}</strong><small class="map-list-status" data-tone="${tone}">${label}</small></span></button><span class="map-list-actions">${eligible(p)?`<button class="map-list-action" data-map-show="${e(p.id)}" aria-label="${e(translateText("Trên bản đồ"))}: ${e(p.name)}" title="${e(translateText("Trên bản đồ"))}">${icon("pin")}</button>`:""}${route?`<a class="map-list-action is-route" href="${e(route)}" target="_blank" rel="noopener noreferrer" aria-label="${e(translateText(eligible(p)?"Chỉ đường":"Tìm trên Google Maps"))}: ${e(p.name)}" title="${e(translateText(eligible(p)?"Chỉ đường":"Tìm trên Google Maps"))}">${icon("route")}</a>`:""}</span></article>`;};
+  const status=p=>p.mapAnchorId?["Mốc tìm đường · vị trí tham khảo","tip"]:p.collectible===false?["Hidden gem · đường núi","warn"]:eligible(p)?["Có vị trí trên bản đồ","ok"]:p.localRecommendation?["Gợi ý địa phương","tip"]:["Đang bổ sung vị trí","wait"];
+  const card=p=>{const [label,tone]=status(p);const route=directionsURL(p);return `<article class="map-list-card" data-category="${e(p.category)}"><button class="map-list-item" data-place="${e(p.id)}"><span class="map-list-art">${icon(p.symbol)}</span><span class="map-list-copy"><strong>${e(p.name)}</strong><small class="map-list-status" data-tone="${tone}">${label}</small></span></button><span class="map-list-actions">${hasMapPosition(p)?`<button class="map-list-action" data-map-show="${e(p.id)}" aria-label="${e(translateText("Trên bản đồ"))}: ${e(p.name)}" title="${e(translateText("Trên bản đồ"))}">${icon("pin")}</button>`:""}${route?`<a class="map-list-action is-route" href="${e(route)}" target="_blank" rel="noopener noreferrer" aria-label="${e(translateText(p.mapAnchorId?"Đến mốc tham khảo":eligible(p)?"Chỉ đường":"Tìm trên Google Maps"))}: ${e(p.name)}" title="${e(translateText(p.mapAnchorId?"Đến mốc tham khảo":eligible(p)?"Chỉ đường":"Tìm trên Google Maps"))}">${icon("route")}</a>`:""}</span></article>`;};
   $("#map-list").innerHTML = visible.length
     ? groups.map(([key,title,symbol])=>{const items=visible.filter(p=>p.category===key);return items.length?`<section class="map-list-group"><h3>${icon(symbol)}<span>${title}</span><b data-no-translate>${items.length}</b></h3>${items.map(card).join("")}</section>`:"";}).join("")+visible.filter(p=>!groups.some(([k])=>k===p.category)).map(card).join("")
     : '<p class="map-search-empty">Chưa tìm thấy tên này trong danh sách đang biên tập.</p>';
@@ -530,7 +538,8 @@ function placeDetail(id) {
  ${p.category !== "heritage" ? `<div class="stop-facts">${p.address ? `<p>${icon("pin")} ${e(p.address)}</p>` : ""}${p.price ? `<p>${icon("coffee")} ${e(p.price)}</p>` : ""}</div>` : ""}
  ${canCollectStamp(p) ? `<p class="gps-zone">${icon("pin")} Nhận tem trong bán kính ${Math.min(site.radius,p.checkInRadius || site.radius)} m quanh vị trí tham khảo, sau khi GPS xác định thành công.</p>` : ""}
  <p class="detail-description">${e(p.note || "")}</p>
- <div class="notice ${valid ? "" : "warning"}">${p.collectible === false ? "Điểm tùy chọn, không phát tem và không tính vào tiến độ Óc Eo Pass. Chưa xác nhận quyền tiếp cận hoặc tọa độ công trình." : valid ? "Pin là vị trí tham khảo. Xác nhận đúng lối vào và giờ đón khách trước khi đến." : sourced ? (p.category==="heritage"?"Nội dung đã đối chiếu tư liệu. Chưa có tọa độ đủ căn cứ; chưa mở chỉ đường và nhận tem tại điểm này.":"Danh bạ tham khảo, chưa xác nhận hoạt động. Mở nguồn gốc hoặc gọi kiểm tra trước khi đến.") : p.localRecommendation && p.category !== "heritage" ? "Gợi ý theo mốc địa phương; chưa đủ tọa độ gắn pin. Hỏi đúng điểm bán, giờ phục vụ và giá trước khi ghé." : "Thông tin đang được đối chiếu; chưa mở chỉ đường hoặc nhận tem."}</div>
+ <div class="notice ${valid ? "" : "warning"}">${p.collectible === false ? "Điểm tùy chọn, không phát tem và không tính vào tiến độ Óc Eo Pass. Chưa xác nhận quyền tiếp cận hoặc tọa độ công trình." : valid ? "Pin là vị trí tham khảo. Xác nhận đúng lối vào và giờ đón khách trước khi đến." : p.mapAnchorId ? "Pin chỉ mốc tìm đường; chưa mở nhận tem GPS tại di tích này." : sourced ? (p.category==="heritage"?"Nội dung đã đối chiếu tư liệu. Chưa có tọa độ đủ căn cứ; chưa mở chỉ đường và nhận tem tại điểm này.":"Danh bạ tham khảo, chưa xác nhận hoạt động. Mở nguồn gốc hoặc gọi kiểm tra trước khi đến.") : p.localRecommendation && p.category !== "heritage" ? "Gợi ý theo mốc địa phương; chưa đủ tọa độ gắn pin. Hỏi đúng điểm bán, giờ phục vụ và giá trước khi ghé." : "Thông tin đang được đối chiếu; chưa mở chỉ đường hoặc nhận tem."}</div>
+ ${p.locationHint?`<p class="place-location-hint">${icon("pin")} ${e(p.locationHint)}</p>`:""}
  ${valid && p.coordinateNote ? `<details class="coordinate-details"><summary>Về vị trí trên bản đồ</summary><p>${e(p.coordinateNote)}</p></details>` : ""}
  <div class="source-links">${safeURL(p.sourceUrl) ? `<a href="${e(safeURL(p.sourceUrl))}" target="_blank" rel="noopener noreferrer">${icon("leaf")} Đọc nguồn ${e(p.sourceLabel || (p.category === "heritage" ? "Ban Quản lý" : "OpenStreetMap"))} ↗</a>` : p.category === "heritage" ? `<a class="heritage-reference" href="${HERITAGE_REFERENCE_URL}" target="_blank" rel="noopener noreferrer">Tra cứu tư liệu Óc Eo ↗</a>` : `<span class="local-source-note">Gợi ý địa phương · cập nhật ${e(p.contentReviewedAt || "")}</span>`}${safeURL(p.coordinateSource) ? `<a href="${e(safeURL(p.coordinateSource))}" target="_blank" rel="noopener noreferrer">${e(coordinateLabel(p))} ↗</a>` : ""}</div>
  <div class="detail-actions">${p.phone && /^\+?[0-9]{9,15}$/.test(p.phone) ? `<a class="button outline" href="tel:${e(p.phone)}">${e(p.phoneLabel || "Gọi cơ sở · số công khai")}</a>` : ""}${directionsLink(p, "button dark")}${valid ? `<a class="button outline" href="https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lng}#map=18/${p.lat}/${p.lng}" target="_blank" rel="noopener noreferrer">Mở vị trí ${icon("map")}</a><button class="button outline" id="focus-on-map">Xem trong app ${icon("pin")}</button>` : ""}${p.category === "heritage" && p.collectible !== false ? `<button class="button dark" id="checkin" ${!canCollectStamp(p) ? "disabled" : ""}>${profile.badges.includes(p.id) ? "Đã có tem · xem Pass" : "Mình đang ở đây"} ${icon("pin")}</button>` : ""}</div>
@@ -723,11 +732,11 @@ async function checkIn(p) {
 function renderMarkers({fit=false} = {}) {
   markerLayer.clearLayers();
   mapMarkers.clear();
-  const verified = mapPlaces().filter(eligible);
+  const verified = mapPlaces().filter(hasMapPosition);
   for (const p of verified) {
-    const marker = L.marker([p.lat, p.lng], {
+    const marker = L.marker([mapPosition(p).lat, mapPosition(p).lng], {
       icon: L.divIcon({
-        className: `osm-pin pin-${p.category}${p.id===mapSelectedId?" is-selected":""}`,
+        className: `osm-pin pin-${p.category}${p.mapAnchorId?" pin-landmark":""}${p.id===mapSelectedId?" is-selected":""}`,
         html: icon(p.symbol),
         iconSize: [44, 44],
         iconAnchor: [22, 35],
@@ -735,7 +744,7 @@ function renderMarkers({fit=false} = {}) {
       title: p.name,
       alt: p.name,
     }).addTo(markerLayer);
-    marker.bindTooltip(e(p.name), {permanent: p.featured === true, direction: p.featured === true ? "auto" : "top", offset: p.featured === true ? [0,0] : [0,-18], className: "townwalk-map-label"});
+    marker.bindTooltip(e(p.name)+(p.mapAnchorId?" · "+e(translateText("Mốc tìm đường")):""), {permanent: p.featured === true, direction: p.featured === true ? "auto" : "top", offset: p.featured === true ? [0,0] : [0,-18], className: "townwalk-map-label"});
     mapMarkers.set(p.id,marker);
     marker.on("click", () => selectMapPlace(p.id));
   }

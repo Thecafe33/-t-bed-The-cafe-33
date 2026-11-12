@@ -1,5 +1,5 @@
 /* Photo-led cards with a visible next card and explicit actions. */
-.townwalk-app #places-grid { display:flex;align-items:flex-start;gap:16px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-inline:2px;padding:5px 2px 19px;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#b1bda4 transparent;max-width:100%; }
+.townwalk-app #places-grid { display:flex;align-items:flex-start;gap:16px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-inline:var(--view-gutter);padding:5px var(--view-gutter) 19px;margin-inline:calc(-1 * var(--view-gutter));overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#b1bda4 transparent;max-width:none; }
 .townwalk-app #places-grid>.feed-card { flex:0 0 calc(100% - 30px);max-width:365px;min-width:0;display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0;border:1px solid #203d3418;border-radius:25px;overflow:hidden;background:#fffdf7;box-shadow:none;scroll-snap-align:start;scroll-snap-stop:normal;transform:none; }
 .townwalk-app #places-grid>.feed-card:hover { transform:none; }
 .townwalk-app .feed-card .place-art { display:block;position:relative;flex-shrink:0;align-self:stretch;width:100%;height:235px;min-height:235px;border-radius:0;border:0;overflow:hidden;padding:0; }
@@ -29,7 +29,7 @@
 .catalog-scroll-controls { display:flex;gap:7px; }.catalog-scroll-controls button { display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1px solid #cbd2c0;background:#fffdf7;font-size:22px;color:#203d34; }
 .catalog-scroll-controls button:disabled { opacity:.35; }
 .townwalk-app .catalog-swipe-hint { font-size:11px;line-height:1.7;color:#627266;margin:5px 0 9px; }
-.townwalk-app.is-searching #places-grid { display:grid;grid-template-columns:1fr;overflow:visible; }.townwalk-app.is-searching #places-grid>.feed-card { max-width:none; }.townwalk-app.is-searching .catalog-scroll-controls,.townwalk-app.is-searching .catalog-swipe-hint { display:none; }
+.townwalk-app.is-searching #places-grid { margin-inline:0;padding-inline:0;display:grid;grid-template-columns:1fr;overflow:visible; }.townwalk-app.is-searching #places-grid>.feed-card { max-width:none; }.townwalk-app.is-searching .catalog-scroll-controls,.townwalk-app.is-searching .catalog-swipe-hint { display:none; }
 .townwalk-app .artifact-launch { min-height:82px;padding:17px; }.townwalk-app .artifact-launch> .icon:last-child { width:36px;height:36px;padding:8px;background:#173f36;color:#f5f7e9;border-radius:50%; }
 @media(min-width:500px) { .townwalk-app #places-grid>.feed-card { flex-basis:355px; } }
 @media(max-width:359px) { .townwalk-app .feed-card .place-art { height:210px;min-height:210px; }.townwalk-app .feed-card .place-card-body { padding:15px; }.townwalk-app .feed-card .place-card-body h3 { font-size:22px; }.place-lettering { font-size:34px;padding-inline:21px; } }
