@@ -121,7 +121,8 @@ test("museum and summit detour remain distinct; optional stops never count towar
   assert.ok(museum && hidden);
   assert.equal(d.places.filter(p=>p.id==='chua-linh-son').length,1);
   assert.equal(d.itinerary.find(s=>s.time==='08:30').placeId,museum.id);
-  assert.equal(d.itinerary.find(s=>s.time==='09:30').placeId,'chua-linh-son');
+  assert.deepEqual(d.itinerary.find(s=>s.time==='09:30').placeIds,['linh-son-bac','chua-linh-son','linh-son-nam','go-sau-thuan']);
+  assert.equal(d.itinerary.find(s=>s.time==='09:15').placeId,'xofa');
   assert.equal(hidden.lat,null);
   assert.equal(hidden.lng,null);
   assert.match(hidden.accessWarning,/ngày mưa/);
@@ -129,7 +130,7 @@ test("museum and summit detour remain distinct; optional stops never count towar
   const mapped={...hidden,verified:true,coordinateSource:'https://www.openstreetmap.org/node/123',lat:10.2465,lng:105.1453};
   assert.equal(eligible(mapped),true);
   assert.equal(canCollectStamp(mapped),false);
-  assert.equal(d.itinerary.some(s=>s.placeId===hidden.id),false);
+  assert.equal(d.itinerary.find(s=>s.placeId===hidden.id).optional,true);
   const invalid=cloneDefault();
   invalid.places.find(p=>p.id===hidden.id).collectible='false';
   assert.throws(()=>validateSite(invalid),/bộ tem/);

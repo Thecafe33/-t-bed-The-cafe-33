@@ -181,3 +181,13 @@
   .story-chapter.is-in .story-dot { animation:story-pop .5s cubic-bezier(.34,1.5,.64,1); }
 }
 @keyframes story-pop { from { transform:scale(.4); } }
+
+/* A morning visit with an optional, unhurried afternoon. */
+.plan-card .plan-description { white-space:pre-line; }
+.plan-afternoon { margin:20px 0; border:1px solid #173f3624; border-radius:22px; padding:0 14px; background:#eff2e4; }
+.plan-afternoon>summary { cursor:pointer; min-height:64px; padding:18px 4px; font-weight:700; color:#173f36; }
+.plan-afternoon>summary small { display:block; margin:6px 0 0; font-size:12px; font-weight:400; }
+.plan-afternoon .plan-list { padding-bottom:12px; }
+.plan-booking { margin-top:12px; font-size:13px; }
+.townwalk-app .plan-local-note { font-size:12px; line-height:1.7; color:#627266; }
+.plan-card-actions .plan-action { max-width:100%; white-space:normal; text-align:left; }

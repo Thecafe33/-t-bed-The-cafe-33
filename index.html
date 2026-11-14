@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="./assets/genz.css?v=20261112-shell" />
     <link rel="stylesheet" href="./assets/artifacts.css?v=20261112-toolbar" />
     <link rel="stylesheet" href="./assets/campaign.css?v=20261106-mountain" />
-    <link rel="stylesheet" href="./assets/journey-story.css?v=20261112-story" />
+    <link rel="stylesheet" href="./assets/journey-story.css?v=20261114-plan" />
     <link rel="stylesheet" href="./assets/stamp-desk.css?v=20261112-book" />
     <link rel="stylesheet" href="./assets/place-feed.css?v=20261112-shelves" />
     <link rel="stylesheet" href="./assets/header.css?v=20261108-stable" />
@@ -233,7 +233,7 @@
         <div class="app-view-heading">
           <div class="eyebrow">MỘT NGÀY Ở ÓC EO</div>
           <h1 id="day-heading" tabindex="-1">Chuyến đi Óc Eo.</h1>
-          <p>Lịch gợi ý từ sáng đến chiều. Chạm từng chặng để xem hoặc chỉ đường.</p>
+          <p>Khám phá buổi sáng, nghỉ lúc nắng lên. Muốn đi tiếp? Mở lịch trình chiều.</p>
         </div>
         <section class="day-plan" aria-labelledby="day-plan-title">
           <h2 id="day-plan-title" class="sr-only">Lịch trình gợi ý</h2>
@@ -243,6 +243,11 @@
             <button type="button" class="button outline" id="save-itinerary"><span data-icon="download"></span><span>Lưu lịch</span></button>
           </div>
           <ol class="timeline plan-list" id="timeline"></ol>
+          <details id="plan-afternoon" class="plan-afternoon">
+            <summary><span>Đi tiếp buổi chiều</span><small>16:00–18:00 · di tích, đồng ruộng &amp; Ba Thê</small></summary>
+            <ol class="timeline plan-list" id="timeline-afternoon"></ol>
+          </details>
+          <p class="plan-local-note">Lịch trình và gợi ý ăn nghỉ theo thông tin địa phương do chủ dự án cung cấp. Giá, giờ đón khách và điều kiện tiếp cận cần xác nhận trước chuyến đi.</p>
         </section>
         <div id="saved-trip"></div>
         <section class="day-story" aria-labelledby="day-story-title">

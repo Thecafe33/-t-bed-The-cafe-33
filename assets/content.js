@@ -33,7 +33,7 @@ export const CURATED = {
       "phone": "02963878156",
       "phoneLabel": "Gọi Ban Quản lý",
       "price": "Hỏi Ban Quản lý",
-      "hours": "Liên hệ xác nhận giờ đón khách",
+      "hours": "Đóng cửa thứ Hai; liên hệ xác nhận giờ đón khách các ngày còn lại",
       "contentVerified": true,
       "contentReviewedAt": "2026-11-05",
       "coordinateSourceLabel": "OSM · đối chiếu Nhà trưng bày",
@@ -821,43 +821,105 @@ export const CURATED = {
     }
   ],
   "itinerary": [
-    {
-      "time": "07:30",
-      "title": "Ăn sáng và chuẩn bị",
-      "description": "Ăn tại cơ sở đang mở trong xã, chuẩn bị nước, mũ và giày bám tốt. Giá ăn uống chưa được app khảo sát; hỏi giá trước khi gọi món.",
-      "placeId": ""
-    },
-    {
-      "time": "08:30",
-      "title": "Ghé Nhà trưng bày, nghe câu chuyện mở đầu",
-      "description": "Liên hệ Ban Quản lý trước để xác nhận lịch đón khách và đặt thuyết minh. Nhìn hiện vật trước sẽ giúp bạn đọc các nền gạch ngoài thực địa có ý nghĩa hơn.",
-      "placeId": "nha-trung-bay-van-hoa-oc-eo"
-    },
-    {
-      "time": "09:30",
-      "title": "Chùa Linh Sơn và Linh Sơn Nam",
-      "description": "Hai điểm có dữ liệu vị trí gần nhau. Dành khoảng 60–90 phút nếu được đón khách; đi theo lối cho phép và tôn trọng sinh hoạt tín ngưỡng.",
-      "placeId": "chua-linh-son"
-    },
-    {
-      "time": "11:30",
-      "title": "Ăn trưa → nghỉ giữa ngày",
-      "description": "Ăn trưa tại hàng đang phục vụ trong xã, rồi nghỉ với Cafe in bed tại The cafe 33 nếu đã đặt lịch. Đặt qua website The cafe 33 trước để xác nhận chỗ và tổng phí; không đặt trước có thể phát sinh phụ phí.",
-      "placeId": "the-cafe-33"
-    },
-    {
-      "time": "14:00",
-      "title": "Gò Cây Thị → Giồng Cát",
-      "description": "Hai cụm có vị trí trên OSM. Chỉ thực hiện khi Ban Quản lý xác nhận tiếp cận; dự trù phương tiện giữa các cụm thay vì coi đây là tuyến đi bộ hoàn toàn.",
-      "placeId": "go-cay-thi"
-    },
-    {
-      "time": "15:30",
-      "title": "XOFA · thử Sữa Gạo Phù Nam",
-      "description": "Kết chuyến bằng món nước lấy cảm hứng từ văn hóa Óc Eo tại XOFA, giá tham khảo từ 25K. Hỏi giá hiện tại, nghỉ chân rồi lưu Óc Eo Pass để chia sẻ câu chuyện của bạn.",
-      "placeId": "xofa"
-    }
-  ],
+  {
+    "time": "07:30",
+    "title": "Ăn sáng như người địa phương",
+    "description": "Chọn một quán đang mở: cơm tấm Long Xuyên đối diện quán Kim (từ 25K); tiệm cơm Thái Sơn đối diện tiệm vàng Bi Kiều (từ 25K); bánh mì xíu mại cạnh tiệm vàng Bi Kiều; hoặc Phở Tám Hưng. Bạn cũng có thể dạo chợ Óc Eo để chọn món ăn sáng local.\nGiá là gợi ý địa phương, hãy hỏi giá hiện tại trước khi gọi món. Mang theo nước, mũ và giày bám tốt.",
+    "placeId": "cho-oc-eo",
+    "placeIds": [
+      "cho-oc-eo"
+    ]
+  },
+  {
+    "time": "08:30",
+    "title": "Bắt đầu ở Nhà trưng bày Văn hóa Óc Eo",
+    "description": "Xem hiện vật và nghe câu chuyện Óc Eo trước khi ra thực địa. Nhà trưng bày không mở cửa vào thứ Hai; nếu đi hôm đó, bỏ qua chặng này và bắt đầu ở cụm Linh Sơn. Liên hệ Ban Quản lý để xác nhận giờ đón khách và thuyết minh trước khi đến.",
+    "placeId": "nha-trung-bay-van-hoa-oc-eo",
+    "placeIds": [
+      "nha-trung-bay-van-hoa-oc-eo"
+    ]
+  },
+  {
+    "time": "09:15",
+    "title": "XOFA · một ngụm Sữa Gạo Phù Nam",
+    "description": "Vừa xem hiện vật ở nhà trưng bày, ghé XOFA thử Sữa Gạo Phù Nam để nối câu chuyện văn hóa với một trải nghiệm hôm nay. Món nước lấy cảm hứng từ văn hóa Óc Eo, giá tham khảo từ 25K. Hỏi giá hiện tại và dành chút thời gian cảm nhận trước khi đi tiếp cụm Linh Sơn. Các mốc giờ là gợi ý, có thể xê dịch theo thời gian phục vụ và di chuyển.",
+    "placeId": "xofa",
+    "placeIds": [
+      "xofa"
+    ]
+  },
+  {
+    "time": "09:30",
+    "title": "Linh Sơn Bắc → chùa Linh Sơn → Linh Sơn Nam → Gò Sáu Thuận",
+    "description": "Ghé Linh Sơn Bắc trước vì nằm trước trên tuyến đường. Sau đó chạy xe máy lên đường nhỏ cạnh chùa Linh Sơn; gặp cổng nhỏ thì hỏi chỗ đậu xe trong chùa. Ô tô không lên được lối này.\nTham quan chùa và xem hai bia đá. Để xe tại chùa, nhớ khóa cổ cẩn thận. Đi bộ xuống con dốc vừa chạy lên, rồi tiếp tục đi lên một đoạn để đến Linh Sơn Nam. Trở ra cổng chùa: Gò Sáu Thuận nằm đối diện. Hỏi người tại chỗ nếu chưa rõ lối đi; chỉ vào khu vực được phép.\nDành khoảng một giờ cho cụm này. Nếu còn thời gian có thể ghé Gò Cây Thị và Giồng Cát, nhưng nên để chiều 16:00–17:00 cho mát và ngắm đồng ruộng.",
+    "placeId": "linh-son-bac",
+    "placeIds": [
+      "linh-son-bac",
+      "chua-linh-son",
+      "linh-son-nam",
+      "go-sau-thuan"
+    ]
+  },
+  {
+    "time": "11:00",
+    "title": "Ăn trưa quanh Óc Eo",
+    "description": "Thử bún cua Óc Eo đối diện chùa Phổ Quang, hoặc bánh xèo gần đó, đối diện nhà nghỉ Út Mập. Hỏi giờ bán và giá trước khi gọi món.",
+    "placeId": "bun-cua-oc-eo",
+    "placeIds": [
+      "bun-cua-oc-eo",
+      "banh-xeo-oc-eo"
+    ]
+  },
+  {
+    "time": "11:30",
+    "title": "Nghỉ trưa theo cách bạn thích",
+    "description": "Khoảng 11:30–12:00, ghé The cafe 33 nếu muốn nghỉ trong không gian máy lạnh; quán có Cafe in bed và một vài món ăn nhẹ. Đặt trước Cafe in bed qua website để xác nhận chỗ, khung giờ, thời lượng và tổng phí; không đặt trước có thể bị tính phụ phí.\nNếu muốn tiết kiệm, bạn có thể tìm quán cà phê võng gần đó để nằm nghỉ; hỏi giá và điều kiện sử dụng trước.",
+    "placeId": "the-cafe-33",
+    "placeIds": [
+      "the-cafe-33"
+    ],
+    "bookingUrl": "https://the-cafe-33.web.app"
+  },
+  {
+    "time": "13:00",
+    "title": "Nghỉ mát, hoặc kết thúc chuyến đi",
+    "description": "Buổi trưa ở Óc Eo khá nóng, nên hạn chế hoạt động ngoài trời và tiếp tục nghỉ trong bóng mát. Nếu chỉ muốn tìm hiểu những nét cơ bản của Óc Eo, bạn có thể kết thúc chuyến đi tại đây. Muốn đi tiếp? Mở phần lịch trình chiều bên dưới; không cần vội ra ngoài giữa lúc nắng gắt.",
+    "placeId": "",
+    "placeIds": []
+  },
+  {
+    "time": "16:00",
+    "title": "Gò Cây Thị → Gò Giồng Cát",
+    "description": "Dành khoảng 16:00–17:00 tham quan hai điểm, kết hợp ngắm đồng ruộng khi trời dịu hơn. Xác nhận khả năng tiếp cận di tích trước khi đi, chỉ theo lối được phép và dự trù phương tiện giữa các điểm. Nếu đã ghé buổi sáng, bạn có thể bỏ qua chặng này.",
+    "placeId": "go-cay-thi",
+    "placeIds": [
+      "go-cay-thi",
+      "go-giong-cat"
+    ],
+    "optional": true
+  },
+  {
+    "time": "17:00",
+    "title": "Chọn một đỉnh Ba Thê để ngắm cảnh",
+    "description": "Thuê xe ôm địa phương quen đường cho chuyến lên núi khoảng một giờ; phải xuống núi trước 18:00. Nếu chưa đủ thời gian, bỏ qua chặng này.\nBa Thê có hai đỉnh riêng biệt: chọn đỉnh có Thạch Đại Đao để ngắm toàn cảnh, tìm hiểu Thạch Đại Đao và điểm dừng chân Phật tử gần đó; hoặc chọn đỉnh chùa Sơn Tiên để xem tảng đá Bàn Chân Tiên và khám phá khu vực nhà trưng bày văn hóa Óc Eo cũ (hidden gem). Không cố ghé cả hai đỉnh trong một giờ.\nĐường núi hẹp, dốc và có khúc cua; tránh ngày mưa hoặc đường trơn. Đội mũ bảo hiểm, hỏi tình trạng đường và quyền tiếp cận. Tôn trọng nơi thờ tự; không vào công trình bỏ hoang, leo mái hay vượt rào.",
+    "placeId": "nha-trung-bay-cu-ba-the",
+    "placeIds": [
+      "nha-trung-bay-cu-ba-the"
+    ],
+    "optional": true
+  },
+  {
+    "time": "18:00",
+    "title": "Ở lại Óc Eo một đêm?",
+    "description": "Nếu lưu trú qua đêm, ưu tiên tham khảo nhà nghỉ Phượng Sang; nhà nghỉ Út Mập cũng là một lựa chọn. Cả hai đều gần các điểm di tích đã ghé buổi sáng. Bấm vào từng nơi để xem thông tin, liên hệ hỏi phòng trống, giá và giờ nhận phòng.",
+    "placeId": "phuong-sang",
+    "placeIds": [
+      "phuong-sang",
+      "ut-map"
+    ],
+    "optional": true
+  }
+],
   "sources": {
     "inventory": "https://vanhoaoceo.angiang.gov.vn/khu-di-tich-khao-co-oc-eo-ba-nhung-gia-tri-noi-bat-duoc-de-cu-lap-ho-so-trinh-unesco-cong-nhan-di-san-van-hoa-gioi",
     "overview": "https://vanhoaoceo.angiang.gov.vn/oc-eo-ba-dau-an-do-thi-co-giao-thuong-quoc-te-va-su-giao-thoa-van-hoa-o-nam-bo",

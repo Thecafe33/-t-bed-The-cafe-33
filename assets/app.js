@@ -465,18 +465,21 @@ function renderMap() {
   if (map) renderMarkers({fit:true});
 }
 // The day plan is the main content of the Day tab: one card per stop, each with its own actions.
-function planPlaceIds(){return [...new Set(site.itinerary.map(s=>s.placeId).filter(id=>id&&findPlace(id)))];}
+function planPlaceIds(){return [...new Set(site.itinerary.flatMap(s=>s.placeIds||[s.placeId]).filter(id=>id&&findPlace(id)))];}
 function renderTimeline() {
-  const steps=site.itinerary, first=steps[0]?.time||"", last=steps.at(-1)?.time||"";
+  const steps=site.itinerary, main=steps.filter(s=>!s.optional), extra=steps.filter(s=>s.optional), first=main[0]?.time||"", last=main.at(-1)?.time||"";
   const heritage=planPlaceIds().map(findPlace).filter(p=>p&&p.category==="heritage"&&p.collectible!==false);
   const earned=heritage.filter(p=>profile.badges.includes(p.id)).length;
-  $("#plan-summary").innerHTML=`<span><b data-no-translate>${steps.length}</b> <span>chặng</span></span><span><b data-no-translate>${e(first)} → ${e(last)}</b></span>${heritage.length?`<span><span>Tem di sản</span> <b data-no-translate>${earned}/${heritage.length}</b></span>`:""}`;
-  $("#timeline").innerHTML = steps
-    .map((s) => {
-      const p=s.placeId?findPlace(s.placeId):null, route=p?directionsURL(p):null, stamped=p&&profile.badges.includes(p.id);
-      return `<li class="timeline-row plan-stop" data-category="${e(p?.category||"break")}"><time>${e(s.time)}</time><article class="plan-card"><h3>${e(s.title)}</h3><p>${e(s.description)}</p>${p||stamped?`<div class="plan-card-actions">${p?`<button class="plan-action" data-place="${e(p.id)}">${icon("arrowup")}<span>Xem điểm dừng</span></button>`:""}${route?`<a class="plan-action is-route" href="${e(route)}" target="_blank" rel="noopener noreferrer">${icon("route")}<span>Chỉ đường</span></a>`:""}${stamped?`<span class="plan-stamp">${icon("check")}<span>Đã có tem</span></span>`:""}</div>`:""}</article></li>`;
-    })
-    .join("");
+  $("#plan-summary").innerHTML=`<span><b data-no-translate>${main.length}</b> <span>chặng</span></span><span><b data-no-translate>${e(first)} → ${e(last)}</b></span>${heritage.length?`<span><span>Tem di sản</span> <b data-no-translate>${earned}/${heritage.length}</b></span>`:""}`;
+  const renderStep=s=>{
+    const places=(s.placeIds||[s.placeId]).map(findPlace).filter(Boolean);
+    return `<li class="timeline-row plan-stop" data-category="${e(places[0]?.category||'break')}"><time>${e(s.time)}</time><article class="plan-card"><h3>${e(s.title)}</h3><p class="plan-description">${e(s.description)}</p>${places.length?`<div class="plan-card-actions">${places.map(p=>`<button class="plan-action" data-place="${e(p.id)}">${icon('arrowup')}<span data-no-translate>${e(p.name)}</span>${profile.badges.includes(p.id)?icon('check'):''}</button>`).join('')}</div>`:''}${safeURL(s.bookingUrl)?`<a class="button outline plan-booking" href="${e(safeURL(s.bookingUrl))}" target="_blank" rel="noopener noreferrer">Đặt trước The cafe 33 ${icon('arrowup')}</a>`:''}</article></li>`;
+  };
+  $('#timeline').innerHTML=main.map(renderStep).join('');
+  const extension=$('#plan-afternoon');
+  extension.hidden=!extra.length;
+  $('#timeline-afternoon').innerHTML=extra.map(renderStep).join('');
+
 }
 function renderSite() {
   renderCampaign();
@@ -1329,7 +1332,7 @@ $("#save-itinerary").onclick = () =>
   downloadBlob(
     new Blob(
       [
-        `ÓC EO TOWNWALK — MỘT NGÀY GỢI Ý\nKhung trải nghiệm, chưa tính quãng đường. Xác minh điểm, giờ mở cửa và điều kiện đón khách trước khi đi.\n\n${site.itinerary.map((s) => `${s.time} — ${s.title}\n${s.description}`).join("\n\n")}`,
+        `ÓC EO TOWNWALK — MỘT NGÀY GỢI Ý\nKhung trải nghiệm, chưa tính quãng đường. Xác minh điểm, giờ mở cửa và điều kiện đón khách trước khi đi.\n\n${site.itinerary.map((s) => `${s.optional ? "[TÙY CHỌN BUỔI CHIỀU] " : ""}${s.time} — ${s.title}\n${s.description}${s.bookingUrl ? "\nĐặt trước: " + s.bookingUrl : ""}`).join("\n\n")}`,
       ],
       { type: "text/plain;charset=utf-8" },
     ),

@@ -194,6 +194,10 @@ export function validateSite(data) {
       typeof s.placeId !== "string"
     )
       throw Error("Mỗi mốc lịch trình cần giờ HH:MM, tiêu đề và mô tả hợp lệ.");
+    if (s.placeIds !== undefined && (!Array.isArray(s.placeIds) || s.placeIds.some(id=>typeof id!=="string" || !ids.has(id))))
+      throw Error("Lịch trình tham chiếu địa điểm không tồn tại.");
+    if (s.optional !== undefined && typeof s.optional !== "boolean") throw Error("Chặng tùy chọn không hợp lệ.");
+    if (s.bookingUrl !== undefined && !validSource(s.bookingUrl)) throw Error("Liên kết đặt chỗ cần HTTPS.");
     if (s.placeId && !ids.has(s.placeId))
       throw Error("Lịch trình tham chiếu địa điểm không tồn tại.");
   }
